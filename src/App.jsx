@@ -44,9 +44,9 @@ function StartButton() {
   );
 }
 
-function HomeFrame() {
+function HomeFrame({ active }) {
   return (
-    <article className="phone-frame home-frame" data-node-id="1:2" id="home">
+    <article className={`phone-frame home-frame ${active ? "is-active" : ""}`} data-node-id="1:2" id="home">
         <div className="base-bg" />
         <div className="lime-rail-left" />
         <div className="lime-rail-right" />
@@ -102,9 +102,9 @@ function JourneyIndex() {
   );
 }
 
-function PageTwoFrame() {
+function PageTwoFrame({ active }) {
   return (
-    <article className="phone-frame page-two-frame" data-node-id="5:106" id="page-2">
+    <article className={`phone-frame page-two-frame ${active ? "is-active" : ""}`} data-node-id="5:106" id="page-2">
       <div className="page-two-art" data-node-id="5:108">
         <img className="page-two-top" src="/assets/page2-title-top.svg" alt="" aria-hidden="true" />
         <img className="page-two-bottom" src="/assets/page2-title-bottom.svg" alt="" aria-hidden="true" />
@@ -115,9 +115,9 @@ function PageTwoFrame() {
   );
 }
 
-function PageThreeFrame() {
+function PageThreeFrame({ active }) {
   return (
-    <article className="phone-frame page-three-frame" data-node-id="103:3" id="page-3">
+    <article className={`phone-frame page-three-frame ${active ? "is-active" : ""}`} data-node-id="103:3" id="page-3">
       <img className="page-three-top" src="/assets/page3-top.svg" alt="" aria-hidden="true" />
       <img className="page-three-main" src="/assets/page3-main.svg" alt="" aria-hidden="true" />
       <img className="page-three-bottom" src="/assets/page3-bottom.svg" alt="" aria-hidden="true" />
@@ -138,9 +138,9 @@ function PageThreeFrame() {
   );
 }
 
-function PageFourFrame() {
+function PageFourFrame({ active }) {
   return (
-    <article className="phone-frame page-four-frame" data-node-id="109:148" id="page-4">
+    <article className={`phone-frame page-four-frame ${active ? "is-active" : ""}`} data-node-id="109:148" id="page-4">
       <div className="page-four-art" data-node-id="109:261">
         <div className="page-four-masked">
           <img src="/assets/page4-masked.svg" alt="" aria-hidden="true" />
@@ -168,33 +168,30 @@ function PageFourFrame() {
   );
 }
 
-function HashScroller() {
+function useActivePage() {
+  const getPage = () => window.location.hash.slice(1) || "home";
+  const [activePage, setActivePage] = React.useState(getPage);
+
   React.useEffect(() => {
-    const scrollToHash = () => {
-      const id = window.location.hash.slice(1);
-      if (!id) return;
-      document.getElementById(id)?.scrollIntoView({ block: "start" });
-    };
+    const handleHashChange = () => setActivePage(getPage());
+    window.addEventListener("hashchange", handleHashChange);
 
-    window.setTimeout(scrollToHash, 0);
-    window.setTimeout(scrollToHash, 300);
-    window.addEventListener("hashchange", scrollToHash);
-
-    return () => window.removeEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  return null;
+  return activePage;
 }
 
 function App() {
+  const activePage = useActivePage();
+
   return (
     <main className="preview-page">
-      <HashScroller />
       <h1 className="sr-only">作狀生活俱樂部</h1>
-      <HomeFrame />
-      <PageTwoFrame />
-      <PageThreeFrame />
-      <PageFourFrame />
+      <HomeFrame active={activePage === "home"} />
+      <PageTwoFrame active={activePage === "page-2"} />
+      <PageThreeFrame active={activePage === "page-3"} />
+      <PageFourFrame active={activePage === "page-4"} />
     </main>
   );
 }

@@ -6,29 +6,37 @@ body {
   margin: 0;
   min-width: 320px;
   background: #ffffff;
+  overflow: hidden;
 }
 
 html {
-  scroll-behavior: smooth;
+  overflow: hidden;
 }
 
 .preview-page {
-  min-height: 100vh;
+  width: 100vw;
+  height: 100dvh;
   display: grid;
   justify-items: center;
   align-items: start;
   padding: 0;
   background: #ffffff;
+  overflow: hidden;
 }
 
 .phone-frame {
   position: relative;
   width: 402px;
   height: 874px;
+  display: none;
   overflow: hidden;
   background: #ffffff;
   color: #000000;
   transform-origin: top center;
+}
+
+.phone-frame.is-active {
+  display: block;
 }
 
 .page-two-frame {
