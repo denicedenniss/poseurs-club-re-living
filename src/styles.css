@@ -6,22 +6,24 @@ body {
   margin: 0;
   min-width: 320px;
   background: #ffffff;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 html {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .preview-page {
   width: 100vw;
-  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   justify-items: center;
   align-items: start;
   padding: 0;
   background: #ffffff;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .phone-frame {
