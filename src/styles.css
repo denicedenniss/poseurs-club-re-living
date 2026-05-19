@@ -656,6 +656,13 @@ html {
   top: calc(0 / 700 * 100%);
   width: calc(391 / 402 * 100%);
   height: calc(364 / 700 * 100%);
+  overflow: visible;
+}
+
+.cover-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .opening-copy {
