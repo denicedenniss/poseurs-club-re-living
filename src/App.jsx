@@ -74,7 +74,9 @@ function HomeFrame({ active }) {
         <div className="lime-rail-right" />
         <div className="lime-masthead" />
         <img className="ellipse" src="/assets/figma-ellipse.svg" alt="" aria-hidden="true" />
-        <img className="cover-art" src="/assets/figma-cover.svg" alt="" aria-hidden="true" />
+        <div className="cover-art-window" aria-hidden="true">
+          <img className="cover-art" src="/assets/figma-cover.svg" alt="" />
+        </div>
         <OpeningCopy />
         <StartButton />
     </article>
@@ -214,7 +216,11 @@ function Article101Frame({ active }) {
       <header className="article-header">
         <p className="article-number">1.01</p>
         <p className="article-quote">《港島散步・趕到散步時領悟》</p>
-        <h2>一場關於心靈肌群的痛苦鍛鍊。</h2>
+        <img
+          className="article-kicker-art"
+          src="/assets/article-kicker.svg"
+          alt="一場關於心靈肌群的痛苦鍛鍊。"
+        />
       </header>
       <div className="article-scroll-wrap">
         <section className="article-scroll" aria-label="港島散步正文">

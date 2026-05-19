@@ -58,6 +58,7 @@ html {
 .lime-rail-right,
 .lime-masthead,
 .ellipse,
+.cover-art-window,
 .cover-art,
 .opening-copy,
 .start-button {
@@ -332,8 +333,7 @@ html {
 }
 
 .article-number,
-.article-quote,
-.article-header h2 {
+.article-quote {
   margin: 0;
 }
 
@@ -355,15 +355,12 @@ html {
   letter-spacing: 1.4px;
 }
 
-.article-header h2 {
-  margin: 33px 0 0;
-  transform: translateX(-2px);
-  font-family: "Noto Serif HK", "Noto Serif TC", serif;
-  font-size: 29px;
-  font-weight: 700;
-  line-height: 34px;
-  letter-spacing: -1.2px;
-  white-space: nowrap;
+.article-kicker-art {
+  display: block;
+  width: 376px;
+  height: 75px;
+  margin: 31px auto 0;
+  object-fit: contain;
 }
 
 .article-scroll-wrap {
@@ -655,11 +652,19 @@ html {
   height: calc(200 / 700 * 100%);
 }
 
-.cover-art {
+.cover-art-window {
   left: calc(9 / 402 * 100%);
   top: calc(3 / 700 * 100%);
   width: calc(377 / 402 * 100%);
-  height: calc(535 / 700 * 100%);
+  height: calc(363 / 700 * 100%);
+  overflow: hidden;
+}
+
+.cover-art {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(535 / 363 * 100%);
 }
 
 .opening-copy {
