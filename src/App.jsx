@@ -7,6 +7,18 @@ const introLines = [
   "你可以慢慢向下走，由荒原、海市蜃樓，走到山。",
 ];
 
+const article101 = `2025年快過了一半，要數數手指說做了什麼，好像並沒有那麼多姿多彩，但卻有一種用溫水要把我烹煮的感覺，上半年經歷一段憂鬱的時間，我發現有時並不是必需有大事情來重錘一擊，也可以成為覺悟的轉捩點。然而，改變一個已經運作了很久的思想迴路，確是相當痛苦。難道就正如蘇格拉底所說：「未經反省的人生是不值得活的。」其實我更喜歡那個把「反省」翻譯成「審視」的版本。
+
+看了一千篇心理分析、一萬篇心靈雞湯，難道就能換取一次徹底的覺悟嗎？人最痛苦的狀態莫過於頭腦上認知，但心未能抵達的狀態，好比我看見了一切，但雙手無法觸及，既迷惘又沮喪。
+
+前陣子，有人問我健身的成果，我只尷尬地回應：「我並『未』練成腹肌馬甲線。」但我卻想，肌肉並不會背叛你，它還是透過每次肌肉的撕裂，再復原，然後悄悄地長成。所以並『未』，只是我堅信它們的確悄悄在長成。比起肌肉，我的意外收穫竟然是多了一份耐力，若不是這樣的鍛鍊，應該沒有下半段的發展。
+
+自我審視的過程如一場心靈肌群的鍛鍊，就是由觸發到洞察、認知、接受痛苦到療癒（完全跟鍛鍊肌肉是一樣），上半年大概就是不斷地複習這過程。而我的課題大概是平常人的困擾：如何好好認清自己，接受本我。當我無法忽略世界的雜音，不斷解讀他人的反應，我連感到憤怒傷心都要受到限制，但最無聊的是，這些設限是我自己親手建造的牢籠。
+
+常言當你不斷遇到相當的課題，你要把它學完才能停止遇上。某日某些人出現，勾起了你一些創傷，他是誰並不重要，有狗血劇情嗎？並沒有。不過就是使我發現數個不同時空的遠古傷口，它們悄悄地變成了寄生合成獸躲在我的體內，剛巧被那個新故事在一霎之間抓開了它的巢穴，痛感達200%。
+
+說到這裡，我是故意沒有好具體地說發生什麼事，因為故事不重要，想起前陣子看《混沌少年時》的對白：「事實並不重要，重要是為什麼這樣想？」這句對白啟發我真正思考「為什麼我有這個感受」，才會發現「寄生合成獸」，苦戰八千回，把怪獸馴服，再蛻變成一個新的自我。在過程我竭力感受所有不適、所有傷痛。然後我體會：人生就是這樣，有快樂也伴隨痛苦，如西西弗斯一樣，他用享受過程來否定諸神的懲罰；我用盡力體會來拿回定義一切的主權，然而看着所有事消散得不留痕跡，化成虛空，如夢幻泡影。然而，正因為一切都會成虛空，更要深刻地體會——人生的意義，莫過於此。`;
+
 function OpeningCopy() {
   return (
     <section className="opening-copy" aria-label="陌生人你好">
@@ -155,7 +167,7 @@ function PageFourFrame({ active }) {
         <a className="page-four-back" href="#page-3" aria-label="返回序">
           <img src="/assets/page4-back.svg" alt="" aria-hidden="true" />
         </a>
-        <a className="page-four-next" href="#page-5" aria-label="下一頁">
+        <a className="page-four-next" href="#article-1-01" aria-label="下一頁">
           <img src="/assets/page4-next.svg" alt="" aria-hidden="true" />
         </a>
       </nav>
@@ -164,6 +176,43 @@ function PageFourFrame({ active }) {
         <img className="page-four-dot" src="/assets/page4-dot.svg" alt="" />
         <span>正在經過</span>
       </div>
+    </article>
+  );
+}
+
+function ArticleBottomNav({ previous, next, progress = 0.25 }) {
+  return (
+    <nav className="article-bottom" aria-label="文章 navigation">
+      <a className="article-nav-button article-prev" href={previous} aria-label="上一頁">
+        <span aria-hidden="true">◀</span>
+      </a>
+      <a className="article-nav-button article-next" href={next} aria-label="下一頁">
+        <span aria-hidden="true">▶</span>
+      </a>
+      <div className="article-progress" aria-hidden="true">
+        <span className="article-progress-dot" style={{ left: `${progress * 100}%` }} />
+      </div>
+      <p className="article-passing">正在經過</p>
+    </nav>
+  );
+}
+
+function Article101Frame({ active }) {
+  return (
+    <article className={`phone-frame article-frame ${active ? "is-active" : ""}`} data-node-id="109:338" id="article-1-01">
+      <header className="article-header">
+        <p className="article-number">1.01</p>
+        <p className="article-quote">《港島散步・趕到散步時領悟》</p>
+        <h2>港島散步</h2>
+      </header>
+      <div className="article-scroll-wrap">
+        <section className="article-scroll" aria-label="港島散步正文">
+          {article101.split("\n\n").map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </section>
+      </div>
+      <ArticleBottomNav previous="#page-4" next="#home" progress={4 / 20} />
     </article>
   );
 }
@@ -192,6 +241,7 @@ function App() {
       <PageTwoFrame active={activePage === "page-2"} />
       <PageThreeFrame active={activePage === "page-3"} />
       <PageFourFrame active={activePage === "page-4"} />
+      <Article101Frame active={activePage === "article-1-01"} />
     </main>
   );
 }
