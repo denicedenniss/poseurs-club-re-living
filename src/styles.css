@@ -58,7 +58,6 @@ html {
 .lime-rail-right,
 .lime-masthead,
 .ellipse,
-.cover-art-window,
 .cover-art,
 .opening-copy,
 .start-button {
@@ -652,19 +651,11 @@ html {
   height: calc(200 / 700 * 100%);
 }
 
-.cover-art-window {
-  left: calc(9 / 402 * 100%);
-  top: calc(3 / 700 * 100%);
-  width: calc(377 / 402 * 100%);
-  height: calc(363 / 700 * 100%);
-  overflow: hidden;
-}
-
 .cover-art {
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: calc(535 / 363 * 100%);
+  left: calc(4 / 402 * 100%);
+  top: calc(0 / 700 * 100%);
+  width: calc(391 / 402 * 100%);
+  height: calc(364 / 700 * 100%);
 }
 
 .opening-copy {

@@ -74,9 +74,7 @@ function HomeFrame({ active }) {
         <div className="lime-rail-right" />
         <div className="lime-masthead" />
         <img className="ellipse" src="/assets/figma-ellipse.svg" alt="" aria-hidden="true" />
-        <div className="cover-art-window" aria-hidden="true">
-          <img className="cover-art" src="/assets/figma-cover.svg" alt="" />
-        </div>
+        <img className="cover-art" src="/assets/home-cover.svg" alt="" aria-hidden="true" />
         <OpeningCopy />
         <StartButton />
     </article>
