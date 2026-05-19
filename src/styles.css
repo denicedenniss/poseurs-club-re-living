@@ -324,8 +324,8 @@ html {
   top: 0;
   width: 100%;
   height: 139px;
-  padding-top: 23px;
-  background: #fcfcfc;
+  padding-top: 22px;
+  background: #e0ff00;
   color: #000000;
   text-align: center;
   z-index: 2;
@@ -338,29 +338,32 @@ html {
 }
 
 .article-number {
-  font-family: "Noto Sans HK", "Noto Sans TC", sans-serif;
-  font-size: 10px;
-  font-weight: 350;
-  line-height: 20px;
-  letter-spacing: 0;
-}
-
-.article-quote {
-  margin-top: 0;
   font-family: "Noto Serif HK", "Noto Serif TC", serif;
-  font-size: 10px;
+  font-size: 14px;
+  font-style: italic;
   font-weight: 600;
   line-height: 20px;
   letter-spacing: 0;
 }
 
-.article-header h2 {
-  margin-top: 1px;
+.article-quote {
+  margin-top: 5px;
   font-family: "Noto Serif HK", "Noto Serif TC", serif;
-  font-size: 36px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 1.4px;
+}
+
+.article-header h2 {
+  margin: 33px 0 0;
+  transform: translateX(-2px);
+  font-family: "Noto Serif HK", "Noto Serif TC", serif;
+  font-size: 29px;
   font-weight: 700;
-  line-height: 41px;
-  letter-spacing: 0;
+  line-height: 34px;
+  letter-spacing: -1.2px;
+  white-space: nowrap;
 }
 
 .article-scroll-wrap {
@@ -655,8 +658,8 @@ html {
 .cover-art {
   left: calc(9 / 402 * 100%);
   top: calc(3 / 700 * 100%);
-  width: calc(387 / 402 * 100%);
-  height: calc(363 / 700 * 100%);
+  width: calc(377 / 402 * 100%);
+  height: calc(535 / 700 * 100%);
 }
 
 .opening-copy {

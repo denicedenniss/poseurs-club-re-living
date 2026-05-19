@@ -214,7 +214,7 @@ function Article101Frame({ active }) {
       <header className="article-header">
         <p className="article-number">1.01</p>
         <p className="article-quote">《港島散步・趕到散步時領悟》</p>
-        <h2>港島散步</h2>
+        <h2>一場關於心靈肌群的痛苦鍛鍊。</h2>
       </header>
       <div className="article-scroll-wrap">
         <section className="article-scroll" aria-label="港島散步正文">
