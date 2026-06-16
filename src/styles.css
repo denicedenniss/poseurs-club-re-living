@@ -28,8 +28,8 @@ html {
 
 .phone-frame {
   position: relative;
-  width: 402px;
-  height: 700px;
+  width: min(402px, 100vw);
+  height: min(700px, 100dvh);
   display: none;
   overflow: hidden;
   background: #ffffff;
@@ -172,10 +172,10 @@ html {
 
 .page-three-dot {
   position: absolute;
-  left: 0;
   top: 0;
   width: calc(8 / 358 * 100%);
   height: calc(8 / 29 * 100%);
+  transform: translateX(-50%);
 }
 
 .page-three-progress span {
@@ -396,10 +396,10 @@ html {
 .article-scroll p {
   margin: 0 0 20px;
   font-family: "Noto Sans HK", "Noto Sans TC", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 350;
   line-height: 22px;
-  letter-spacing: 1.82px;
+  letter-spacing: 2.08px;
   text-align: left;
   white-space: pre-wrap;
 }
@@ -407,7 +407,7 @@ html {
 .article-scroll .article-final {
   margin-top: 0;
   font-family: "Noto Serif HK", "Noto Serif TC", serif;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   line-height: 27px;
   letter-spacing: -0.8px;
@@ -498,10 +498,10 @@ html {
 
 .page-four-dot {
   position: absolute;
-  left: 0;
   top: 0;
   width: calc(8 / 358 * 100%);
   height: calc(8 / 29 * 100%);
+  transform: translateX(-50%);
 }
 
 .page-four-progress span {
@@ -663,6 +663,231 @@ html {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.cover-art-original {
+  display: block;
+  object-fit: contain;
+  object-position: top center;
+}
+
+.visual-frame,
+.artwork-article-frame,
+.text-article-frame {
+  background: #ffffff;
+}
+
+.visual-stage {
+  position: absolute;
+  inset: 0 0 112px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.visual-stage.is-scrollable {
+  overflow-y: auto;
+  scrollbar-color: #e0ff00 transparent;
+  scrollbar-width: thin;
+}
+
+.visual-stage.is-scrollable::-webkit-scrollbar,
+.artwork-article-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+
+.visual-stage.is-scrollable::-webkit-scrollbar-thumb,
+.artwork-article-scroll::-webkit-scrollbar-thumb {
+  background: #e0ff00;
+}
+
+.visual-original {
+  display: block;
+  width: 100%;
+}
+
+.visual-cover {
+  height: 100%;
+  object-fit: cover;
+}
+
+.visual-contain {
+  height: 100%;
+  object-fit: contain;
+}
+
+.visual-width {
+  height: auto;
+  object-fit: contain;
+}
+
+.journey-bottom-nav {
+  position: absolute;
+  inset: auto 0 0;
+  height: 112px;
+  background: #fcfcfc;
+  z-index: 5;
+}
+
+.journey-nav-button {
+  position: absolute;
+  bottom: 53px;
+  width: 29px;
+  height: 29px;
+  display: block;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+
+.journey-nav-button:active {
+  filter: invert(1);
+  transform: scale(0.94);
+}
+
+.journey-nav-button img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.journey-prev {
+  left: 23px;
+}
+
+.journey-next {
+  right: 23px;
+}
+
+.journey-progress-track {
+  position: absolute;
+  left: 23px;
+  right: 21px;
+  bottom: 39px;
+  height: 2px;
+  background: #161616;
+}
+
+.journey-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: #e0ff00;
+}
+
+.journey-progress-dot {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #161616;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translate(-50%, -50%);
+}
+
+.journey-passing {
+  position: absolute;
+  left: 22px;
+  bottom: 12px;
+  margin: 0;
+  font-family: "Noto Sans HK", "Noto Sans TC", sans-serif;
+  font-size: 10px;
+  font-weight: 350;
+  line-height: 20px;
+  letter-spacing: 1.4px;
+}
+
+.artwork-article-header {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 139px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #e0ff00;
+  z-index: 2;
+}
+
+.artwork-article-header img {
+  display: block;
+  width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.artwork-article-scroll {
+  position: absolute;
+  inset: 139px 0 102px;
+  overflow-y: auto;
+  padding: 18px 16px 32px;
+  scrollbar-color: #e0ff00 transparent;
+  scrollbar-width: thin;
+}
+
+.artwork-article-scroll img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto 30px;
+  object-fit: contain;
+}
+
+.text-article-header {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 139px;
+  padding-top: 17px;
+  background: #ffffff;
+  color: #000000;
+  text-align: center;
+  z-index: 2;
+}
+
+.text-article-header p {
+  margin: 0 0 10px;
+  font-family: "Noto Serif HK", "Noto Serif TC", serif;
+  font-size: 10px;
+  font-weight: 350;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.text-article-header img {
+  display: block;
+  width: 100%;
+  height: 74px;
+  object-fit: contain;
+  object-position: center top;
+}
+
+.text-article-scroll {
+  position: absolute;
+  inset: 139px 0 112px;
+  overflow-y: auto;
+  padding: 48px 29px 36px 21px;
+  scrollbar-color: #e0ff00 transparent;
+  scrollbar-width: thin;
+}
+
+.text-article-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+
+.text-article-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.text-article-scroll::-webkit-scrollbar-thumb {
+  background: #e0ff00;
+  border-radius: 0;
+}
+
+.text-article-scroll p {
+  margin: 0 0 20px;
+  font-family: "Noto Serif HK", "Noto Serif TC", serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 2.08px;
+  text-align: left;
+  white-space: pre-wrap;
 }
 
 .opening-copy {

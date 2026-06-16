@@ -9,6 +9,41 @@ const introLines = [
   "你可以慢慢向下走，由荒原、海市蜃樓，走到山。",
 ];
 
+const journeyPages = [
+  "home",
+  "page-2",
+  "page-3",
+  "start",
+  "page-4",
+  "article-1-01",
+  "article-1-02",
+  "re-001",
+  "part-2",
+  "article-2-01",
+  "article-2-02",
+  "article-2-03",
+  "article-2-04",
+  "re-002",
+  "part-3-a",
+  "part-3-b",
+  "article-3-01",
+  "article-3-02",
+  "re-003",
+  "article-3-03",
+  "article-3-04",
+  "article-3-05",
+  "outro-road",
+  "outro",
+  "roller",
+  "back",
+];
+
+function getJourneyProgress(pageId, pageScrollProgress = 0) {
+  const pageIndex = Math.max(0, journeyPages.indexOf(pageId));
+  const boundedScroll = Math.min(1, Math.max(0, pageScrollProgress));
+  return ((pageIndex + boundedScroll) / (journeyPages.length - 1)) * 100;
+}
+
 const article101 = [
   {
     text: `2025年快過了一半，要數數手指說做了什麼，好像並沒有那麼多姿多彩，但卻有一種用溫水要把我烹煮的感覺，上半年經歷一段憂鬱的時間，我發現有時並不是必需有大事情來重錘一擊，也可以成為覺悟的轉捩點。然而，改變一個已經運作了很久的思想迴路，確是相當痛苦。難道就正如蘇格拉底所說：「未經反省的人生是不值得活的。」其實我更喜歡那個把「反省」翻譯成「審視」的版本。`,
@@ -31,8 +66,213 @@ const article101 = [
   },
 ];
 
+const textArticles = [
+  {
+    pageId: "article-1-02",
+    titleAsset: "1.02.svg",
+    meta: "第一部 · 荒原 / 1.02",
+    label: "每個人都尋找的生活秘笈正文",
+    body: `自從西醫成主流，人被強行劈開了一半——心靈與身體分離。以致我們思考如何照顧自己時，總慣性地將它們分開。人成熟到某個階段，便會計劃如何好好照顧自己。或者這樣說：我們都在尋找應對世界的生活秘笈。
+
+我以為找到秘笈，就能將安穩變為常態。原來只是幻想，事實上無常才是常態，上一刻安穩，下一刻手足無措。我學習照顧自己：理解情緒、處理工作、鍛鍊身體、好好吃飯休息。即便全部做妥，仍無法逃避生存的無力——尤其當你認為自己已在各方面用盡全力。
+到底有誰已找到生活的秘笈？抑或根本沒有秘笈？
+
+世界是一個荒原，書裡說的，我很感動。
+——電影《大象席地而坐》
+
+記得看到這一幕，莫名被說到心坎裡。自己在心裡悄悄念了一次。拼了命在荒野裡找尋生存秘笈，原來大家都一樣，背著迷惘、記憶、不知所措與竭力，最後卻都空手而回。
+
+獨自在荒原中的你，你也無法親眼看見他人的荒原，各人背負着各人的痛苦，注定無法真正理解彼此，面對無法溝通的世界，我們只能彷似依附彼此生存，但依然無法逃離，只能無聲掙扎中尋找存在感，拼命想證明自己，卻發現那只是演給自己的一台戲——你以為聲嘶力竭地訴說自己的故事，回頭才發現舞台上沒有別的演員，觀眾席上也是空蕩蕩的。
+
+那麼，在求生的過程裡，秘笈到底是什麼？是愛嗎？是自我照顧嗎？
+
+我掏盡背包的法寶想自我解救，最後只掏出過期敏感藥。就像考試打開試卷，寫不出任何東西。我以為只有我要交白卷，我以為迷惘的只有我一個，我以為無法證明自己存在的也只有我一個。
+
+然而原來，世界是一個荒原。
+電影裡說的，我很感動。`,
+  },
+  {
+    pageId: "article-2-01",
+    titleAsset: "201.svg",
+    meta: "第二部 · 海市蜃樓 / 2.01",
+    label: "自古成功在嘗試正文",
+    body: `「嘗試成功自古無，放翁這話未必是。我今為下一轉語，自古成功在嘗試！莫想小試便成功，那有這樣容易事。」 ——胡適《嘗試歌》節錄
+
+近日思考關於失敗的課題。童年時，我總覺得「失敗」二字與自己密不可分。老師同學因我不交作業，便認定我懶惰，可說是被老師放棄的學生。每當談及學業，我總被貼上失敗的標籤。
+
+若問為何不交作業？回想起來，大概是因毫無興趣（說來慚愧）。記得小學時，隔日交作業，老師當眾斥責：「你做錯了！只有你和這幾個同學做錯！」隨後長篇指責，卻無意幫我修正，簡直是一場公開處刑（在此奉勸不擅教導者勿投身教育）。對當時的我而言，「失敗」就只是失敗，完全無法領會何謂「失敗乃成功之母」。
+
+多年來，這種習得性無助讓我將失敗內化為自我標籤，每次遭遇挫折便陷入消沉。直到某日豁然開悟，發現自己因此錯失太多機會，始決意不再如此。反省為何總是錯過？為何許多心心念念之事始終未曾開始？原來每當面臨可能的失敗，我便預先認輸，認定自己做不成。這種心態嚴重阻礙嘗試新事物與新機會，更妨礙成長，還自以為聰明，找到了避開失敗的妙計——乾脆不去嘗試。
+
+總是未行動就先懼怕出醜、犯錯、碰壁。以設計為例，優秀作品都需要反覆測試改良，既然美好成果都經歷過失敗，又何須如此恐懼錯誤與批評？自此對「失敗經驗」的認知開始轉變。「失敗」一詞確實負面，但與其稱之失敗，不如視為「找到了不可行的方案」。這些不可行的方案，恰恰能指引我們走向正確道路。
+
+拜讀胡適《嘗試歌》時深有共鳴。當機會來臨，常因自覺準備不足而拒絕，但何時才算準備充分？若始終不行動，一切都不過是紙上談兵；只管空想，也無法令你一步登天。世間美玉，無非百般琢磨；我們也只能夠從跨出第一步開始，真正地讓想法落地生根，從錯誤中修正，由粗糙而潦草的初稿，讓他慢慢成了模樣。
+
+近日整理舊物，翻看早年作品，實在醜陋無比，創意貧乏！最終我沒有丟棄這些「黑歷史」，而是將它們封存於潘朵拉盒中（請放心，已貼上封條嚴密封印）。這堆見證創作歷程的物件，滿是失敗的實驗品，卻也是促成進步的必要元素，讓我能夠一路走來。最後寄語諸位：不要懼怕失敗，不要畏懼嘗試，完成比完美更有價值。
+
+「有時試到千百回，始知前功盡拋棄。即使如此已無愧，即此失敗便足記。告人此路不通行，可使腳力莫浪費。我生求師二十年，今得『嘗試』兩個字。」
+
+——胡適《嘗試歌》節錄`,
+  },
+  {
+    pageId: "article-2-02",
+    titleAsset: "202.svg",
+    meta: "第二部 · 海市蜃樓 / 2.02",
+    label: "此日期前悲傷正文",
+    body: `每每我跟教練做重訓健身時，我沒心沒眼聽清楚教練說一組要做多少下，然後在舉第一下時就會問：「幾多下？」聽到答案後，就把它都做完。跟朋友行山時，也會問還有多少路程；等車時也想知還要多久才有車。我常常也會問還有多久？還有多少？其實這些追問並不是在埋怨，而是彷彿當我聽到有終點時，我的心才有種莫名的安定。
+
+當面對痛苦時，不論是心理或是生理，的確心裡很想很想有人告訴我什麼時候完結。痛苦伴隨的情緒會有如排山倒海一樣，混亂得無法整理，在煎熬中的你我會因為極為痛苦，所以忘卻了其實它像牛奶一樣，會有有效限期。此等對未知的無力感，忽悠著我們，以為這會像永遠般漫長。我常常以此來安慰自己，總會有完結的一刻，甚至在感受痛苦的第一秒就已對自己這樣說。
+
+我試過以一個類似減重挑戰計劃的方式去消化一次分離的情緒。雖是悲傷，但又帶點興奮，因為覺得好像做實驗一樣，自編自導自演，我既是實驗人員，也是實驗品。二十一天的限期規劃，每天事無大小都以日記記錄，然後日復日像田野調查般檢視進度，像心電圖起起伏伏、進進退退，最後跳躍式地完成悲傷的五個階段。
+
+二十一天後，宣布實驗成功，完整的痛苦消化報告出爐，翻著報告的每一頁：分離的哀悼消化了，事後檢討也檢討了，悲傷五個階段都像景點一樣逐一打過卡了。我完成計劃的當刻，我有點感到很驚嘆，我驚嘆的是在低潮中極力捱過的生產力，KPI（關鍵績效指標 Key Performance Indicators)極高，而且所有SOP (標準作業程序 Standard Operating Procedure)全數走完。最後筋疲力盡，身心透支，幸好瘦了一點，需要靜養一段時日，不再研究、不再記錄，只單純吃喝睡覺。
+
+我曾以為是二十一天這個限期救了我。因為目標明確畫在日曆上，我追趕KPI、完成SOP。可以這樣說，但又不盡如此。二十一天給我的，只是一個「也許能完成」的盼望。真正讓我完成的，不是限期，而是我願意溫柔陪伴自己——縱使前進三步又退兩步，仍對自己誠實、允許，甚至為小得尷尬的進度而歡喜。
+
+但最近，我不想再這樣了。雖然曾有成功經驗，這次我卻想徹底放軟手腳、極致擺爛。日記一字未寫，我像雨天中淋濕的人，不回家換衣，反而去坐巴士、吃飯、四處閒逛。濕透的鞋襪讓腳掌發癢，我不處理，只適應它。因為我知道，走著坐著，總會風乾——而這個「總會風乾」的念頭，其實也是一種「限期」。
+
+對我來說，一再追問「有限期嗎？」是一種面對痛苦的安慰劑。允許自己追問，也是訓練自己誠實。本以為數算日子就能過渡，最終卻發現：奮力對抗的是我，無為而治的也是我。我既能將悲傷活成一種近乎荒謬的魄力，也能拋棄一切，誠實地允許自己以任何形態存在。
+
+我一直追問的限期，不是對脫離的催逼，而是對破曉時分再三的確認——確認我有能力捱過暗夜，確認會有止息的一天。`,
+  },
+  {
+    pageId: "article-2-03",
+    titleAsset: "203.svg",
+    meta: "第二部 · 海市蜃樓 / 2.03",
+    label: "觀望與被觀望的距離正文",
+    body: `最近連連陰天雨天，昨日終於放晴，把握機會外出拍照，《偷看獅子山》是我持續收集的相集，在大家所謂的「公廁位」會去拍、瞥見發現又拍下來，一直在收集不同面向的獅子山。
+
+（劇透注意）前陣子看了電影《怪物》，講述一樁學校裡的疑似欺凌事件。電影從三個角度敘事：家長、老師與學生。觀眾隨著視角轉換，感受也截然不同。開始時心想：「這是什麼學校？怎麼會這樣？」看到老師的角度，才發現他被冤枉，啞巴吃黃蓮；最後看到學生的角度，又深深同情孩子的處境。如同剝洋蔥，層層遞進，補完我們眼中所謂的「事實」。
+
+電影裡，家長看不見老師眼中的「事實」，老師在他們眼中自然成了怪物。而老師也不明白：學生為何說謊？學校為何不讓他說出真相？在他眼裡，旁人都是咄咄逼人的怪物。直到電影最後，我們彷彿擁有上帝視角，能立體俯瞰全貌。但電影始終沒有定義誰是怪物。觀眾本以為收集了足夠面向，足以判定是非，卻仍是空手而回。
+
+這部電影讓我反芻良久。那些情節與對白，明明已吞下肚，卻不斷從胃裡湧回口中，讓我不得不再三咀嚼。整整一週，思緒縈繞不去，我卻在這反覆的消化中，感到一絲釋懷。第一層釋懷是：原來人一旦站定立場——無論是否接近真相——在他們眼中，所見即是真理，未必添油加醋，世界本就長成那樣。第二層釋懷，如我曾分享：人的煩惱多來自人際關係。以前我天真以為，只要合理、有道理就夠了。漸漸才明白，成長的覺悟正是：「合理也無用。」就像戲中的老師並未做錯什麼，竭力爭取解釋時，校長只回一句：「沒有人想知道真相。」
+
+然後我就回想，以往被別人誤解，我都失眠數天，忿忿不平，覺得必須要跟對方好好解釋。直到你有機會把你眼中的真相和原貌告知對方時，卻驚覺原來合理也沒用，再真誠也是沒用，真的如校長所言，沒人在乎真相。誤解誕生那一刻，對方早已用零星碎片將你拼湊成怪物。此後即便一句簡單問候，聽來也是怪物的聲音。
+
+聽來確實無力。我們無法糾正別人眼中的真相，於是誰都可能成為他人眼中的怪物；同時，我們也在自身有限的視角裡誤解他人。電影宣傳卡上問：「誰是怪物？」卡面鍍銀如鏡，照出持卡人的臉。回想片中，我們在不同時刻都自以為知道得夠多，殊不知自己正成為別人眼中的怪物，對人張牙舞爪，定別人的罪。
+
+最後，我雖未決定凡事都要追問到底，卻也希望自己看待事物時，能接納更多可能，明白事情是立體的，多些同理心，同時擁抱這份無力，專心過自己的生活就好。有時無法互相理解，或許是命運。若注定該解散，那就解散吧。`,
+  },
+  {
+    pageId: "article-2-04",
+    titleAsset: "pack.svg",
+    meta: "第二部 · 海市蜃樓 / 2.04",
+    label: "人生潔癖你也有嗎正文",
+    body: `世人都以白紙形容呱呱落地的嬰兒，強調其未被世俗污染。無形中，我們將一塵不染視為完美。所謂「人生潔癖」，是無法接受生命歷程中有任何「錯誤」與「失敗」，將這些經驗全視為「污點」。但人生本就難免犯錯，也許只是我們以為這些所謂的「犯錯」畫花了稿紙。
+
+論人生潔癖的兩種逃避，其一，當無法避免的「壞經驗」發生時，他們難以面對，傾向逃避責任、歸咎他人，竭力將這些經驗與自我切割，此舉甚至去到自欺的地步，心底堅信是外在因素導致犯錯——正如亞當對神說：「是你給我作伴的那個女人給了我那樹上的果子，我才吃了。」
+
+其二，為了避免犯錯，他們以清單羅列風險、用世俗道德自我約束，只為確保自己無可指責，成為完美模範生。他們像機械般信守規條，卻不思考其意義，更將這種毫無彈性的方式視為理性與唯一出路。最終，這只為自己建造了牢籠，無法真實體驗為人的過程，更遑論理解自己所信為何。
+
+我們必須接納自身的無能為力。生命不是非黑即白的二元分法，每個抉擇背後皆有複雜脈絡。再者，塵世間誰能毫無差池地判定對錯？前陣子遇到一群小學生，其中一個同學跑到我面前問：「老師，我要問你一個世界大難題——在鐵軌上，有五個人被綁在路軌，電車正朝他們駛去。你站在離火車站一段距離的地方，如果你拉動拉桿，電車將切換到另一組軌道，而另一個路軌上綁了一個人。那麼你會拉動拉桿嗎？」我淡淡回道：「我什麼都不做，因我不介入他人因果。」孩子聽罷大笑離去。我想，她大概沒聽懂。其實下一句我想說：「因為李鳳儀不是日本兵。」但這時代的眼淚，就讓它留在眼眶裡吧。我有想過作為大人這樣回答會否不似榜樣，我不是該要教他們「對」嗎？這個回應與其說是答案，不如說是我放棄了「潔癖式的正確」，正是因為我自知無法給予絕對正確的回答，明白自身的所限，而這也是事實，我作為大人，我不想欺騙小孩子。
+
+然而這一份明白，放諸他人，當所有人都在焦慮何謂「正確」時，我們是否更該問：是誰設下了這個只能二選一的遊戲？世上只有對與錯嗎？我們無法保證能永遠選對，但至少能在當下盡力選擇，犯錯使我們理解何謂正確，失敗讓我們檢視是否選了不合適的道路。關鍵在於，能否將所謂的壞經驗，提煉為未來的指南與動力。當然，這份接納並非為惡意開脫。我們接納的是生命的塵土與裂痕，並從中學習如何更負責地前行；這不是縱容自己，去成為他人生命裡那無謂的風暴，而是敢於走進自身的風雨，在洗禮中蛻變，讓傷痕終成紋理。
+
+聽過「金繼」嗎？這項日本工藝以繁複工序修補破裂陶器，再用金漆描繪裂痕，讓瑕疵化作金光。接受不完美，正是其背後的智慧。我曾想，未來是改變過去的時光機。當我們學會包容自身缺憾，以理解與成長修補昔日失誤，便能從中改過、重新出發。未來其實在你掌握之中——這重新定義的舉動，正是一場生命的「金繼」，亦是改變過去的時光機。`,
+  },
+  {
+    pageId: "article-3-01",
+    titleAsset: "世界.svg",
+    meta: "第二部 · 山 / 3.01",
+    label: "作狀生活俱樂部正文",
+    body: `當網絡世界裡，誰都可以對誰指指點點時，難道非要隨時應戰、據理力爭嗎？我並非對事情沒有自己的想法，只是這些碎碎念，無論說出口或止於心想，終究要回歸到對他人選擇的尊重。
+
+人總有心魔，就是渴望獨特，不落俗套，但誰也有這樣的經歷，發現自己會與誰相似。直到聽了一首歌SHINE的《俗》，歌詞道：「越要裝不普通，使我越平庸普通。」若想着拼命擺脫的模樣，卻是我最無能為力的寫照——當所有人都拒絕平庸，原來才是平庸至極。
+
+即便是創作，我們也身處同一個星球，分享同一片天、同一輪日月，甚至為相似的故事流淚。創作是生活的總集，終究會與他人的體驗交織，誰能真正獨善其身？正如歌中叩問：「如何拒絕像人？當你是人總要心跳。」
+
+回到生活層面，總充斥著質疑：「這有什麼好拍？那有什麼好看？有什麼好吃？大家都一窩蜂做什麼？」指責別人無聊、庸俗、跟風、無意義。後來我才明白：有些人就是能在生活中找到自己的樂子，有些人則不能；而有些人無法體會，也看不慣別人歡喜。
+
+生活的本質是什麼？它從來不是為了服務某種崇高的意義，而是從純粹的體驗中展開。你的生活無人能代你經歷，只要不傷害他人，何不盡情活成自己想要的模樣？
+
+如果你喜歡在地鐵上看書，那就看吧！你愛記錄生活，就拍吧！你想千挑萬選一個精美餐具來配你的小蛋糕，那就找吧！你習慣用文字精雕細琢地表達感受，那就寫吧！作狀多好，若我偏愛這樣作狀地生活，有何不可？
+
+偶爾恨世界為何不如我願？但轉念間卻見處處皆事成全。難道眾人都在過著理想中的日子嗎？事實無非你羨慕我，我羨慕你，不如專注自己的生活，找到自己的樂子。
+
+送給大家近來的樂子：
+拍攝晴朗的天空。`,
+  },
+  {
+    pageId: "article-3-02",
+    titleAsset: "2.svg",
+    meta: "第二部 · 山 / 3.02",
+    label: "攜帶式避難所正文",
+    body: `我曾經說過，人面對生活種種，難免感到不適。這種不適叫我輾轉反側，為求一個能安穩入睡的睡姿，最後竟一夜未眠。近來又有一個近乎「變態」的想法：所謂「把痛苦活得有魄力」，究竟怎樣才是直面痛苦？我發現無論怎樣活著，人都要面對痛苦。我寫過許多文章分享如何面對痛苦，但事實上，我依然在尋尋覓覓。
+
+叔本華說過人追求慾望是本能，這本性使我們不停在生命掘出一個個洞，再極力地，拼命地要將其填滿，然後在這些慾望的洞還未被填滿之前，我們飽受求不得之苦，若有朝一日，像精衛填海般似乎將其填滿了，以為能得到滿足，誰知卻是永不滿足，反得無聊。由一種「永不滿足的痛苦」擺盪到「慾望被填滿後的無聊」，這樣的鐘擺，終其一生不斷輪迴。初次拜讀叔本華的哲學時，我並無太大共鳴。或許因為那時我還年輕，身上還帶著所謂積極的光澤，而叔本華本就是極度悲觀的哲學家。反倒是蘇格拉底、莊子、齊克果、尼采等哲人的思想，更令我眼前一亮。也許現階段的我，更重視生活的實踐。即便生命中有絕望，我仍想在裂縫中掙扎，活出光彩。也許二三十年後，我不再這樣想。因此，我寧願不強求保持初心，而是在生活歷程中，游刃有餘地選擇當下舒適的形態。
+
+所謂飽暖思淫慾，即使已得著溫飽、安眠與舒適的住所，人依然會對世界發出各種提問。這是與生俱來的焦慮，我們每日思忖著如何擺脫它。但如今我發現，越是掙扎，焦慮越是如影隨形。於是我想，或許我不該再試圖掙脫，而是學習如何攜帶著這份焦慮前行。千想萬想，無非想擺脫這些捆綁，得着心靈自由，但此刻依然無法釋出任何答案，本來我也在想，每一篇文章也需要得到一個結論嗎？不盡如此，我只是在陳述我現在的狀態，近乎本能的焦慮，繼續前行。
+
+寫文章時我並未想太多，想到什麼便寫什麼。然而寫到此處，想起開頭提及對叔本華缺乏共鳴時，卻發現自己正如他所言：將藝術當作生命暫時的避難所。此刻，我選擇直面生命的焦慮，不再採取任何方式去與其對抗，在不知不覺間，我竟悄悄服下了叔本華對抗生命焦慮與無力最後一劑藥方。
+
+所以我會說哲學並不是什麼陣營不陣營，反而更像是一面鏡子，讓我們反照並洞察自己與生命之間的關係，再持續地去親身驗證，嘗試用不同的方式去反應世界，並且期待世界因着你的回應，為你展現不同的模樣，我想必定是好玩和有趣的。`,
+  },
+  {
+    pageId: "article-3-03",
+    titleAsset: "303.svg",
+    meta: "第二部 · 山 / 3.03",
+    label: "西藏遊記正文",
+    body: `年初，我答應自己要成為一個坐言起行的人。看著年初製作的願景板，那張靜立在納木措旁的西藏氂牛照片，一直貼在左下角，彷彿提示我，始終有一天要親自踏足這地方。這像人生清單般的願望，終於實現了。
+
+一直以來，我對西藏的想像，總帶著一種貼近靈魂的神秘感。無論是當地人的生活、宗教、建築、香巴拉的傳說、藏人對信仰的投入，還是他們與大自然共存的方式，都令我無比好奇。我本就熱愛自然，一個與我日常環境截然不同的世界會是何種面貌？高原地區多樣化的景色，高山與湖泊（藏語稱「措」），究竟有多壯麗？最後，就是一個最坦率的理由——我想攝影，把這些一切一切，我都想用鏡頭把它們記錄下來。
+
+終於，我來到了西藏，遊覽了好幾座寺廟。其中的壁畫、雕像、建築與法器，有的金碧輝煌，有的五彩斑斕，有的則細緻得令人屏息。那些人手繪畫對稱得有點不對稱的自然線條，都刻劃着匠人的手繪溫感。這一切都令我目不暇給。然而，多數寺廟內部禁止拍照。那些巨碩的佛像瀰漫著藏香，窗框透出的光線混雜着煙霧，像似電影感的情景，但卻無法把它們收進鏡頭裡。所以我都跟自己說：「那就用眼睛和腦袋記着這些畫面吧！」我也不敢喧嘩，靜靜地觀察着在寺廟裡修行的僧侶和參拜的信眾。有時寂靜無聲，有時聽到僧人們喃喃低語的誦經聲，混雜着導遊講解的內容。有抱着襁褓嬰兒來到的人、正在把銀紙插在佛像旁的人、正在專心跪拜的人、拿着電話的僧人、正在走路聊天的僧人，也有即使旅客人來人往參觀欣賞，也依舊專心頌經的僧人，彷彿把在寺廟裡的眾生相與瞬間當下，一一收進眼底。
+
+然後一下回神，耳機響起導遊導賞的說話：「佛教中提到——未來是許多個現在的集結，所以我們只能活好每一個現在。」這句話像小石頭掉進湖裡，在我心中泛起漣漪。我想著，未來就似千百個瞬間集結在一個玻璃球，然後這些瞬間最終為未來調和出一種色彩。我突然理解，眼前這些不同的片刻，原來就是「每一個現在」——它們不只是畫面，也是選擇。
+
+這讓我想起前陣子略讀過的尼采提出的「永恆循環」的假說：如果你的人生將無限重複，你會否選擇仍然這樣活着？其實正正是一個當頭棒喝，讓我更坐言起行，不願虛擲光陰，徒留後悔。這趟旅程，便是我為自己做出的一個選擇——一個即使生命循環，也絕不後悔的決定。
+
+過去有太多理由擱置啟程，每個理由都伴隨遲疑，而每個遲疑背後，無非是對未來的焦慮。但正如那句話說的——未來是許多個「現在」的集結。這次，我終於選擇了「現在」，而不只是在焦慮未來。不再是「始終有一天會出發」，而是我真的搭上了那八小時的航班來到西藏，也帶上了我的相機和一直以來的想像。
+
+旅程完結，回到家還是覺得有點不真實。我翻着一張張定格瞬間的照片，還在自我疑問：我真的是跑了一趟西藏了嗎？但當我靜靜地回想，我發現：那些畫面並非夢境。曾經貼在願景板上的願望，已變成了真實的回憶；而旅程中各個片刻，即是我所看見的未來。`,
+  },
+  {
+    pageId: "article-3-04",
+    titleAsset: "304.svg",
+    meta: "第二部 · 山 / 3.04",
+    label: "未來是這樣嗎正文",
+    body: `前年在台灣，我讀了日本作家吉竹伸介的繪本《未來是這樣嗎？不一定喔！》。故事以一對兄妹的對話開始，哥哥像講鬼故事般對妹妹說：「大人們都說當他們長大後，世界會變成一團糟，充滿了天災人禍、戰爭、可能外星人會佔襲地球，非常混亂和可怕。」妹妹愈聽她的臉愈失色。
+
+焦慮的妹妹跑去問奶奶。奶奶聽完，慈祥地看著她，從容微笑說：「未來是這樣嗎？不一定喔！世界常常跟說我們只有兩種選項，好比我們的未來，就只有好與壞兩個選項嗎？可能未來會真的有壞事發生，但不一定會所有都是壞，也有可能有好事發生喔！」我們總被告知未來非好即壞，但仔細想想，難道不能又好又壞嗎？我們不必只用正面或負面去面對變化，而是可以更有彈性。接著，奶奶和妹妹一起想像各種美好的可能，繪本便在此結束。
+
+這讓我想起有天和朋友去拍照。來到太子道西，那間紅得搶眼、用白色書法寫著「曾權利」的店舖門口，看見一個全身紅衣的路人正要經過。我們立刻舉機準備，他就似一顆送到嘴邊的草莓，正要品嚐卻滑落了。一心想要拍下這一幕的我們，眼睜睜看著他從我們身後繞過，難免失望——因為我們以為必會發生的事，竟然落空了。然後打算老老實實拍下鋪門的招牌書法作罷，想不到不一會兒，有個穿著更搭、氣質更好看的路人就在正前方走過，幸好反應過來就拍到了。這一段小事情卻令我很深刻，正是「塞翁失馬，焉知非福」。這句老生常談，卻常被我們遺忘在旁。
+
+對照2025年的當下，網上熱議的《我看見的未來》令許多人焦慮。我有時也刻意避開這類預言，因為它們總在無形中引發不安。然而，如果某些事必然發生，而我們又無法控制，那何必「提早焦慮」？不如活在當下，隨遇而安。未來是這樣嗎？不一定喔！`,
+  },
+  {
+    pageId: "article-3-05",
+    titleAsset: "305.svg",
+    meta: "第二部 · 山 / 3.05",
+    label: "已練成能往心內奔馳正文",
+    body: `記得很久之前，曾經有個陌生人問我，怎樣才是做自己，當時我心裏面在想：「好問唔問，問我？我何德何能去教人呢？」先不追究他為何問我這陌生人。我只記得，當時這樣回答：「我覺得做自己首先要認識你自己是誰？當你真正認識你自己知道自己的喜惡，你就知道和選擇做自己。」
+
+作為外向的人，我慣於透過他人的反應認識自己——像一面鏡子，映出我的倒影，告訴我『我是誰』。但久而久之就變成一個容易內耗，容易看別人反應來決定自身的惡習。我記得小時候，外婆說要拖我的手，但我不願意牽她的手，然後她就說：「你應該覺得我隻手皺，所以唔想拖我。」當時我應該只有兩歲，我聽到外婆這樣說，我就馬上牽她的手，因為我覺得我不應該讓她失望，然後外婆覺得我很體貼，就說我很乖。然後我很深刻，我覺得我應該就是很乖。
+
+成長後，與朋輩相處雖愉快，但他們的評價偶爾仍令我對自我形象搖擺不定。甚至常常揣測別人是否不喜歡我？在想我如何才能討別人的歡心呢？雖然我很想討別人的歡心，但我回想起大概其實我不是那麼乖，我內心其實有很多執着、亦有叛逆的一面，我以為自己隱藏了，但其實我並沒有隱藏，我就麻木無意識地把這些叛逆表現出來，例如小學的時候就是不喜歡做功課，然後我就真的夠膽不做，然後帶着空空的課業回到學校，老師當然會斥責我說我是一個很懶惰的學生，但其實我心底裏覺得做這些功課很沉悶，我亦不知道為什麼要做這些功課。但當我做我喜歡的功課的時候，我卻是用盡全力去做，而且的確是做得比別人好，老師們似乎不懂評價我，只對我母親說：「他是一個，只要他有興趣就會做得很好的人。」
+
+直到長大後，當別人問我是一個怎樣的人，我發覺我不懂回答，這不是一個很基本的問題嗎？為什麼我不懂回答？我才發覺事態嚴重。過了一些日子，我開始花很多時間跟自己對話，其實我小時候也會跟自己說話，跟自己聊天，但大概聊天的內容都是想着別人如何看待我，而我沒有當自己是一個朋友來告訴我自己，我如何看待自己。
+
+近年我開始成為了一個完全沒有選擇困難症的人，因為我很懂自己的喜惡，我很清楚自己是一個如何的人，世界要你學會一課，就會給你重複的課題。被這些課題磨練過之後，也自我反省過之後，慢慢透過自我對話，我自覺已優秀地完成這一個課題，但不代表這樣的課題，以後不會再遇見。然而近來有一次，我跟我的姐姐聊天，然後她誤會了我，令我非常之失望，但這個失望與我的自我價值已經不再掛鉤，我知道我的失望是因為我覺得我的姐姐應該是一個世上最認識我的人，而她誤會我令我非常失望，值我卻沒有一絲懷疑自己就如她口中所說的一樣，反而我很快就有一把聲音告訴我：「你根本就不是這樣。」我覺得這樣才是做自己，原來做自己就是清楚自己的為人是如何？也因此才能選擇你想選擇的。
+
+我記得以前翻讀聖經的時候，看到聖經裏約伯記裏面記載：「我赤身出於母胎，也必赤身歸回。」當時看到這句話，我非常震撼。從約伯的話中，我看到其實每一個人生來是孤獨的，而去到生命的終結也是孤身離開，我覺得很害怕，亦令我感到很焦慮，因為我覺得需要自己一個去面對很多未知。當然現在我也不敢說我永遠都可以一個人面對生活中的難事，我依然需要身邊的親朋好友扶持我，而我的確擁有也萬分感激。但是我想說的，是培養自己成為自己的好朋友，這是一個很重要的特質。
+
+之前跟朋友在討論能量吸血鬼這件事，有些人就是在傾訴的時候永遠都一直在吐苦水，然後要你不斷輪迴地安慰，強迫你認同他的痛苦，即使你並不認同。但他跟我說，覺得我雖然偶爾也會傾訴自己的困難，卻沒有覺得我像吸血鬼，因為我不是倚賴別人去幫我消化我的情緒，而是每當我分享的時候，即使是已經有結論或是沒有，他們也相信我能不讓他們擔心，可以自己消化的人，有分寸和能判斷。我覺得成為別人的朋友，其中一個義務也是好好照顧自己。所以讓自己成為自己心的密友是一件很重要的事，然後你也可以成為別人的朋友。
+
+今天我聽了《三人行》，是林子祥、劉天蘭和詩詩的那個版本，我聽完很感動，因為我覺得我已經如歌中所說：已練成能往心內奔馳。這不是自滿，而是在大千世界中，能夠有自我照顧的能力。`,
+  },
+];
+
+function splitArticleBody(body) {
+  return body
+    .replace(/\r/g, "\n")
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
 function HomeCoverArt() {
-  return <div className="cover-art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: homeCoverSvg }} />;
+  return <img className="cover-art cover-art-original" src="/assets/journey/cover.svg" alt="" aria-hidden="true" />;
 }
 
 function OpeningCopy() {
@@ -143,7 +383,7 @@ function PageTwoFrame({ active }) {
   );
 }
 
-function PageThreeFrame({ active }) {
+function PageThreeFrame({ active, progress }) {
   return (
     <article className={`phone-frame page-three-frame ${active ? "is-active" : ""}`} data-node-id="103:3" id="page-3">
       <img className="page-three-top" src="/assets/page3-top.svg" alt="" aria-hidden="true" />
@@ -159,14 +399,14 @@ function PageThreeFrame({ active }) {
       </nav>
       <div className="page-three-progress" aria-hidden="true">
         <img className="page-three-line" src="/assets/page3-line.svg" alt="" />
-        <img className="page-three-dot" src="/assets/page3-dot.svg" alt="" />
+        <img className="page-three-dot" src="/assets/page3-dot.svg" alt="" style={{ left: `${progress}%` }} />
         <span>正在經過</span>
       </div>
     </article>
   );
 }
 
-function PageFourFrame({ active }) {
+function PageFourFrame({ active, progress }) {
   return (
     <article className={`phone-frame page-four-frame ${active ? "is-active" : ""}`} data-node-id="109:148" id="page-4">
       <div className="page-four-art" data-node-id="109:261">
@@ -189,14 +429,14 @@ function PageFourFrame({ active }) {
       </nav>
       <div className="page-four-progress" aria-hidden="true">
         <img className="page-four-line" src="/assets/page4-line.svg" alt="" />
-        <img className="page-four-dot" src="/assets/page4-dot.svg" alt="" />
+        <img className="page-four-dot" src="/assets/page4-dot.svg" alt="" style={{ left: `${progress}%` }} />
         <span>正在經過</span>
       </div>
     </article>
   );
 }
 
-function ArticleBottomNav({ previous, next, progress = 0.25 }) {
+function ArticleBottomNav({ previous, next, progress = 0 }) {
   return (
     <nav className="article-bottom" aria-label="文章 navigation">
       <a className="article-nav-button article-prev" href={previous} aria-label="上一頁">
@@ -207,14 +447,14 @@ function ArticleBottomNav({ previous, next, progress = 0.25 }) {
       </a>
       <div className="article-progress" aria-hidden="true">
         <img className="article-progress-line" src="/assets/page4-line.svg" alt="" />
-        <img className="article-progress-dot" src="/assets/page4-dot.svg" alt="" style={{ left: `${progress * 100}%` }} />
+        <img className="article-progress-dot" src="/assets/page4-dot.svg" alt="" style={{ left: `${progress}%` }} />
       </div>
       <p className="article-passing">正在經過</p>
     </nav>
   );
 }
 
-function Article101Frame({ active }) {
+function Article101Frame({ active, progress, onScrollProgress }) {
   return (
     <article className={`phone-frame article-frame ${active ? "is-active" : ""}`} data-node-id="109:338" id="article-1-01">
       <header className="article-header">
@@ -222,21 +462,140 @@ function Article101Frame({ active }) {
         <p className="article-quote">《港島散步・趕到散步時領悟》</p>
         <img
           className="article-kicker-art"
-          src="/assets/article-kicker.svg"
+          src="/assets/journey/港島.svg"
           alt="一場關於心靈肌群的痛苦鍛鍊。"
         />
       </header>
       <div className="article-scroll-wrap">
-        <section className="article-scroll" aria-label="港島散步正文">
+        <section
+          className="article-scroll"
+          aria-label="港島散步正文"
+          onScroll={(event) => {
+            const element = event.currentTarget;
+            const scrollableDistance = element.scrollHeight - element.clientHeight;
+            onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
+          }}
+        >
           {article101.map((paragraph) => (
             <p className={paragraph.final ? "article-final" : ""} key={paragraph.text}>{paragraph.text}</p>
           ))}
         </section>
       </div>
-      <ArticleBottomNav previous="#page-4" next="#home" progress={4 / 20} />
+      <ArticleBottomNav previous="#page-4" next="#article-1-02" progress={progress} />
     </article>
   );
 }
+
+function JourneyBottomNav({ pageId, progress }) {
+  const pageIndex = journeyPages.indexOf(pageId);
+  const previous = pageIndex > 0 ? journeyPages[pageIndex - 1] : null;
+  const next = pageIndex < journeyPages.length - 1 ? journeyPages[pageIndex + 1] : null;
+
+  return (
+    <nav className="journey-bottom-nav" aria-label="旅程 navigation">
+      {previous && (
+        <a className="journey-nav-button journey-prev" href={`#${previous}`} aria-label="上一頁">
+          <img src="/assets/page4-back.svg" alt="" aria-hidden="true" />
+        </a>
+      )}
+      {next && (
+        <a className="journey-nav-button journey-next" href={`#${next}`} aria-label="下一頁">
+          <img src="/assets/page4-next.svg" alt="" aria-hidden="true" />
+        </a>
+      )}
+      <div className="journey-progress-track" aria-hidden="true">
+        <span className="journey-progress-fill" style={{ width: `${progress}%` }} />
+        <span className="journey-progress-dot" style={{ left: `${progress}%` }} />
+      </div>
+      <p className="journey-passing">正在經過</p>
+    </nav>
+  );
+}
+
+function VisualJourneyFrame({ active, pageId, image, progress, scrollable = false, onScrollProgress, fit = "cover" }) {
+  return (
+    <article className={`phone-frame visual-frame ${active ? "is-active" : ""}`} id={pageId}>
+      <div
+        className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
+        onScroll={(event) => {
+          if (!scrollable) return;
+          const element = event.currentTarget;
+          const scrollableDistance = element.scrollHeight - element.clientHeight;
+          onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
+        }}
+      >
+        <img className={`visual-original visual-${fit}`} src={`/assets/journey/${image}`} alt="" />
+      </div>
+      <JourneyBottomNav pageId={pageId} progress={progress} />
+    </article>
+  );
+}
+
+function ArtworkArticleFrame({ active, pageId, title, artwork, progress, onScrollProgress }) {
+  return (
+    <article className={`phone-frame artwork-article-frame ${active ? "is-active" : ""}`} id={pageId}>
+      <header className="artwork-article-header">
+        <img src={`/assets/journey/${title}`} alt="" />
+      </header>
+      <div
+        className="artwork-article-scroll"
+        onScroll={(event) => {
+          const element = event.currentTarget;
+          const scrollableDistance = element.scrollHeight - element.clientHeight;
+          onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
+        }}
+      >
+        {artwork.map((asset) => (
+          <img key={asset} src={`/assets/journey/${asset}`} alt="" />
+        ))}
+      </div>
+      <JourneyBottomNav pageId={pageId} progress={progress} />
+    </article>
+  );
+}
+
+function TextArticleFrame({ active, pageId, meta, titleAsset, body, label, progress, onScrollProgress }) {
+  return (
+    <article className={`phone-frame text-article-frame ${active ? "is-active" : ""}`} id={pageId}>
+      <header className="text-article-header">
+        <p>{meta}</p>
+        <img src={`/assets/journey/${titleAsset}`} alt="" aria-hidden="true" />
+      </header>
+      <section
+        className="text-article-scroll"
+        aria-label={label}
+        onScroll={(event) => {
+          const element = event.currentTarget;
+          const scrollableDistance = element.scrollHeight - element.clientHeight;
+          onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
+        }}
+      >
+        {splitArticleBody(body).map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </section>
+      <JourneyBottomNav pageId={pageId} progress={progress} />
+    </article>
+  );
+}
+
+const visualPages = [
+  { pageId: "page-3", image: "122.png" },
+  { pageId: "start", image: "122-2.png" },
+  { pageId: "page-4", image: "122-3.png" },
+  { pageId: "re-001", image: "001.png", fit: "contain" },
+  { pageId: "part-2", image: "200.png" },
+  { pageId: "re-002", image: "222.png" },
+  { pageId: "part-3-a", image: "300.png" },
+  { pageId: "part-3-b", image: "301.png", fit: "contain" },
+  { pageId: "re-003", image: "6.png", fit: "contain" },
+  { pageId: "outro-road", image: "山路漫長.png", fit: "contain" },
+  { pageId: "outro", image: "out.png", fit: "contain" },
+  { pageId: "roller", image: "未命名-3.png", scrollable: true, fit: "width" },
+  { pageId: "back", image: "end.png" },
+];
+
+const artworkArticles = [];
 
 function useActivePage() {
   const getPage = () => window.location.hash.slice(1) || "home";
@@ -254,15 +613,51 @@ function useActivePage() {
 
 function App() {
   const activePage = useActivePage();
+  const [pageScrollProgress, setPageScrollProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    setPageScrollProgress(0);
+  }, [activePage]);
+
+  const journeyProgress = getJourneyProgress(activePage, pageScrollProgress);
 
   return (
     <main className="preview-page">
       <h1 className="sr-only">作狀生活俱樂部</h1>
       <HomeFrame active={activePage === "home"} />
       <PageTwoFrame active={activePage === "page-2"} />
-      <PageThreeFrame active={activePage === "page-3"} />
-      <PageFourFrame active={activePage === "page-4"} />
-      <Article101Frame active={activePage === "article-1-01"} />
+      <Article101Frame
+        active={activePage === "article-1-01"}
+        progress={journeyProgress}
+        onScrollProgress={setPageScrollProgress}
+      />
+      {visualPages.map((page) => (
+        <VisualJourneyFrame
+          key={page.pageId}
+          {...page}
+          active={activePage === page.pageId}
+          progress={journeyProgress}
+          onScrollProgress={setPageScrollProgress}
+        />
+      ))}
+      {textArticles.map((page) => (
+        <TextArticleFrame
+          key={page.pageId}
+          {...page}
+          active={activePage === page.pageId}
+          progress={journeyProgress}
+          onScrollProgress={setPageScrollProgress}
+        />
+      ))}
+      {artworkArticles.map((page) => (
+        <ArtworkArticleFrame
+          key={page.pageId}
+          {...page}
+          active={activePage === page.pageId}
+          progress={journeyProgress}
+          onScrollProgress={setPageScrollProgress}
+        />
+      ))}
     </main>
   );
 }
