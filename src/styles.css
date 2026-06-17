@@ -704,6 +704,15 @@ html {
   background: #ffffff;
 }
 
+.visual-frame-page-3,
+.visual-frame-start,
+.visual-frame-page-3 .visual-stage,
+.visual-frame-start .visual-stage,
+.visual-frame-page-3 .journey-bottom-nav,
+.visual-frame-start .journey-bottom-nav {
+  background: #e0ff00;
+}
+
 .visual-stage.is-scrollable {
   overflow-y: auto;
   scrollbar-color: #e0ff00 transparent;
@@ -738,6 +747,29 @@ html {
 .visual-width {
   height: auto;
   object-fit: contain;
+}
+
+.start-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  margin: 0;
+  color: #000000;
+  font-family: "Noto Sans TC Local", "Noto Sans TC", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.56px;
+  text-align: center;
+}
+
+.start-caption-top {
+  top: 89px;
+}
+
+.start-caption-bottom {
+  bottom: 121px;
 }
 
 .journey-bottom-nav {

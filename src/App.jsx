@@ -548,11 +548,11 @@ function JourneyBottomNav({ pageId, progress }) {
   );
 }
 
-function VisualJourneyFrame({ active, pageId, image, progress, scrollable = false, onScrollProgress, fit = "cover" }) {
+function VisualJourneyFrame({ active, pageId, image, progress, scrollable = false, onScrollProgress, fit = "cover", captionTop, captionBottom }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
 
   return (
-    <article className={`phone-frame visual-frame ${active ? "is-active" : ""}`} id={pageId}>
+    <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""}`} id={pageId}>
       <div
         className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
         onScroll={(event) => {
@@ -564,6 +564,8 @@ function VisualJourneyFrame({ active, pageId, image, progress, scrollable = fals
       >
         <img className={`visual-original visual-${fit}`} src={imageSrc} alt="" />
       </div>
+      {captionTop && <p className="start-caption start-caption-top">{captionTop}</p>}
+      {captionBottom && <p className="start-caption start-caption-bottom">{captionBottom}</p>}
       <JourneyBottomNav pageId={pageId} progress={progress} />
     </article>
   );
@@ -621,7 +623,7 @@ function TextArticleFrame({ active, pageId, meta, titleAsset, body, label, progr
 
 const visualPages = [
   { pageId: "page-3", image: "png-pages/intro/序.png" },
-  { pageId: "start", image: "png-pages/intro/Start.png" },
+  { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK" },
   { pageId: "page-4", image: "png-pages/荒原100/100.png" },
   { pageId: "article-1-01-cover", image: "png-pages/荒原100/101.png" },
   { pageId: "article-1-02-cover", image: "png-pages/荒原100/102.png" },
