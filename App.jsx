@@ -498,6 +498,12 @@ function ArticleBottomNav({ previous, next, progress = 0 }) {
 }
 
 function Article101Frame({ active, progress, onScrollProgress }) {
+  const getArticle101TypeClass = (paragraph) => {
+    if (paragraph.final) return "type-d article-emphasis";
+    if (paragraph.note) return "type-b article-note";
+    return "type-c";
+  };
+
   return (
     <article className={`phone-frame article-frame ${active ? "is-active" : ""}`} data-node-id="109:338" id="article-1-01">
       <header className="text-article-header">
@@ -514,7 +520,7 @@ function Article101Frame({ active, progress, onScrollProgress }) {
         }}
       >
         {article101.map((paragraph) => (
-          <p className={paragraph.final ? "article-emphasis" : paragraph.note ? "article-note" : ""} key={paragraph.text}>{paragraph.text}</p>
+          <p className={getArticle101TypeClass(paragraph)} key={paragraph.text}>{paragraph.text}</p>
         ))}
       </section>
       <ArticleBottomNav previous="#article-1-01-cover" next="#article-1-02-cover" progress={progress} />
