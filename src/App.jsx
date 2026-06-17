@@ -15,22 +15,33 @@ const journeyPages = [
   "page-3",
   "start",
   "page-4",
+  "article-1-01-cover",
   "article-1-01",
+  "article-1-02-cover",
   "article-1-02",
   "re-001",
   "part-2",
+  "article-2-01-cover",
   "article-2-01",
+  "article-2-02-cover",
   "article-2-02",
+  "article-2-03-cover",
   "article-2-03",
+  "article-2-04-cover",
   "article-2-04",
   "re-002",
   "part-3-a",
   "part-3-b",
+  "article-3-01-cover",
   "article-3-01",
+  "article-3-02-cover",
   "article-3-02",
   "re-003",
+  "article-3-03-cover",
   "article-3-03",
+  "article-3-04-cover",
   "article-3-04",
+  "article-3-05-cover",
   "article-3-05",
   "outro-road",
   "outro",
@@ -46,19 +57,39 @@ function getJourneyProgress(pageId, pageScrollProgress = 0) {
 
 const article101 = [
   {
+    text: `Re: 人類每半年的跟風審視`,
+    note: true,
+  },
+  {
     text: `2025年快過了一半，要數數手指說做了什麼，好像並沒有那麼多姿多彩，但卻有一種用溫水要把我烹煮的感覺，上半年經歷一段憂鬱的時間，我發現有時並不是必需有大事情來重錘一擊，也可以成為覺悟的轉捩點。然而，改變一個已經運作了很久的思想迴路，確是相當痛苦。難道就正如蘇格拉底所說：「未經反省的人生是不值得活的。」其實我更喜歡那個把「反省」翻譯成「審視」的版本。`,
   },
   {
     text: `看了一千篇心理分析、一萬篇心靈雞湯，難道就能換取一次徹底的覺悟嗎？人最痛苦的狀態莫過於頭腦上認知，但心未能抵達的狀態，好比我看見了一切，但雙手無法觸及，既迷惘又沮喪。`,
   },
   {
+    text: `Re: 鍛鍊的果效`,
+    note: true,
+  },
+  {
     text: `前陣子，有人問我健身的成果，我只尷尬地回應：「我並『未』練成腹肌馬甲線。」但我卻想，肌肉並不會背叛你，它還是透過每次肌肉的撕裂，再復原，然後悄悄地長成。所以並『未』，只是我堅信它們的確悄悄在長成。比起肌肉，我的意外收穫竟然是多了一份耐力，若不是這樣的鍛鍊，應該沒有下半段的發展。`,
+  },
+  {
+    text: `Re: 複習著某一種循環 be like`,
+    note: true,
   },
   {
     text: `自我審視的過程如一場心靈肌群的鍛鍊，就是由觸發到洞察、認知、接受痛苦到療癒（完全跟鍛鍊肌肉是一樣），上半年大概就是不斷地複習這過程。而我的課題大概是平常人的困擾：如何好好認清自己，接受本我。當我無法忽略世界的雜音，不斷解讀他人的反應，我連感到憤怒傷心都要受到限制，但最無聊的是，這些設限是我自己親手建造的牢籠。`,
   },
   {
+    text: `Re: 你好，寄生合成獸`,
+    note: true,
+  },
+  {
     text: `常言當你不斷遇到相當的課題，你要把它學完才能停止遇上。某日某些人出現，勾起了你一些創傷，他是誰並不重要，有狗血劇情嗎？並沒有。不過就是使我發現數個不同時空的遠古傷口，它們悄悄地變成了寄生合成獸躲在我的體內，剛巧被那個新故事在一霎之間抓開了它的巢穴，痛感達200%（be like好撚痛屌你老母）。`,
+  },
+  {
+    text: `Re: 事實並不重要？`,
+    note: true,
   },
   {
     text: `說到這裡，我是故意沒有好具體地說發生什麼事，因為故事不重要，想起前陣子看《混沌少年時》的對白：「事實並不重要，重要是為什麼這樣想？」這句對白啟發我真正思考「為什麼我有這個感受」，才會發現「寄生合成獸」，苦戰八千回，把怪獸馴服，再蛻變成一個新的自我。在過程我竭力感受所有不適、所有傷痛。然後我體會：人生就是這樣，有快樂也伴隨痛苦，如西西弗斯一樣，他用享受過程來否定諸神的懲罰；我用盡力體會來拿回定義一切的主權，然而看着所有事消散得不留痕跡，化成虛空，如夢幻泡影。然而，正因為一切都會成虛空，更要深刻地體會——人生的意義，莫過於此。`,
@@ -271,8 +302,20 @@ function splitArticleBody(body) {
     .filter(Boolean);
 }
 
+function assetSrc(path) {
+  return encodeURI(path);
+}
+
+function journeySrc(name) {
+  return assetSrc(`/assets/journey/${name}`);
+}
+
+function pngPageSrc(name) {
+  return assetSrc(`/assets/png-pages/${name}`);
+}
+
 function HomeCoverArt() {
-  return <img className="cover-art cover-art-original" src="/assets/journey/cover.svg" alt="" aria-hidden="true" />;
+  return <img className="cover-art cover-art-original" src={journeySrc("cover.svg")} alt="" aria-hidden="true" />;
 }
 
 function OpeningCopy() {
@@ -457,31 +500,24 @@ function ArticleBottomNav({ previous, next, progress = 0 }) {
 function Article101Frame({ active, progress, onScrollProgress }) {
   return (
     <article className={`phone-frame article-frame ${active ? "is-active" : ""}`} data-node-id="109:338" id="article-1-01">
-      <header className="article-header">
-        <p className="article-number">1.01</p>
-        <p className="article-quote">《港島散步・趕到散步時領悟》</p>
-        <img
-          className="article-kicker-art"
-          src="/assets/journey/港島.svg"
-          alt="一場關於心靈肌群的痛苦鍛鍊。"
-        />
+      <header className="text-article-header">
+        <p className="text-article-meta">第一部 · 荒原 / 1.01</p>
+        <p className="text-article-title">《港島散步・趕到散步時領悟》</p>
       </header>
-      <div className="article-scroll-wrap">
-        <section
-          className="article-scroll"
-          aria-label="港島散步正文"
-          onScroll={(event) => {
-            const element = event.currentTarget;
-            const scrollableDistance = element.scrollHeight - element.clientHeight;
-            onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
-          }}
-        >
-          {article101.map((paragraph) => (
-            <p className={paragraph.final ? "article-final" : ""} key={paragraph.text}>{paragraph.text}</p>
-          ))}
-        </section>
-      </div>
-      <ArticleBottomNav previous="#page-4" next="#article-1-02" progress={progress} />
+      <section
+        className="text-article-scroll"
+        aria-label="港島散步正文"
+        onScroll={(event) => {
+          const element = event.currentTarget;
+          const scrollableDistance = element.scrollHeight - element.clientHeight;
+          onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
+        }}
+      >
+        {article101.map((paragraph) => (
+          <p className={paragraph.final ? "article-emphasis" : paragraph.note ? "article-note" : ""} key={paragraph.text}>{paragraph.text}</p>
+        ))}
+      </section>
+      <ArticleBottomNav previous="#article-1-01-cover" next="#article-1-02-cover" progress={progress} />
     </article>
   );
 }
@@ -513,6 +549,8 @@ function JourneyBottomNav({ pageId, progress }) {
 }
 
 function VisualJourneyFrame({ active, pageId, image, progress, scrollable = false, onScrollProgress, fit = "cover" }) {
+  const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
+
   return (
     <article className={`phone-frame visual-frame ${active ? "is-active" : ""}`} id={pageId}>
       <div
@@ -524,7 +562,7 @@ function VisualJourneyFrame({ active, pageId, image, progress, scrollable = fals
           onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
         }}
       >
-        <img className={`visual-original visual-${fit}`} src={`/assets/journey/${image}`} alt="" />
+        <img className={`visual-original visual-${fit}`} src={imageSrc} alt="" />
       </div>
       <JourneyBottomNav pageId={pageId} progress={progress} />
     </article>
@@ -535,7 +573,7 @@ function ArtworkArticleFrame({ active, pageId, title, artwork, progress, onScrol
   return (
     <article className={`phone-frame artwork-article-frame ${active ? "is-active" : ""}`} id={pageId}>
       <header className="artwork-article-header">
-        <img src={`/assets/journey/${title}`} alt="" />
+        <img src={journeySrc(title)} alt="" />
       </header>
       <div
         className="artwork-article-scroll"
@@ -546,7 +584,7 @@ function ArtworkArticleFrame({ active, pageId, title, artwork, progress, onScrol
         }}
       >
         {artwork.map((asset) => (
-          <img key={asset} src={`/assets/journey/${asset}`} alt="" />
+          <img key={asset} src={journeySrc(asset)} alt="" />
         ))}
       </div>
       <JourneyBottomNav pageId={pageId} progress={progress} />
@@ -555,11 +593,13 @@ function ArtworkArticleFrame({ active, pageId, title, artwork, progress, onScrol
 }
 
 function TextArticleFrame({ active, pageId, meta, titleAsset, body, label, progress, onScrollProgress }) {
+  const headerTitle = `《${label.replace(/正文$/, "")}》`;
+
   return (
     <article className={`phone-frame text-article-frame ${active ? "is-active" : ""}`} id={pageId}>
       <header className="text-article-header">
-        <p>{meta}</p>
-        <img src={`/assets/journey/${titleAsset}`} alt="" aria-hidden="true" />
+        <p className="text-article-meta">{meta}</p>
+        <p className="text-article-title">{headerTitle}</p>
       </header>
       <section
         className="text-article-scroll"
@@ -571,7 +611,7 @@ function TextArticleFrame({ active, pageId, meta, titleAsset, body, label, progr
         }}
       >
         {splitArticleBody(body).map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
+          <p className={paragraph.startsWith("Re:") ? "article-note" : ""} key={paragraph}>{paragraph}</p>
         ))}
       </section>
       <JourneyBottomNav pageId={pageId} progress={progress} />
@@ -580,19 +620,30 @@ function TextArticleFrame({ active, pageId, meta, titleAsset, body, label, progr
 }
 
 const visualPages = [
-  { pageId: "page-3", image: "122.png" },
-  { pageId: "start", image: "122-2.png" },
-  { pageId: "page-4", image: "122-3.png" },
-  { pageId: "re-001", image: "001.png", fit: "contain" },
-  { pageId: "part-2", image: "200.png" },
-  { pageId: "re-002", image: "222.png" },
-  { pageId: "part-3-a", image: "300.png" },
-  { pageId: "part-3-b", image: "301.png", fit: "contain" },
-  { pageId: "re-003", image: "6.png", fit: "contain" },
-  { pageId: "outro-road", image: "山路漫長.png", fit: "contain" },
-  { pageId: "outro", image: "out.png", fit: "contain" },
-  { pageId: "roller", image: "未命名-3.png", scrollable: true, fit: "width" },
-  { pageId: "back", image: "end.png" },
+  { pageId: "page-3", image: "png-pages/intro/序.png" },
+  { pageId: "start", image: "png-pages/intro/Start.png" },
+  { pageId: "page-4", image: "png-pages/荒原100/100.png" },
+  { pageId: "article-1-01-cover", image: "png-pages/荒原100/101.png" },
+  { pageId: "article-1-02-cover", image: "png-pages/荒原100/102.png" },
+  { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain" },
+  { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png" },
+  { pageId: "article-2-01-cover", image: "png-pages/海市蜃樓 200/201.png" },
+  { pageId: "article-2-02-cover", image: "png-pages/海市蜃樓 200/202.png" },
+  { pageId: "article-2-03-cover", image: "png-pages/海市蜃樓 200/203.png" },
+  { pageId: "article-2-04-cover", image: "png-pages/海市蜃樓 200/204.png" },
+  { pageId: "re-002", image: "png-pages/Re002.png" },
+  { pageId: "part-3-a", image: "png-pages/山 300/300.png" },
+  { pageId: "part-3-b", image: "png-pages/山 300/山002.png", fit: "contain" },
+  { pageId: "article-3-01-cover", image: "png-pages/山 300/301.png" },
+  { pageId: "article-3-02-cover", image: "png-pages/山 300/302.png" },
+  { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain" },
+  { pageId: "article-3-03-cover", image: "png-pages/山 300/303.png", fit: "contain" },
+  { pageId: "article-3-04-cover", image: "png-pages/山 300/304.png" },
+  { pageId: "article-3-05-cover", image: "png-pages/山 300/305.png" },
+  { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
+  { pageId: "outro", image: "png-pages/Outro/out.png", fit: "contain" },
+  { pageId: "roller", image: "png-pages/Outro/roller.png", scrollable: true, fit: "width" },
+  { pageId: "back", image: "png-pages/Outro/Tilte.png", fit: "contain" },
 ];
 
 const artworkArticles = [];
