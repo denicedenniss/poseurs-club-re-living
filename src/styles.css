@@ -7,11 +7,97 @@
 }
 
 @font-face {
+  font-family: "Noto Sans HK";
+  src: url("/assets/fonts/NotoSansTC-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Noto Serif TC Local";
   src: url("/assets/fonts/NotoSerifTC-Variable.ttf") format("truetype");
   font-weight: 200 900;
   font-style: normal;
   font-display: swap;
+}
+
+@font-face {
+  font-family: "Noto Serif HK";
+  src: url("/assets/fonts/NotoSerifTC-Variable.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans-hk: "Noto Sans HK", "Noto Sans TC Local", "Noto Sans TC", sans-serif;
+  --font-serif-hk: "Noto Serif HK", "Noto Serif TC Local", "Noto Serif TC", serif;
+}
+
+/* Global article typography system */
+.type-a1,
+.article-number,
+.text-article-meta {
+  font-family: var(--font-sans-hk);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.type-a2,
+.article-quote,
+.text-article-title {
+  font-family: var(--font-serif-hk);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 1.96px;
+  text-align: center;
+}
+
+.type-b,
+.text-article-scroll .article-note,
+.article-scroll .article-note {
+  font-family: var(--font-sans-hk);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0.72px;
+}
+
+.type-c,
+.article-scroll p,
+.text-article-scroll p {
+  font-family: var(--font-sans-hk);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 29px;
+  letter-spacing: 0.96px;
+}
+
+.type-d,
+.article-scroll .article-final,
+.text-article-scroll .article-emphasis,
+.article-scroll .article-emphasis {
+  font-family: var(--font-serif-hk);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 29px;
+  letter-spacing: -1.44px;
+}
+
+.type-e,
+.article-page-number {
+  font-family: var(--font-serif-hk);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0;
+  text-align: center;
 }
 
 * {
@@ -357,7 +443,7 @@ html {
 }
 
 .article-number {
-  font-family: "Noto Sans TC Local", "Noto Sans TC", sans-serif;
+  font-family: var(--font-sans-hk);
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -367,7 +453,7 @@ html {
 
 .article-quote {
   margin-top: 5px;
-  font-family: "Noto Serif TC Local", "Noto Serif TC", serif;
+  font-family: var(--font-serif-hk);
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
@@ -415,7 +501,7 @@ html {
 
 .article-scroll p {
   margin: 0 0 20px;
-  font-family: "Noto Sans TC Local", "Noto Sans TC", sans-serif;
+  font-family: var(--font-sans-hk);
   font-size: 16px;
   font-weight: 300;
   line-height: 29px;
@@ -426,7 +512,7 @@ html {
 
 .article-scroll .article-final {
   margin-top: 0;
-  font-family: "Noto Serif TC Local", "Noto Serif TC", serif;
+  font-family: var(--font-serif-hk);
   font-size: 24px;
   font-weight: 600;
   line-height: 29px;
@@ -713,6 +799,15 @@ html {
   background: #e0ff00;
 }
 
+.visual-frame-page-4,
+.visual-frame-article-1-01-cover,
+.visual-frame-page-4 .visual-stage,
+.visual-frame-article-1-01-cover .visual-stage,
+.visual-frame-page-4 .journey-bottom-nav,
+.visual-frame-article-1-01-cover .journey-bottom-nav {
+  background: #f2f2f2;
+}
+
 .visual-stage.is-scrollable {
   overflow-y: auto;
   scrollbar-color: #e0ff00 transparent;
@@ -770,6 +865,37 @@ html {
 
 .start-caption-bottom {
   bottom: 121px;
+}
+
+.visual-cover-header {
+  position: absolute;
+  top: 68px;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  color: #000000;
+  text-align: center;
+  pointer-events: none;
+}
+
+.visual-cover-meta,
+.visual-cover-title,
+.visual-page-number {
+  margin: 0;
+}
+
+.visual-cover-title {
+  margin-top: 0;
+}
+
+.visual-page-number {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 121px;
+  z-index: 4;
+  color: #000000;
+  pointer-events: none;
 }
 
 .journey-bottom-nav {
@@ -899,7 +1025,7 @@ html {
 }
 
 .text-article-meta {
-  font-family: "Noto Sans TC Local", "Noto Sans TC", sans-serif;
+  font-family: var(--font-sans-hk);
   font-size: 12px;
   font-weight: 400;
   line-height: 20px;
@@ -907,7 +1033,7 @@ html {
 }
 
 .text-article-title {
-  font-family: "Noto Serif TC Local", "Noto Serif TC", serif;
+  font-family: var(--font-serif-hk);
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
@@ -938,7 +1064,7 @@ html {
 
 .text-article-scroll p {
   margin: 0 0 20px;
-  font-family: "Noto Sans TC Local", "Noto Sans TC", sans-serif;
+  font-family: var(--font-sans-hk);
   font-size: 16px;
   font-weight: 300;
   line-height: 29px;
@@ -949,7 +1075,7 @@ html {
 
 .text-article-scroll .article-note,
 .article-scroll .article-note {
-  font-family: "Noto Sans TC Local", "Noto Sans TC", sans-serif;
+  font-family: var(--font-sans-hk);
   font-size: 12px;
   font-weight: 700;
   line-height: 29px;
@@ -958,7 +1084,7 @@ html {
 
 .text-article-scroll .article-emphasis,
 .article-scroll .article-emphasis {
-  font-family: "Noto Serif TC Local", "Noto Serif TC", serif;
+  font-family: var(--font-serif-hk);
   font-size: 24px;
   font-weight: 600;
   line-height: 29px;

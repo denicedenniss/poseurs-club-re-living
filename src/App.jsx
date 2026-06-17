@@ -548,7 +548,20 @@ function JourneyBottomNav({ pageId, progress }) {
   );
 }
 
-function VisualJourneyFrame({ active, pageId, image, progress, scrollable = false, onScrollProgress, fit = "cover", captionTop, captionBottom }) {
+function VisualJourneyFrame({
+  active,
+  pageId,
+  image,
+  progress,
+  scrollable = false,
+  onScrollProgress,
+  fit = "cover",
+  captionTop,
+  captionBottom,
+  coverHeaderMeta,
+  coverHeaderTitle,
+  pageNumber,
+}) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
 
   return (
@@ -566,6 +579,13 @@ function VisualJourneyFrame({ active, pageId, image, progress, scrollable = fals
       </div>
       {captionTop && <p className="start-caption start-caption-top">{captionTop}</p>}
       {captionBottom && <p className="start-caption start-caption-bottom">{captionBottom}</p>}
+      {(coverHeaderMeta || coverHeaderTitle) && (
+        <header className="visual-cover-header">
+          {coverHeaderMeta && <p className="visual-cover-meta type-a1">{coverHeaderMeta}</p>}
+          {coverHeaderTitle && <p className="visual-cover-title type-a2">{coverHeaderTitle}</p>}
+        </header>
+      )}
+      {pageNumber && <p className="visual-page-number type-e">{pageNumber}</p>}
       <JourneyBottomNav pageId={pageId} progress={progress} />
     </article>
   );
@@ -625,7 +645,13 @@ const visualPages = [
   { pageId: "page-3", image: "png-pages/intro/序.png" },
   { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK" },
   { pageId: "page-4", image: "png-pages/荒原100/100.png" },
-  { pageId: "article-1-01-cover", image: "png-pages/荒原100/101.png" },
+  {
+    pageId: "article-1-01-cover",
+    image: "png-pages/荒原100/101.png",
+    coverHeaderMeta: "第一部 · 荒原 / 1.01",
+    coverHeaderTitle: "《港島散步・趕到散步時領悟》",
+    pageNumber: "1／2",
+  },
   { pageId: "article-1-02-cover", image: "png-pages/荒原100/102.png" },
   { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain" },
   { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png" },
