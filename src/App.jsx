@@ -49,6 +49,50 @@ const journeyPages = [
   "back",
 ];
 
+const PAGE_BG = {
+  home: "#F8F8F8",
+  "page-2": "#E0FF00",
+  "page-3": "#E0FF00",
+  start: "#E0FF00",
+  "page-4": "#F8F8F8",
+  "article-1-01-cover": "#F8F8F8",
+  "article-1-01": "#F8F8F8",
+  "article-1-02-cover": "#E0FF00",
+  "article-1-02": "#E0FF00",
+  "re-001": "#E0FF00",
+  "part-2": "#E0FF00",
+  "article-2-01-cover": "#F8F8F8",
+  "article-2-01": "#F8F8F8",
+  "article-2-02-cover": "#F8F8F8",
+  "article-2-02": "#F8F8F8",
+  "re-002": "#E0FF00",
+  "article-2-03-cover": "#F8F8F8",
+  "article-2-03": "#F8F8F8",
+  "article-2-04-cover": "#F8F8F8",
+  "article-2-04": "#F8F8F8",
+  "part-3-a": "#F8F8F8",
+  "part-3-b": "#E0FF00",
+  "article-3-01-cover": "#F8F8F8",
+  "article-3-01": "#F8F8F8",
+  "article-3-02-cover": "#E0FF00",
+  "article-3-02": "#F8F8F8",
+  "re-003": "#F8F8F8",
+  "article-3-03-cover": "#F8F8F8",
+  "article-3-03": "#F8F8F8",
+  "article-3-04-cover": "#F8F8F8",
+  "article-3-04": "#F8F8F8",
+  "article-3-05-cover": "#E0FF00",
+  "article-3-05": "#F8F8F8",
+  "outro-road": "#F8F8F8",
+  outro: "#E0FF00",
+  roller: "#F8F8F8",
+  back: "#F8F8F8",
+};
+
+function pageBgStyle(pageId) {
+  return { "--page-bg": PAGE_BG[pageId] || "#F8F8F8" };
+}
+
 function getJourneyProgress(pageId, pageScrollProgress = 0) {
   const pageIndex = Math.max(0, journeyPages.indexOf(pageId));
   const boundedScroll = Math.min(1, Math.max(0, pageScrollProgress));
@@ -61,20 +105,17 @@ const article101 = [
     note: true,
   },
   {
-    text: `2025年快過了一半，要數數手指說做了什麼，好像並沒有那麼多姿多彩，但卻有一種用溫水要把我烹煮的感覺，上半年經歷一段憂鬱的時間，我發現有時並不是必需有大事情來重錘一擊，也可以成為覺悟的轉捩點。然而，改變一個已經運作了很久的思想迴路，確是相當痛苦。難道就正如蘇格拉底所說：「未經反省的人生是不值得活的。」其實我更喜歡那個把「反省」翻譯成「審視」的版本。`,
-  },
-  {
-    text: `看了一千篇心理分析、一萬篇心靈雞湯，難道就能換取一次徹底的覺悟嗎？人最痛苦的狀態莫過於頭腦上認知，但心未能抵達的狀態，好比我看見了一切，但雙手無法觸及，既迷惘又沮喪。`,
+    text: `2025年快過了一半，要數數手指說做了什麼，好像並沒有那麼多姿多彩，但卻有一種用溫水要把我烹煮的感覺，上半年經歷一段憂鬱的時間，我發現有時並不是必需有大事情來重錘一擊，也可以成為覺悟的轉捩點。然而，改變一個已經運作了很久的思想迴路，確是相當痛苦。難道就正如蘇格拉底所說：「未經反省的人生是不值得活的。」其實我更喜歡那個把「反省」翻譯成「審視」的版本。看了一千篇心理分析、一萬篇心靈雞湯，難道就能換取一次徹底的覺悟嗎？人最痛苦的狀態莫過於頭腦上認知，但心未能抵達的狀態，好比我看見了一切，但雙手無法觸及，既迷惘又沮喪。`,
   },
   {
     text: `Re: 鍛鍊的果效`,
     note: true,
   },
   {
-    text: `前陣子，有人問我健身的成果，我只尷尬地回應：「我並『未』練成腹肌馬甲線。」但我卻想，肌肉並不會背叛你，它還是透過每次肌肉的撕裂，再復原，然後悄悄地長成。所以並『未』，只是我堅信它們的確悄悄在長成。比起肌肉，我的意外收穫竟然是多了一份耐力，若不是這樣的鍛鍊，應該沒有下半段的發展。`,
+    text: `前陣子，有人問我健身的成果，我只尷尬地回應：「我並「未」練成腹肌馬甲線。」但我卻想，肌肉並不會背叛你，它還是透過每次肌肉的撕裂，再復原，然後悄悄地長成。所以並「未」，只是我堅信它們的確悄悄在長成。比起肌肉，我的意外收穫竟然是多了一份耐力，若不是這樣的鍛鍊，應該沒有下半段的發展。`,
   },
   {
-    text: `Re: 複習著某一種循環 be like`,
+    text: `Re: 複習著某一種循環be like`,
     note: true,
   },
   {
@@ -85,14 +126,19 @@ const article101 = [
     note: true,
   },
   {
-    text: `常言當你不斷遇到相當的課題，你要把它學完才能停止遇上。某日某些人出現，勾起了你一些創傷，他是誰並不重要，有狗血劇情嗎？並沒有。不過就是使我發現數個不同時空的遠古傷口，它們悄悄地變成了寄生合成獸躲在我的體內，剛巧被那個新故事在一霎之間抓開了它的巢穴，痛感達200%（be like好撚痛屌你老母）。`,
+    text: `常言當你不斷遇到相當的課題，你要把它學完才能停止遇上。某日某些人出現，勾起了你一些創傷，他是誰並不重要，有狗血劇情嗎？並沒有。不過就是使我發現數個不同時空的遠古傷口，它們悄悄地變成了寄生合成獸躲在我的體內，剛巧被那個新故事在一霎之間抓開了它的巢穴，痛感達200% (be like好撚痛屌你老母)。然後天時地利，我逼住企好把它處理好。`,
   },
   {
     text: `Re: 事實並不重要？`,
     note: true,
   },
   {
-    text: `說到這裡，我是故意沒有好具體地說發生什麼事，因為故事不重要，想起前陣子看《混沌少年時》的對白：「事實並不重要，重要是為什麼這樣想？」這句對白啟發我真正思考「為什麼我有這個感受」，才會發現「寄生合成獸」，苦戰八千回，把怪獸馴服，再蛻變成一個新的自我。在過程我竭力感受所有不適、所有傷痛。然後我體會：人生就是這樣，有快樂也伴隨痛苦，如西西弗斯一樣，他用享受過程來否定諸神的懲罰；我用盡力體會來拿回定義一切的主權，然而看着所有事消散得不留痕跡，化成虛空，如夢幻泡影。然而，正因為一切都會成虛空，更要深刻地體會——人生的意義，莫過於此。`,
+    text: `說到這裡，我是故意沒有好具體地說發生什麼事，因為故事不重要。想起前陣子看《混沌少年時》的對白：「事實並不重要，重要是為什麼這樣想？」`,
+  },
+  {
+    text: `這句對白啟發我真正思考「為什麼我有這個感受」，才會發現「寄生合成獸」，苦戰八千回，把怪獸馴服，再蛻變成一個新的自我。在過程我竭力感受所有不適、所有傷痛。然後我體會：人生就是這樣，有快樂也伴隨痛苦，如西西弗斯一樣，他用享受過程來否定諸神的懲罰；我用盡力體會來拿回定義一切的主權，然而看着所有事消散得不留痕跡，化成虛空，如夢幻泡影。
+
+然而，正因為一切都會成虛空，更要深刻地體會——人生的意義，莫過於此。`,
     final: true,
   },
 ];
@@ -357,7 +403,7 @@ function StartButton() {
 
 function HomeFrame({ active }) {
   return (
-    <article className={`phone-frame home-frame ${active ? "is-active" : ""}`} data-node-id="1:2" id="home">
+    <article className={`phone-frame home-frame ${active ? "is-active" : ""}`} data-node-id="1:2" id="home" style={pageBgStyle("home")}>
         <div className="base-bg" />
         <div className="lime-rail-left" />
         <div className="lime-rail-right" />
@@ -415,7 +461,7 @@ function JourneyIndex() {
 
 function PageTwoFrame({ active }) {
   return (
-    <article className={`phone-frame page-two-frame ${active ? "is-active" : ""}`} data-node-id="5:106" id="page-2">
+    <article className={`phone-frame page-two-frame ${active ? "is-active" : ""}`} data-node-id="5:106" id="page-2" style={pageBgStyle("page-2")}>
       <div className="page-two-art" data-node-id="5:108">
         <img className="page-two-top" src="/assets/page2-title-top.svg" alt="" aria-hidden="true" />
         <img className="page-two-bottom" src="/assets/page2-title-bottom.svg" alt="" aria-hidden="true" />
@@ -505,10 +551,10 @@ function Article101Frame({ active, progress, onScrollProgress }) {
   };
 
   return (
-    <article className={`phone-frame article-frame ${active ? "is-active" : ""}`} data-node-id="109:338" id="article-1-01">
+    <article className={`phone-frame article-frame ${active ? "is-active" : ""}`} data-node-id="109:338" id="article-1-01" style={pageBgStyle("article-1-01")}>
       <header className="text-article-header">
-        <p className="text-article-meta">第一部 · 荒原 / 1.01</p>
-        <p className="text-article-title">《港島散步・趕到散步時領悟》</p>
+        <p className="text-article-meta type-a1">第一部 · 荒原 / 1.01</p>
+        <p className="text-article-title type-a2">《港島散步・趕到散步時領悟》</p>
       </header>
       <section
         className="text-article-scroll"
@@ -571,7 +617,7 @@ function VisualJourneyFrame({
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
 
   return (
-    <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""}`} id={pageId}>
+    <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       <div
         className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
         onScroll={(event) => {
@@ -624,10 +670,10 @@ function TextArticleFrame({ active, pageId, meta, titleAsset, body, label, progr
   const headerTitle = `《${label.replace(/正文$/, "")}》`;
 
   return (
-    <article className={`phone-frame text-article-frame ${active ? "is-active" : ""}`} id={pageId}>
+    <article className={`phone-frame text-article-frame ${active ? "is-active" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       <header className="text-article-header">
-        <p className="text-article-meta">{meta}</p>
-        <p className="text-article-title">{headerTitle}</p>
+        <p className="text-article-meta type-a1">{meta}</p>
+        <p className="text-article-title type-a2">{headerTitle}</p>
       </header>
       <section
         className="text-article-scroll"
@@ -639,7 +685,7 @@ function TextArticleFrame({ active, pageId, meta, titleAsset, body, label, progr
         }}
       >
         {splitArticleBody(body).map((paragraph) => (
-          <p className={paragraph.startsWith("Re:") ? "article-note" : ""} key={paragraph}>{paragraph}</p>
+          <p className={paragraph.startsWith("Re:") ? "type-b article-note" : "type-c"} key={paragraph}>{paragraph}</p>
         ))}
       </section>
       <JourneyBottomNav pageId={pageId} progress={progress} />

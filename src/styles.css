@@ -40,7 +40,7 @@
 .article-number,
 .text-article-meta {
   font-family: var(--font-sans-hk);
-  font-size: 12px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
@@ -138,7 +138,7 @@ html {
   height: auto;
   display: none;
   overflow: hidden;
-  background: #ffffff;
+  background: var(--page-bg, #f8f8f8);
   color: #000000;
   transform-origin: top center;
 }
@@ -148,15 +148,15 @@ html {
 }
 
 .page-two-frame {
-  background: #e0ff00;
+  background: var(--page-bg, #e0ff00);
 }
 
 .page-three-frame {
-  background: #e0ff00;
+  background: var(--page-bg, #e0ff00);
 }
 
 .page-four-frame {
-  background: #ffffff;
+  background: var(--page-bg, #f8f8f8);
 }
 
 .base-bg,
@@ -421,7 +421,7 @@ html {
 }
 
 .article-frame {
-  background: #ffffff;
+  background: var(--page-bg, #f8f8f8);
 }
 
 .article-header {
@@ -444,7 +444,7 @@ html {
 
 .article-number {
   font-family: var(--font-sans-hk);
-  font-size: 12px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
@@ -525,7 +525,7 @@ html {
   bottom: 0;
   width: 100%;
   height: 102px;
-  background: #fcfcfc;
+  background: var(--page-bg, #f8f8f8);
   z-index: 2;
 }
 
@@ -723,7 +723,7 @@ html {
 
 .base-bg {
   inset: 0;
-  background: #fcfcfc;
+  background: var(--page-bg, #f8f8f8);
 }
 
 .lime-rail-left {
@@ -780,32 +780,14 @@ html {
 .visual-frame,
 .artwork-article-frame,
 .text-article-frame {
-  background: #ffffff;
+  background: var(--page-bg, #f8f8f8);
 }
 
 .visual-stage {
   position: absolute;
   inset: 0 0 112px;
   overflow: hidden;
-  background: #ffffff;
-}
-
-.visual-frame-page-3,
-.visual-frame-start,
-.visual-frame-page-3 .visual-stage,
-.visual-frame-start .visual-stage,
-.visual-frame-page-3 .journey-bottom-nav,
-.visual-frame-start .journey-bottom-nav {
-  background: #e0ff00;
-}
-
-.visual-frame-page-4,
-.visual-frame-article-1-01-cover,
-.visual-frame-page-4 .visual-stage,
-.visual-frame-article-1-01-cover .visual-stage,
-.visual-frame-page-4 .journey-bottom-nav,
-.visual-frame-article-1-01-cover .journey-bottom-nav {
-  background: #f2f2f2;
+  background: var(--page-bg, #f8f8f8);
 }
 
 .visual-stage.is-scrollable {
@@ -902,7 +884,7 @@ html {
   position: absolute;
   inset: auto 0 0;
   height: 112px;
-  background: #fcfcfc;
+  background: var(--page-bg, #f8f8f8);
   z-index: 5;
 }
 
@@ -1010,8 +992,12 @@ html {
 .text-article-header {
   position: absolute;
   inset: 0 0 auto;
-  height: 121px;
-  padding-top: 37px;
+  height: 69px;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: #e0ff00;
   color: #000000;
   text-align: center;
@@ -1026,7 +1012,7 @@ html {
 
 .text-article-meta {
   font-family: var(--font-sans-hk);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 20px;
   letter-spacing: 0;
@@ -1042,7 +1028,7 @@ html {
 
 .text-article-scroll {
   position: absolute;
-  inset: 121px 0 102px;
+  inset: 69px 0 102px;
   overflow-y: auto;
   padding: 24px 29px 36px 21px;
   scrollbar-color: #e0ff00 transparent;
@@ -1113,6 +1099,10 @@ html {
   font-weight: 600;
   line-height: 29px;
   letter-spacing: -1.44px;
+}
+
+#article-1-01 .text-article-scroll p.type-b {
+  margin-bottom: 29px;
 }
 
 .opening-copy {
