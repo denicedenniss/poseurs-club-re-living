@@ -867,6 +867,28 @@ html {
   width: calc(70 / 402 * 100%);
 }
 
+.re-caption {
+  position: absolute;
+  left: 50%;
+  top: calc(576 / 700 * 100%);
+  z-index: 4;
+  height: 20px;
+  margin: 0;
+  color: #000000;
+  font-family: var(--font-sans-hk);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.56px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
 .visual-cover-header {
   position: absolute;
   top: 68px;
@@ -914,10 +936,13 @@ html {
 .opening-title,
 .opening-page-number {
   display: block;
+  width: auto;
+  max-width: none;
   white-space: nowrap;
   overflow: visible;
   overflow-wrap: normal;
   word-break: keep-all;
+  transform: translateX(-50%);
 }
 
 .opening-meta {

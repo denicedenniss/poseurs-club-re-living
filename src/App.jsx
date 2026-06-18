@@ -719,6 +719,7 @@ function VisualJourneyFrame({
   coverHeaderMeta,
   coverHeaderTitle,
   pageNumber,
+  reCaption,
 }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
 
@@ -737,6 +738,7 @@ function VisualJourneyFrame({
       </div>
       {captionTop && <p className="start-caption start-caption-top">{captionTop}</p>}
       {captionBottom && <p className="start-caption start-caption-bottom">{captionBottom}</p>}
+      {reCaption && <p className="re-caption">{reCaption}</p>}
       {(coverHeaderMeta || coverHeaderTitle) && (
         <header className="visual-cover-header">
           {coverHeaderMeta && <p className="visual-cover-meta type-a1">{coverHeaderMeta}</p>}
@@ -758,6 +760,14 @@ function frameRectStyle(rect) {
   };
 }
 
+function openingTextStyle(rect) {
+  return {
+    left: `${((rect.x + rect.width / 2) / 402) * 100}%`,
+    top: `${(rect.y / 700) * 100}%`,
+    height: `${(rect.height / 700) * 100}%`,
+  };
+}
+
 function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber, progress }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
 
@@ -766,9 +776,9 @@ function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber,
       <div className="opening-main-asset" style={frameRectStyle(art)}>
         <img src={imageSrc} alt="" />
       </div>
-      <p className="opening-meta type-a1" style={frameRectStyle(meta.rect)}>{meta.text}</p>
-      <p className="opening-title type-a2" style={frameRectStyle(title.rect)}>{title.text}</p>
-      <p className="opening-page-number type-e" style={frameRectStyle(pageNumber.rect)}>{pageNumber.text}</p>
+      <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
+      <p className="opening-title type-a2" style={openingTextStyle(title.rect)}>{title.text}</p>
+      <p className="opening-page-number type-e" style={openingTextStyle(pageNumber.rect)}>{pageNumber.text}</p>
       <JourneyBottomNav pageId={pageId} progress={progress} />
     </article>
   );
@@ -827,12 +837,12 @@ const visualPages = [
   { pageId: "page-3", image: "png-pages/intro/序.png" },
   { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK" },
   { pageId: "page-4", image: "png-pages/荒原100/100.png" },
-  { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain" },
+  { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found" },
   { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png" },
-  { pageId: "re-002", image: "png-pages/Re002.png" },
+  { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes" },
   { pageId: "part-3-a", image: "png-pages/山 300/300.png" },
   { pageId: "part-3-b", image: "png-pages/山 300/山002.png", fit: "contain" },
-  { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain" },
+  { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to..." },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
   { pageId: "outro", image: "png-pages/Outro/out.png", fit: "contain" },
   { pageId: "roller", image: "png-pages/Outro/roller.png", scrollable: true, fit: "width" },
@@ -860,7 +870,7 @@ const openingPages = [
     pageId: "article-2-01-cover",
     image: "png-pages/海市蜃樓 200/201.png",
     art: { x: -16, y: 29, width: 433, height: 633 },
-    meta: { text: "第二部 · 海市蜃樓 / 2.01", rect: { x: 137, y: 91, width: 130, height: 20 } },
+    meta: { text: "第二部 · 海市蜃樓 / 2.01", rect: { x: 136, y: 91, width: 130, height: 20 } },
     title: { text: "《自古成功在嘗試》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "1／4", rect: { x: 189, y: 548, width: 27, height: 20 } },
   },
@@ -876,7 +886,7 @@ const openingPages = [
     pageId: "article-2-03-cover",
     image: "png-pages/海市蜃樓 200/203.png",
     art: { x: -24, y: 0, width: 451, height: 660 },
-    meta: { text: "第二部 · 海市蜃樓 / 2.03", rect: { x: 137, y: 91, width: 130, height: 20 } },
+    meta: { text: "第二部 · 海市蜃樓 / 2.03", rect: { x: 136, y: 91, width: 130, height: 20 } },
     title: { text: "《觀望與被觀望的距離》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "3／4", rect: { x: 187, y: 548, width: 30, height: 20 } },
   },
@@ -900,7 +910,7 @@ const openingPages = [
     pageId: "article-3-02-cover",
     image: "png-pages/山 300/302.png",
     art: { x: 2, y: 19, width: 400, height: 584 },
-    meta: { text: "第二部 · 山 / 3.02", rect: { x: 157, y: 91, width: 91, height: 20 } },
+    meta: { text: "第二部 · 山 / 3.02", rect: { x: 156, y: 91, width: 91, height: 20 } },
     title: { text: "《攜帶式避難所》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "2／5", rect: { x: 187, y: 548, width: 30, height: 20 } },
   },
@@ -908,7 +918,7 @@ const openingPages = [
     pageId: "article-3-03-cover",
     image: "png-pages/山 300/303.png",
     art: { x: 21.98, y: 262.4, width: 356.57, height: 123.06 },
-    meta: { text: "第二部 · 山 / 3.03", rect: { x: 157, y: 91, width: 91, height: 20 } },
+    meta: { text: "第二部 · 山 / 3.03", rect: { x: 156, y: 91, width: 91, height: 20 } },
     title: { text: "《西藏遊記: 我所看見的未來》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "3／5", rect: { x: 187, y: 548, width: 30, height: 20 } },
   },
