@@ -910,6 +910,34 @@ html {
   pointer-events: none;
 }
 
+.opening-meta,
+.opening-title,
+.opening-page-number {
+  display: block;
+  white-space: nowrap;
+  overflow: visible;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.opening-meta {
+  font-size: 12px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.opening-title {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 1.96px;
+}
+
+.opening-page-number {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
 .opening-main-asset {
   z-index: 1;
   overflow: hidden;
