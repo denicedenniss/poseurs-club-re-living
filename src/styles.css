@@ -812,6 +812,15 @@ html {
   width: 100%;
 }
 
+.visual-absolute {
+  position: absolute;
+  z-index: 1;
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
 .visual-cover {
   height: 100%;
   object-fit: cover;
@@ -825,6 +834,36 @@ html {
 .visual-width {
   height: auto;
   object-fit: contain;
+}
+
+.mountain-line-overlay {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  margin: 0;
+  padding: 0;
+  background: #000000;
+  transform: none;
+  transform-origin: center;
+  pointer-events: none;
+  animation: mountainCursorBlink 1s ease-in-out infinite;
+}
+
+@keyframes mountainCursorBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mountain-line-overlay {
+    animation: none;
+  }
 }
 
 .visual-frame-start .visual-stage {

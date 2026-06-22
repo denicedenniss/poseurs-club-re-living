@@ -720,22 +720,41 @@ function VisualJourneyFrame({
   coverHeaderTitle,
   pageNumber,
   reCaption,
+  imageRect,
+  mountainLine,
 }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
 
   return (
     <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
-      <div
-        className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
-        onScroll={(event) => {
-          if (!scrollable) return;
-          const element = event.currentTarget;
-          const scrollableDistance = element.scrollHeight - element.clientHeight;
-          onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
-        }}
-      >
-        <img className={`visual-original visual-${fit}`} src={imageSrc} alt="" />
-      </div>
+      {imageRect ? (
+        <img className="visual-original visual-absolute" style={frameRectStyle(imageRect)} src={imageSrc} alt="" />
+      ) : (
+        <div
+          className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
+          onScroll={(event) => {
+            if (!scrollable) return;
+            const element = event.currentTarget;
+            const scrollableDistance = element.scrollHeight - element.clientHeight;
+            onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
+          }}
+        >
+          <img className={`visual-original visual-${fit}`} src={imageSrc} alt="" />
+        </div>
+      )}
+      {mountainLine && (
+        <span
+          className="mountain-line-overlay"
+          data-figma-layer={mountainLine.name}
+          aria-hidden="true"
+          style={{
+            left: `${(mountainLine.x / 402) * 100}%`,
+            top: `${(mountainLine.y / 700) * 100}%`,
+            width: `${mountainLine.strokeWeight}px`,
+            height: `${(mountainLine.length / 700) * 100}%`,
+          }}
+        />
+      )}
       {captionTop && <p className="start-caption start-caption-top">{captionTop}</p>}
       {captionBottom && <p className="start-caption start-caption-bottom">{captionBottom}</p>}
       {reCaption && <p className="re-caption">{reCaption}</p>}
@@ -840,8 +859,17 @@ const visualPages = [
   { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found" },
   { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png" },
   { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes" },
-  { pageId: "part-3-a", image: "png-pages/山 300/300.png" },
-  { pageId: "part-3-b", image: "png-pages/山 300/山002.png", fit: "contain" },
+  {
+    pageId: "part-3-a",
+    image: "png-pages/山 300/300.png",
+    mountainLine: { name: "Mountain_Line_01", x: 289, y: 77, length: 50, strokeWeight: 2 },
+  },
+  {
+    pageId: "part-3-b",
+    image: "png-pages/山 300/山002.png",
+    imageRect: { x: 140, y: 185, width: 121, height: 270 },
+    mountainLine: { name: "Mountain_Line_02", x: 255, y: 390, length: 50, strokeWeight: 1 },
+  },
   { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to..." },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
   { pageId: "outro", image: "png-pages/Outro/out.png", fit: "contain" },
