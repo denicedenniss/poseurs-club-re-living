@@ -692,7 +692,7 @@ function Article101Frame({ active, progress, onScrollProgress }) {
   );
 }
 
-function JourneyBottomNav({ pageId, progress, disableNext = false }) {
+function JourneyBottomNav({ pageId, progress, disableNext = false, onNext }) {
   const pageIndex = journeyPages.indexOf(pageId);
   const previous = pageIndex > 0 ? journeyPages[pageIndex - 1] : null;
   const next = pageId === "back" ? "home" : pageIndex < journeyPages.length - 1 ? journeyPages[pageIndex + 1] : null;
@@ -705,7 +705,16 @@ function JourneyBottomNav({ pageId, progress, disableNext = false }) {
         </a>
       )}
       {next && !disableNext && (
-        <a className="journey-nav-button journey-next" href={`#${next}`} aria-label="下一頁">
+        <a
+          className="journey-nav-button journey-next"
+          href={`#${next}`}
+          aria-label="下一頁"
+          onClick={(event) => {
+            if (!onNext) return;
+            event.preventDefault();
+            onNext(next);
+          }}
+        >
           <img src="/assets/page4-next.svg" alt="" aria-hidden="true" />
         </a>
       )}
@@ -825,15 +834,27 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
 
 function RollerFrame({ active, progress, onScrollProgress, startToken }) {
   const rollerScrollRef = React.useRef(null);
+  const handledSendTokenRef = React.useRef(0);
   const [rollerPhase, setRollerPhase] = React.useState("idle");
   const [typedResponse, setTypedResponse] = React.useState("");
+  const [rollerReply, setRollerReply] = React.useState("再見。");
 
   React.useEffect(() => {
-    if (!active || !startToken || rollerPhase !== "idle") return undefined;
+    if (!active) {
+      setRollerPhase("idle");
+      setTypedResponse("");
+      return undefined;
+    }
 
+    if (rollerPhase !== "idle") return undefined;
+
+    const enteredAfterSend = startToken > handledSendTokenRef.current;
+    if (enteredAfterSend) handledSendTokenRef.current = startToken;
+
+    setRollerReply(enteredAfterSend ? "收到了。" : "再見。");
     setRollerPhase("blinking");
     return undefined;
-  }, [active, rollerPhase]);
+  }, [active, rollerPhase, startToken]);
 
   React.useEffect(() => {
     if (!active || rollerPhase !== "blinking") return undefined;
@@ -845,14 +866,14 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
   React.useEffect(() => {
     if (!active || rollerPhase !== "typing") return undefined;
 
-    const response = "收到了。";
+    const response = rollerReply;
     let length = 0;
     const typeTimer = window.setInterval(() => {
       length += 1;
       setTypedResponse(response.slice(0, length));
       if (length === response.length) {
         window.clearInterval(typeTimer);
-        setRollerPhase("waiting");
+        setRollerPhase("fading");
       }
     }, 180);
 
@@ -860,31 +881,50 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
   }, [active, rollerPhase]);
 
   React.useEffect(() => {
-    if (!active || rollerPhase !== "waiting") return undefined;
+    if (!active || rollerPhase !== "fading") return undefined;
 
-    const delayTimer = window.setTimeout(() => setRollerPhase("rolling"), 1500);
-    return () => window.clearTimeout(delayTimer);
+    const fadeTimer = window.setTimeout(() => setRollerPhase("rolling"), 800);
+    return () => window.clearTimeout(fadeTimer);
   }, [active, rollerPhase]);
 
   React.useEffect(() => {
     if (!active || rollerPhase !== "rolling") return undefined;
 
     const scrollNode = rollerScrollRef.current;
-    if (scrollNode) {
-      scrollNode.scrollTo({
-        top: scrollNode.scrollHeight - scrollNode.clientHeight,
-        behavior: "smooth",
-      });
-    }
+    if (!scrollNode) return undefined;
 
-    const rollTimer = window.setTimeout(() => setRollerPhase("complete"), 1600);
-    return () => window.clearTimeout(rollTimer);
+    const duration = 15000;
+    const target = Math.max(0, scrollNode.scrollHeight - scrollNode.clientHeight);
+    let animationFrame;
+    let startTime;
+
+    const roll = (time) => {
+      if (!startTime) startTime = time;
+      const elapsed = Math.min((time - startTime) / duration, 1);
+      const eased = elapsed < 0.5
+        ? 2 * elapsed * elapsed
+        : 1 - ((-2 * elapsed + 2) ** 2) / 2;
+
+      scrollNode.scrollTop = target * eased;
+
+      if (elapsed < 1) {
+        animationFrame = window.requestAnimationFrame(roll);
+      } else {
+        setRollerPhase("complete");
+      }
+    };
+
+    animationFrame = window.requestAnimationFrame(roll);
+    return () => window.cancelAnimationFrame(animationFrame);
   }, [active, rollerPhase]);
+
+  const isArtVisible = ["fading", "rolling", "complete"].includes(rollerPhase);
+  const isScrollReady = rollerPhase === "complete";
 
   return (
     <article className={`phone-frame ending-page roller-page ${active ? "is-active" : ""}`} id="roller" style={pageBgStyle("roller")}>
       <div
-        className={`ending-scroll roller-scroll ${rollerPhase === "complete" ? "is-scroll-ready" : "is-scroll-locked"}`}
+        className={`ending-scroll roller-scroll ${isScrollReady ? "is-scroll-ready" : "is-scroll-locked"}`}
         ref={rollerScrollRef}
         onScroll={(event) => {
         const element = event.currentTarget;
@@ -893,13 +933,13 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
         }}
       >
         <div className="roller-canvas">
-          <img className="roller-art" src={assetSrc("/assets/png-pages/Outro/roller.png")} alt="" />
-          <span className="ending-scroll-marker" aria-hidden="true" />
+          <img className={`roller-art ${isArtVisible ? "is-visible" : ""}`} src={assetSrc("/assets/png-pages/Outro/roller.png")} alt="" />
+          {isScrollReady && <span className="ending-scroll-marker" aria-hidden="true" />}
         </div>
       </div>
-      <header className="roller-header" aria-label="Re: 收到了。">
+      <header className="roller-header" aria-label={`Re: ${rollerReply}`}>
         {rollerPhase !== "idle" && <span className={`roller-re ${rollerPhase === "blinking" ? "is-blinking" : ""}`}>Re:</span>}
-        {(rollerPhase === "typing" || rollerPhase === "waiting" || rollerPhase === "rolling" || rollerPhase === "complete") && <span>{typedResponse}</span>}
+        {(["typing", "fading", "rolling", "complete"].includes(rollerPhase)) && <span>{typedResponse}</span>}
       </header>
       <JourneyBottomNav pageId="roller" progress={progress} />
     </article>
@@ -931,13 +971,42 @@ function VisualJourneyFrame({
   reCaption,
   imageRect,
   mountainLine,
+  dividerAnimation = false,
 }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
+  const [dividerPhase, setDividerPhase] = React.useState("idle");
+  const dividerLeaveTimerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!dividerAnimation) return undefined;
+
+    if (!active) {
+      setDividerPhase("idle");
+      return undefined;
+    }
+
+    if (dividerPhase === "idle") setDividerPhase("visible");
+    return undefined;
+  }, [active, dividerAnimation, dividerPhase]);
+
+  React.useEffect(() => () => window.clearTimeout(dividerLeaveTimerRef.current), []);
+
+  const handleDividerNext = (nextPageId) => {
+    if (dividerPhase === "leaving") return;
+    setDividerPhase("leaving");
+    dividerLeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 500);
+  };
+
+  const dividerArtClass = dividerAnimation
+    ? `section-divider-art ${dividerPhase === "visible" || dividerPhase === "leaving" ? "is-visible" : ""}`
+    : "";
 
   return (
-    <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
+    <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""} ${dividerPhase === "leaving" ? "is-divider-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       {imageRect ? (
-        <img className="visual-original visual-absolute" style={frameRectStyle(imageRect)} src={imageSrc} alt="" />
+        <img className={`visual-original visual-absolute ${dividerArtClass}`} style={frameRectStyle(imageRect)} src={imageSrc} alt="" />
       ) : (
         <div
           className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
@@ -948,7 +1017,7 @@ function VisualJourneyFrame({
             onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
           }}
         >
-          <img className={`visual-original visual-${fit}`} src={imageSrc} alt="" />
+          <img className={`visual-original visual-${fit} ${dividerArtClass}`} src={imageSrc} alt="" />
         </div>
       )}
       {mountainLine && (
@@ -974,7 +1043,7 @@ function VisualJourneyFrame({
         </header>
       )}
       {pageNumber && <p className="visual-page-number type-e">{pageNumber}</p>}
-      <JourneyBottomNav pageId={pageId} progress={progress} />
+      <JourneyBottomNav pageId={pageId} progress={progress} onNext={dividerAnimation ? handleDividerNext : undefined} />
     </article>
   );
 }
@@ -998,16 +1067,63 @@ function openingTextStyle(rect) {
 
 function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber, progress }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
+  const [phase, setPhase] = React.useState("idle");
+  const [typedTitle, setTypedTitle] = React.useState("");
+  const leaveTimerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!active) {
+      setPhase("idle");
+      setTypedTitle("");
+      return undefined;
+    }
+
+    if (phase !== "idle") return undefined;
+    setPhase("typing");
+    return undefined;
+  }, [active, phase]);
+
+  React.useEffect(() => {
+    if (!active || phase !== "typing") return undefined;
+
+    const characters = Array.from(title.text);
+    let characterIndex = 0;
+    const typeTimer = window.setInterval(() => {
+      characterIndex += 1;
+      setTypedTitle(characters.slice(0, characterIndex).join(""));
+      if (characterIndex === characters.length) {
+        window.clearInterval(typeTimer);
+        setPhase("art-visible");
+      }
+    }, 80);
+
+    return () => window.clearInterval(typeTimer);
+  }, [active, phase, title.text]);
+
+  React.useEffect(() => () => window.clearTimeout(leaveTimerRef.current), []);
+
+  const handleNext = (nextPageId) => {
+    if (phase === "leaving") return;
+    setPhase("leaving");
+    leaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 500);
+  };
+
+  const isArtworkVisible = phase === "art-visible" || phase === "leaving";
 
   return (
-    <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
-      <div className="opening-main-asset" style={frameRectStyle(art)}>
+    <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""} ${phase === "leaving" ? "is-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
+      <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""}`} style={frameRectStyle(art)}>
         <img src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
-      <p className="opening-title type-a2" style={openingTextStyle(title.rect)}>{title.text}</p>
+      <p className="opening-title type-a2" style={openingTextStyle(title.rect)} aria-label={title.text}>
+        <span className="opening-title-reserve" aria-hidden="true">{title.text}</span>
+        <span className="opening-title-typed" aria-hidden="true">{typedTitle}</span>
+      </p>
       <p className="opening-page-number type-e" style={openingTextStyle(pageNumber.rect)}>{pageNumber.text}</p>
-      <JourneyBottomNav pageId={pageId} progress={progress} />
+      <JourneyBottomNav pageId={pageId} progress={progress} onNext={handleNext} />
     </article>
   );
 }
@@ -1064,15 +1180,16 @@ function TextArticleFrame({ active, pageId, meta, title, body, bodyRect, label, 
 const visualPages = [
   { pageId: "page-3", image: "png-pages/intro/序.png" },
   { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK" },
-  { pageId: "page-4", image: "png-pages/荒原100/100.png" },
+  { pageId: "page-4", image: "png-pages/荒原100/100.png", dividerAnimation: true },
   { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found" },
-  { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png" },
+  { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png", dividerAnimation: true },
   { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes" },
   {
     pageId: "part-3-a",
     image: "png-pages/山 300/300.png",
     imageRect: { x: -8, y: 2, width: 410, height: 599 },
     mountainLine: { name: "Mountain_Line_01", x: 289, y: 77, length: 50, strokeWeight: 2 },
+    dividerAnimation: true,
   },
   {
     pageId: "part-3-b",

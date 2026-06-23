@@ -821,6 +821,20 @@ html {
   user-select: none;
 }
 
+.section-divider-art {
+  opacity: 0;
+  transition: opacity 0.8s ease-out, transform 0.5s ease-in;
+}
+
+.section-divider-art.is-visible {
+  opacity: 1;
+}
+
+.visual-frame.is-divider-leaving .section-divider-art {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
 .visual-cover {
   height: 100%;
   object-fit: cover;
@@ -872,7 +886,8 @@ html {
 }
 
 .roller-canvas {
-  aspect-ratio: 402 / 1930;
+  width: calc(403 / 402 * 100%);
+  aspect-ratio: 403 / 1930;
 }
 
 .outro-art-top,
@@ -1106,9 +1121,16 @@ html {
 }
 
 .roller-art {
-  inset: 0 auto auto 0;
-  width: calc(403 / 402 * 100%);
+  left: 0;
+  top: 0;
+  width: 100%;
   height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.roller-art.is-visible {
+  opacity: 1;
 }
 
 .roller-header {
@@ -1130,7 +1152,7 @@ html {
 }
 
 .roller-scroll {
-  top: calc(100 / 700 * 100%);
+  top: 0;
 }
 
 .roller-scroll.is-scroll-locked {
@@ -1327,6 +1349,7 @@ html {
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 1.96px;
+  position: relative;
 }
 
 .opening-page-number {
@@ -1338,6 +1361,8 @@ html {
 .opening-main-asset {
   z-index: 1;
   overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.8s ease-out, transform 0.5s ease-in;
 }
 
 .opening-main-asset img {
@@ -1345,6 +1370,25 @@ html {
   width: 100%;
   height: 100%;
   object-fit: fill;
+}
+
+.opening-main-asset.is-visible {
+  opacity: 1;
+}
+
+.opening-page-frame.is-leaving .opening-main-asset {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.opening-title-reserve {
+  visibility: hidden;
+}
+
+.opening-title-typed {
+  position: absolute;
+  inset: 0 auto auto 0;
+  white-space: nowrap;
 }
 
 .journey-bottom-nav {
