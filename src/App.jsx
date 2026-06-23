@@ -45,6 +45,7 @@ const journeyPages = [
   "article-3-05",
   "outro-road",
   "outro",
+  "end-msg-box",
   "roller",
   "back",
 ];
@@ -58,7 +59,7 @@ const PAGE_BG = {
   "article-1-01-cover": "#F2F2F2",
   "article-1-01": "#F8F8F8",
   "article-1-02-cover": "#E0FF00",
-  "article-1-02": "#E0FF00",
+  "article-1-02": "#F2F2F2",
   "re-001": "#E0FF00",
   "part-2": "#E0FF00",
   "article-2-01-cover": "#F8F8F8",
@@ -84,13 +85,22 @@ const PAGE_BG = {
   "article-3-05-cover": "#E0FF00",
   "article-3-05": "#F8F8F8",
   "outro-road": "#F8F8F8",
-  outro: "#E0FF00",
+  outro: "#F8F8F8",
+  "end-msg-box": "#F8F8F8",
   roller: "#F8F8F8",
   back: "#F8F8F8",
 };
 
 function pageBgStyle(pageId) {
-  return { "--page-bg": PAGE_BG[pageId] || "#F8F8F8" };
+  const pageBackground = PAGE_BG[pageId] || "#F8F8F8";
+  const bottomBarBackground = pageId === "part-3-a" || pageBackground === "#E0FF00"
+    ? "#E0FF00"
+    : "#F2F2F2";
+
+  return {
+    "--page-bg": pageBackground,
+    "--bottom-bar-bg": bottomBarBackground,
+  };
 }
 
 function getJourneyProgress(pageId, pageScrollProgress = 0) {
@@ -449,9 +459,9 @@ function articleBlockClass(block) {
 }
 
 function articleScrollStyle(bodyRect = {}) {
-  const left = bodyRect.x ?? 21;
+  const left = 25;
   const top = bodyRect.y ?? 93;
-  const width = bodyRect.width ?? 332;
+  const width = 332;
   return {
     paddingTop: `${Math.max(0, top - 69)}px`,
     paddingLeft: `${left}px`,
@@ -683,7 +693,7 @@ function Article101Frame({ active, progress, onScrollProgress }) {
 function JourneyBottomNav({ pageId, progress }) {
   const pageIndex = journeyPages.indexOf(pageId);
   const previous = pageIndex > 0 ? journeyPages[pageIndex - 1] : null;
-  const next = pageIndex < journeyPages.length - 1 ? journeyPages[pageIndex + 1] : null;
+  const next = pageId === "back" ? "home" : pageIndex < journeyPages.length - 1 ? journeyPages[pageIndex + 1] : null;
 
   return (
     <nav className="journey-bottom-nav" aria-label="旅程 navigation">
@@ -703,6 +713,78 @@ function JourneyBottomNav({ pageId, progress }) {
       </div>
       <p className="journey-passing">正在經過</p>
     </nav>
+  );
+}
+
+const outroCopy = `我確實是要出版這本小誌，作為我的思想備份，
+好讓十年後的我，能嘲笑今天自以為成熟的模樣。
+
+收集了近年的文章，一口氣把它們好好整理再重新校對，對我來說好比一場回憶走馬燈，勾起感悟的故事碎片映入眼簾。但如果我的文章所說一樣，故事並不重要，反正我們的故事也許雷同，因為我也不過平凡庸俗，吃喝作息，與人無異。可是我想，幸得平庸，才能在字裡行間悄悄地映照出各人共有的焦慮。
+
+果然，藝術是最後的避難所，用文字寫下對生活感悟，於別人眼中是作狀無比，但卻是為在夜裡不停輾轉反側，不能進睡的我，找到安穩的睡姿，作狀至極卻乃是我的救命藥方。`;
+
+function OutroFrame({ active, progress, onScrollProgress }) {
+  return (
+    <article className={`phone-frame ending-page outro-page ${active ? "is-active" : ""}`} id="outro" style={pageBgStyle("outro")}>
+      <div className="ending-scroll outro-scroll" onScroll={(event) => {
+        const element = event.currentTarget;
+        const distance = element.scrollHeight - element.clientHeight;
+        onScrollProgress(distance > 0 ? element.scrollTop / distance : 0);
+      }}>
+        <div className="outro-canvas">
+          <img className="outro-art-top" src={assetSrc("/assets/png-pages/Outro/out.png")} alt="" />
+          <span className="ending-scroll-marker" aria-hidden="true" />
+          <p className="outro-copy">{outroCopy}</p>
+          <img className="outro-art-bottom" src={assetSrc("/assets/journey/10.png")} alt="" />
+        </div>
+      </div>
+      <JourneyBottomNav pageId="outro" progress={progress} />
+    </article>
+  );
+}
+
+function EndMessageFrame({ active, progress }) {
+  const [message, setMessage] = React.useState("");
+
+  return (
+    <article className={`phone-frame ending-page end-message-page ${active ? "is-active" : ""}`} id="end-msg-box" style={pageBgStyle("end-msg-box")}>
+      <span className="ending-scroll-marker" aria-hidden="true" />
+      <p className="end-message-copy">獨立出版電子Zine，一腳踢完成，<br />假如你喜歡我的作品，歡迎隨緣課金，<br />讓筆者可以手維持生命。</p>
+      <button className="end-action end-payme" type="button">Payme 贊助一抹人間煙火</button>
+      <a className="end-action end-instagram" href="https://www.instagram.com/g.c.d___/" target="_blank" rel="noreferrer">Instargram</a>
+      <label className="end-message-label" htmlFor="end-message">你對作狀生活俱樂部的 Re：</label>
+      <textarea id="end-message" className="end-message-input" value={message} onChange={(event) => setMessage(event.target.value)} aria-label="你對作狀生活俱樂部的 Re" />
+      <a className="end-action end-send" href="#roller">Send</a>
+      <JourneyBottomNav pageId="end-msg-box" progress={progress} />
+    </article>
+  );
+}
+
+function RollerFrame({ active, progress, onScrollProgress }) {
+  return (
+    <article className={`phone-frame ending-page roller-page ${active ? "is-active" : ""}`} id="roller" style={pageBgStyle("roller")}>
+      <div className="ending-scroll roller-scroll" onScroll={(event) => {
+        const element = event.currentTarget;
+        const distance = element.scrollHeight - element.clientHeight;
+        onScrollProgress(distance > 0 ? element.scrollTop / distance : 0);
+      }}>
+        <div className="roller-canvas">
+          <img className="roller-art" src={assetSrc("/assets/png-pages/Outro/roller.png")} alt="" />
+          <span className="ending-scroll-marker" aria-hidden="true" />
+          <header className="roller-header">Re: 收到了。</header>
+        </div>
+      </div>
+      <JourneyBottomNav pageId="roller" progress={progress} />
+    </article>
+  );
+}
+
+function BackFrame({ active, progress }) {
+  return (
+    <article className={`phone-frame ending-page back-page ${active ? "is-active" : ""}`} id="back" style={pageBgStyle("back")}>
+      <img className="back-art" src={assetSrc("/assets/journey/end.png")} alt="" />
+      <JourneyBottomNav pageId="back" progress={progress} />
+    </article>
   );
 }
 
@@ -872,9 +954,6 @@ const visualPages = [
   },
   { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to..." },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
-  { pageId: "outro", image: "png-pages/Outro/out.png", fit: "contain" },
-  { pageId: "roller", image: "png-pages/Outro/roller.png", scrollable: true, fit: "width" },
-  { pageId: "back", image: "png-pages/Outro/Tilte.png", fit: "contain" },
 ];
 
 const openingPages = [
@@ -1013,6 +1092,10 @@ function App() {
           onScrollProgress={setPageScrollProgress}
         />
       ))}
+      <OutroFrame active={activePage === "outro"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
+      <EndMessageFrame active={activePage === "end-msg-box"} progress={journeyProgress} />
+      <RollerFrame active={activePage === "roller"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
+      <BackFrame active={activePage === "back"} progress={journeyProgress} />
       {openingPages.map((page) => (
         <OpeningPageFrame
           key={page.pageId}
