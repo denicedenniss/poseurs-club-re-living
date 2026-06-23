@@ -59,7 +59,7 @@ const PAGE_BG = {
   "article-1-01-cover": "#F2F2F2",
   "article-1-01": "#F8F8F8",
   "article-1-02-cover": "#E0FF00",
-  "article-1-02": "#F2F2F2",
+  "article-1-02": "#F8F8F8",
   "re-001": "#E0FF00",
   "part-2": "#E0FF00",
   "article-2-01-cover": "#F8F8F8",
@@ -716,8 +716,7 @@ function JourneyBottomNav({ pageId, progress }) {
   );
 }
 
-const outroCopy = `我確實是要出版這本小誌，作為我的思想備份，
-好讓十年後的我，能嘲笑今天自以為成熟的模樣。
+const outroCopy = `我確實是要出版這本小誌，作為我的思想備份，好讓十年後能嘲笑今天自以為成熟的模樣。
 
 收集了近年的文章，一口氣把它們好好整理再重新校對，對我來說好比一場回憶走馬燈，勾起感悟的故事碎片映入眼簾。但如果我的文章所說一樣，故事並不重要，反正我們的故事也許雷同，因為我也不過平凡庸俗，吃喝作息，與人無異。可是我想，幸得平庸，才能在字裡行間悄悄地映照出各人共有的焦慮。
 
@@ -748,10 +747,9 @@ function EndMessageFrame({ active, progress }) {
 
   return (
     <article className={`phone-frame ending-page end-message-page ${active ? "is-active" : ""}`} id="end-msg-box" style={pageBgStyle("end-msg-box")}>
-      <span className="ending-scroll-marker" aria-hidden="true" />
-      <p className="end-message-copy">獨立出版電子Zine，一腳踢完成，<br />假如你喜歡我的作品，歡迎隨緣課金，<br />讓筆者可以手維持生命。</p>
-      <button className="end-action end-payme" type="button">Payme 贊助一抹人間煙火</button>
-      <a className="end-action end-instagram" href="https://www.instagram.com/g.c.d___/" target="_blank" rel="noreferrer">Instargram</a>
+      <p className="end-message-copy">獨立出版電子Zine，一腳踢完成，<br />假如你喜歡我的作品，歡迎隨緣課金，<br />讓筆者可以維持生命。</p>
+      <button className="end-action end-payme" type="button"><span className="end-payme-brand">PayMe</span>{" "}贊助一抹人間煙火</button>
+      <a className="end-action end-instagram" href="https://www.instagram.com/g.c.d___/" target="_blank" rel="noreferrer">Instagram</a>
       <label className="end-message-label" htmlFor="end-message">你對作狀生活俱樂部的 Re：</label>
       <textarea id="end-message" className="end-message-input" value={message} onChange={(event) => setMessage(event.target.value)} aria-label="你對作狀生活俱樂部的 Re" />
       <a className="end-action end-send" href="#roller">Send</a>
@@ -761,19 +759,83 @@ function EndMessageFrame({ active, progress }) {
 }
 
 function RollerFrame({ active, progress, onScrollProgress }) {
+  const rollerScrollRef = React.useRef(null);
+  const [rollerPhase, setRollerPhase] = React.useState("idle");
+  const [typedResponse, setTypedResponse] = React.useState("");
+
+  React.useEffect(() => {
+    if (!active || rollerPhase !== "idle") return undefined;
+
+    setRollerPhase("blinking");
+    return undefined;
+  }, [active, rollerPhase]);
+
+  React.useEffect(() => {
+    if (!active || rollerPhase !== "blinking") return undefined;
+
+    const blinkTimer = window.setTimeout(() => setRollerPhase("typing"), 1000);
+    return () => window.clearTimeout(blinkTimer);
+  }, [active, rollerPhase]);
+
+  React.useEffect(() => {
+    if (!active || rollerPhase !== "typing") return undefined;
+
+    const response = "收到了。";
+    let length = 0;
+    const typeTimer = window.setInterval(() => {
+      length += 1;
+      setTypedResponse(response.slice(0, length));
+      if (length === response.length) {
+        window.clearInterval(typeTimer);
+        setRollerPhase("waiting");
+      }
+    }, 180);
+
+    return () => window.clearInterval(typeTimer);
+  }, [active, rollerPhase]);
+
+  React.useEffect(() => {
+    if (!active || rollerPhase !== "waiting") return undefined;
+
+    const delayTimer = window.setTimeout(() => setRollerPhase("rolling"), 1500);
+    return () => window.clearTimeout(delayTimer);
+  }, [active, rollerPhase]);
+
+  React.useEffect(() => {
+    if (!active || rollerPhase !== "rolling") return undefined;
+
+    const scrollNode = rollerScrollRef.current;
+    if (scrollNode) {
+      scrollNode.scrollTo({
+        top: scrollNode.scrollHeight - scrollNode.clientHeight,
+        behavior: "smooth",
+      });
+    }
+
+    const rollTimer = window.setTimeout(() => setRollerPhase("complete"), 1600);
+    return () => window.clearTimeout(rollTimer);
+  }, [active, rollerPhase]);
+
   return (
     <article className={`phone-frame ending-page roller-page ${active ? "is-active" : ""}`} id="roller" style={pageBgStyle("roller")}>
-      <div className="ending-scroll roller-scroll" onScroll={(event) => {
+      <div
+        className={`ending-scroll roller-scroll ${rollerPhase === "complete" ? "is-scroll-ready" : "is-scroll-locked"}`}
+        ref={rollerScrollRef}
+        onScroll={(event) => {
         const element = event.currentTarget;
         const distance = element.scrollHeight - element.clientHeight;
         onScrollProgress(distance > 0 ? element.scrollTop / distance : 0);
-      }}>
+        }}
+      >
         <div className="roller-canvas">
           <img className="roller-art" src={assetSrc("/assets/png-pages/Outro/roller.png")} alt="" />
           <span className="ending-scroll-marker" aria-hidden="true" />
-          <header className="roller-header">Re: 收到了。</header>
         </div>
       </div>
+      <header className="roller-header" aria-label="Re: 收到了。">
+        {rollerPhase !== "idle" && <span className={`roller-re ${rollerPhase === "blinking" ? "is-blinking" : ""}`}>Re:</span>}
+        {(rollerPhase === "typing" || rollerPhase === "waiting" || rollerPhase === "rolling" || rollerPhase === "complete") && <span>{typedResponse}</span>}
+      </header>
       <JourneyBottomNav pageId="roller" progress={progress} />
     </article>
   );
@@ -944,6 +1006,7 @@ const visualPages = [
   {
     pageId: "part-3-a",
     image: "png-pages/山 300/300.png",
+    imageRect: { x: -8, y: 2, width: 410, height: 599 },
     mountainLine: { name: "Mountain_Line_01", x: 289, y: 77, length: 50, strokeWeight: 2 },
   },
   {

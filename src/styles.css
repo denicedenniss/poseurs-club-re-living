@@ -872,7 +872,7 @@ html {
 }
 
 .roller-canvas {
-  aspect-ratio: 402 / 1893;
+  aspect-ratio: 402 / 1930;
 }
 
 .outro-art-top,
@@ -897,7 +897,7 @@ html {
 .outro-copy {
   position: absolute;
   left: calc(23 / 402 * 100%);
-  top: calc(234 / 1105 * 100%);
+  top: calc(254 / 1105 * 100%);
   width: calc(348 / 402 * 100%);
   height: calc(694 / 1105 * 100%);
   margin: 0;
@@ -935,12 +935,8 @@ html {
 }
 
 .roller-scroll .ending-scroll-marker {
-  top: calc(181 / 1893 * 100%);
-  height: calc(147 / 1893 * 100%);
-}
-
-.end-message-page > .ending-scroll-marker {
-  top: calc(181 / 700 * 100%);
+  top: calc(181 / 1930 * 100%);
+  height: calc(147 / 1930 * 100%);
 }
 
 .end-message-copy {
@@ -969,12 +965,17 @@ html {
   background: #e0ff00;
   color: #000000;
   font-family: var(--font-serif-hk);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   line-height: normal;
-  letter-spacing: 1.92px;
+  letter-spacing: 1.68px;
   text-align: center;
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.end-payme-brand {
+  font-weight: 700;
 }
 
 .end-payme,
@@ -1032,13 +1033,14 @@ html {
 .roller-art {
   inset: 0 auto auto 0;
   width: calc(403 / 402 * 100%);
-  height: calc(1930 / 1893 * 100%);
+  height: 100%;
 }
 
 .roller-header {
   position: absolute;
   inset: 0 0 auto;
-  height: calc(100 / 1893 * 100%);
+  z-index: 5;
+  height: calc(100 / 700 * 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1049,13 +1051,43 @@ html {
   font-weight: 700;
   line-height: 20px;
   letter-spacing: 2.24px;
+  pointer-events: none;
+}
+
+.roller-scroll {
+  top: calc(100 / 700 * 100%);
+}
+
+.roller-scroll.is-scroll-locked {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.roller-scroll.is-scroll-ready {
+  overflow-y: auto;
+}
+
+.roller-re.is-blinking {
+  animation: rollerReBlink 0.5s ease-in-out 2;
+}
+
+@keyframes rollerReBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
 }
 
 .back-art {
-  left: 0;
-  top: 0;
-  width: calc(403 / 402 * 100%);
-  height: calc(589 / 687 * 100%);
+  left: calc(-2 / 402 * 100%);
+  top: calc(-1 / 687 * 100%);
+  width: calc(406 / 402 * 100%);
+  height: calc(593 / 687 * 100%);
 }
 
 .back-page {
