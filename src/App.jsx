@@ -91,6 +91,8 @@ const PAGE_BG = {
   back: "#F8F8F8",
 };
 
+const GOOGLE_APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbx8gDT9KgLkz_3nHspJL-1LF93ciAMqmeFdFUIV8ZY8PkQmVW-fk_lTye7z-cgZhC3kxw/exec";
+
 function pageBgStyle(pageId) {
   const pageBackground = PAGE_BG[pageId] || "#F8F8F8";
   const bottomBarBackground = pageId === "part-3-a" || pageBackground === "#E0FF00"
@@ -690,7 +692,7 @@ function Article101Frame({ active, progress, onScrollProgress }) {
   );
 }
 
-function JourneyBottomNav({ pageId, progress }) {
+function JourneyBottomNav({ pageId, progress, disableNext = false }) {
   const pageIndex = journeyPages.indexOf(pageId);
   const previous = pageIndex > 0 ? journeyPages[pageIndex - 1] : null;
   const next = pageId === "back" ? "home" : pageIndex < journeyPages.length - 1 ? journeyPages[pageIndex + 1] : null;
@@ -702,10 +704,15 @@ function JourneyBottomNav({ pageId, progress }) {
           <img src="/assets/page4-back.svg" alt="" aria-hidden="true" />
         </a>
       )}
-      {next && (
+      {next && !disableNext && (
         <a className="journey-nav-button journey-next" href={`#${next}`} aria-label="下一頁">
           <img src="/assets/page4-next.svg" alt="" aria-hidden="true" />
         </a>
+      )}
+      {next && disableNext && (
+        <span className="journey-nav-button journey-next is-disabled" aria-label="請先送出留言" aria-disabled="true">
+          <img src="/assets/page4-next.svg" alt="" aria-hidden="true" />
+        </span>
       )}
       <div className="journey-progress-track" aria-hidden="true">
         <span className="journey-progress-fill" style={{ width: `${progress}%` }} />
@@ -742,10 +749,47 @@ function OutroFrame({ active, progress, onScrollProgress }) {
   );
 }
 
-function EndMessageFrame({ active, progress }) {
+function EndMessageFrame({ active, progress, onSubmitSuccess }) {
   const [name, setName] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const [submitState, setSubmitState] = React.useState("idle");
+  const successTimerRef = React.useRef(null);
   const messageCount = Array.from(message).length;
+  const hasMessage = message.trim().length > 0;
+
+  React.useEffect(() => () => window.clearTimeout(successTimerRef.current), []);
+
+  const handleMessageChange = (event) => {
+    const nextMessage = Array.from(event.target.value).slice(0, 500).join("");
+    setMessage(nextMessage);
+    if (submitState !== "submitting") setSubmitState("idle");
+  };
+
+  const handleSubmit = async () => {
+    if (!message.trim()) {
+      setSubmitState("validation");
+      return;
+    }
+
+    setSubmitState("submitting");
+
+    try {
+      const response = await fetch(GOOGLE_APPS_SCRIPT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=UTF-8" },
+        body: JSON.stringify({ name, message }),
+      });
+
+      if (!response.ok) throw new Error("Message submission failed");
+
+      setName("");
+      setMessage("");
+      setSubmitState("success");
+      successTimerRef.current = window.setTimeout(onSubmitSuccess, 1500);
+    } catch {
+      setSubmitState("error");
+    }
+  };
 
   return (
     <article className={`phone-frame ending-page end-message-page ${active ? "is-active" : ""}`} id="end-msg-box" style={pageBgStyle("end-msg-box")}>
@@ -758,7 +802,10 @@ function EndMessageFrame({ active, progress }) {
         className="end-name-input"
         type="text"
         value={name}
-        onChange={(event) => setName(event.target.value)}
+        onChange={(event) => {
+          setName(event.target.value);
+          if (submitState !== "submitting") setSubmitState("idle");
+        }}
         placeholder="你的名字/"
         aria-label="你的名字"
       />
@@ -767,26 +814,31 @@ function EndMessageFrame({ active, progress }) {
           id="end-message"
           className="end-message-input"
           value={message}
-          onChange={(event) => setMessage(event.target.value)}
+          onChange={handleMessageChange}
           placeholder="有些話未必要有答案"
           maxLength={500}
           aria-label="你對作狀生活俱樂部的 Re"
         />
         {messageCount > 0 && <output className="end-message-count">{messageCount} / 500</output>}
       </div>
-      <a className="end-action end-send" href="#roller">Send</a>
-      <JourneyBottomNav pageId="end-msg-box" progress={progress} />
+      <button className="end-action end-send" type="button" onClick={handleSubmit} disabled={!hasMessage || submitState === "submitting" || submitState === "success"}>
+        {submitState === "submitting" ? "Sending..." : "Send"}
+      </button>
+      {submitState === "validation" && <p className="end-submit-status is-error" role="alert">請寫下一些話再送出。</p>}
+      {submitState === "error" && <p className="end-submit-status is-error" role="alert">Re: 未送到，請再試一次。</p>}
+      {submitState === "success" && <p className="end-submit-status is-success" role="status">Re: 收到了。</p>}
+      <JourneyBottomNav pageId="end-msg-box" progress={progress} disableNext />
     </article>
   );
 }
 
-function RollerFrame({ active, progress, onScrollProgress }) {
+function RollerFrame({ active, progress, onScrollProgress, startToken }) {
   const rollerScrollRef = React.useRef(null);
   const [rollerPhase, setRollerPhase] = React.useState("idle");
   const [typedResponse, setTypedResponse] = React.useState("");
 
   React.useEffect(() => {
-    if (!active || rollerPhase !== "idle") return undefined;
+    if (!active || !startToken || rollerPhase !== "idle") return undefined;
 
     setRollerPhase("blinking");
     return undefined;
@@ -1151,12 +1203,17 @@ function useActivePage() {
 function App() {
   const activePage = useActivePage();
   const [pageScrollProgress, setPageScrollProgress] = React.useState(0);
+  const [rollerStartToken, setRollerStartToken] = React.useState(0);
 
   React.useEffect(() => {
     setPageScrollProgress(0);
   }, [activePage]);
 
   const journeyProgress = getJourneyProgress(activePage, pageScrollProgress);
+  const startRollerAfterMessage = React.useCallback(() => {
+    setRollerStartToken((token) => token + 1);
+    window.location.hash = "roller";
+  }, []);
 
   return (
     <main className="preview-page">
@@ -1178,8 +1235,8 @@ function App() {
         />
       ))}
       <OutroFrame active={activePage === "outro"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
-      <EndMessageFrame active={activePage === "end-msg-box"} progress={journeyProgress} />
-      <RollerFrame active={activePage === "roller"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
+      <EndMessageFrame active={activePage === "end-msg-box"} progress={journeyProgress} onSubmitSuccess={startRollerAfterMessage} />
+      <RollerFrame active={activePage === "roller"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} startToken={rollerStartToken} />
       <BackFrame active={activePage === "back"} progress={journeyProgress} />
       {openingPages.map((page) => (
         <OpeningPageFrame

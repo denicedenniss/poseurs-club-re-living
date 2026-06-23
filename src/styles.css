@@ -913,7 +913,7 @@ html {
 
 .outro-art-bottom {
   left: calc(14 / 402 * 100%);
-  top: calc(928 / 1105 * 100%);
+  top: calc(905 / 1105 * 100%);
   width: calc(375 / 402 * 100%);
   height: calc(166 / 1105 * 100%);
 }
@@ -942,7 +942,7 @@ html {
 .end-message-copy {
   position: absolute;
   left: calc(71 / 402 * 100%);
-  top: calc(79 / 700 * 100%);
+  top: calc(61 / 700 * 100%);
   width: calc(263 / 402 * 100%);
   height: calc(57 / 700 * 100%);
   margin: 0;
@@ -1072,6 +1072,37 @@ html {
   top: calc(547 / 700 * 100%);
   width: calc(347 / 402 * 100%);
   font-family: var(--font-serif-hk);
+  cursor: pointer;
+}
+
+.end-send:disabled {
+  border-color: #8b8b8b;
+  background: #bfbfbf;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.end-submit-status {
+  position: absolute;
+  top: calc(576 / 700 * 100%);
+  left: calc(27 / 402 * 100%);
+  width: calc(347 / 402 * 100%);
+  height: calc(20 / 700 * 100%);
+  margin: 0;
+  font-family: var(--font-serif-hk);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0.48px;
+  text-align: center;
+}
+
+.end-submit-status.is-error {
+  color: #9d1b1b;
+}
+
+.end-submit-status.is-success {
+  color: #000000;
 }
 
 .end-message-page .journey-bottom-nav {
@@ -1340,6 +1371,10 @@ html {
 .journey-nav-button:active {
   filter: invert(1);
   transform: scale(0.94);
+}
+
+.journey-nav-button.is-disabled {
+  pointer-events: none;
 }
 
 .journey-nav-button img {
