@@ -823,7 +823,7 @@ html {
 
 .section-divider-art {
   opacity: 0;
-  transition: opacity 0.8s ease-out, transform 0.5s ease-in;
+  transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .section-divider-art.is-visible {
@@ -832,7 +832,7 @@ html {
 
 .visual-frame.is-divider-leaving .section-divider-art {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(24px);
 }
 
 .visual-cover {
@@ -1126,7 +1126,7 @@ html {
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .roller-art.is-visible {
@@ -1350,6 +1350,7 @@ html {
   line-height: 20px;
   letter-spacing: 1.96px;
   position: relative;
+  transform: none;
 }
 
 .opening-page-number {
@@ -1362,7 +1363,7 @@ html {
   z-index: 1;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 0.8s ease-out, transform 0.5s ease-in;
+  transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .opening-main-asset img {
@@ -1378,7 +1379,7 @@ html {
 
 .opening-page-frame.is-leaving .opening-main-asset {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(24px);
 }
 
 .opening-title-reserve {
@@ -1387,7 +1388,9 @@ html {
 
 .opening-title-typed {
   position: absolute;
-  inset: 0 auto auto 0;
+  inset: 0;
+  width: 100%;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -1548,6 +1551,20 @@ html {
   padding: 24px 29px 36px 21px;
   scrollbar-color: #e0ff00 transparent;
   scrollbar-width: thin;
+}
+
+.phone-frame.is-active .article-content-fade {
+  animation: articleContentFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes articleContentFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .text-article-scroll::-webkit-scrollbar {

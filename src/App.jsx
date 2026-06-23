@@ -674,7 +674,7 @@ function Article101Frame({ active, progress, onScrollProgress }) {
         <p className="text-article-title type-a2">{article101.title}</p>
       </header>
       <section
-        className="text-article-scroll"
+        className="text-article-scroll article-content-fade"
         aria-label="港島散步正文"
         style={articleScrollStyle(article101.bodyRect)}
         onScroll={(event) => {
@@ -875,7 +875,7 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
         window.clearInterval(typeTimer);
         setRollerPhase("fading");
       }
-    }, 180);
+    }, 100);
 
     return () => window.clearInterval(typeTimer);
   }, [active, rollerPhase]);
@@ -883,7 +883,7 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
   React.useEffect(() => {
     if (!active || rollerPhase !== "fading") return undefined;
 
-    const fadeTimer = window.setTimeout(() => setRollerPhase("rolling"), 800);
+    const fadeTimer = window.setTimeout(() => setRollerPhase("rolling"), 1200);
     return () => window.clearTimeout(fadeTimer);
   }, [active, rollerPhase]);
 
@@ -996,7 +996,7 @@ function VisualJourneyFrame({
     setDividerPhase("leaving");
     dividerLeaveTimerRef.current = window.setTimeout(() => {
       window.location.hash = nextPageId;
-    }, 500);
+    }, 900);
   };
 
   const dividerArtClass = dividerAnimation
@@ -1065,6 +1065,15 @@ function openingTextStyle(rect) {
   };
 }
 
+function openingTitleStyle(rect) {
+  return {
+    left: `${(rect.x / 402) * 100}%`,
+    top: `${(rect.y / 700) * 100}%`,
+    width: `${(rect.width / 402) * 100}%`,
+    height: `${(rect.height / 700) * 100}%`,
+  };
+}
+
 function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber, progress }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
   const [phase, setPhase] = React.useState("idle");
@@ -1095,7 +1104,7 @@ function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber,
         window.clearInterval(typeTimer);
         setPhase("art-visible");
       }
-    }, 80);
+    }, 100);
 
     return () => window.clearInterval(typeTimer);
   }, [active, phase, title.text]);
@@ -1107,7 +1116,7 @@ function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber,
     setPhase("leaving");
     leaveTimerRef.current = window.setTimeout(() => {
       window.location.hash = nextPageId;
-    }, 500);
+    }, 900);
   };
 
   const isArtworkVisible = phase === "art-visible" || phase === "leaving";
@@ -1118,7 +1127,7 @@ function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber,
         <img src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
-      <p className="opening-title type-a2" style={openingTextStyle(title.rect)} aria-label={title.text}>
+      <p className="opening-title type-a2" style={openingTitleStyle(title.rect)} aria-label={title.text}>
         <span className="opening-title-reserve" aria-hidden="true">{title.text}</span>
         <span className="opening-title-typed" aria-hidden="true">{typedTitle}</span>
       </p>
@@ -1159,7 +1168,7 @@ function TextArticleFrame({ active, pageId, meta, title, body, bodyRect, label, 
         <p className="text-article-title type-a2">{title}</p>
       </header>
       <section
-        className="text-article-scroll"
+        className="text-article-scroll article-content-fade"
         aria-label={label}
         style={articleScrollStyle(bodyRect)}
         onScroll={(event) => {
