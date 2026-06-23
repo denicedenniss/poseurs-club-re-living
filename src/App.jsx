@@ -743,7 +743,9 @@ function OutroFrame({ active, progress, onScrollProgress }) {
 }
 
 function EndMessageFrame({ active, progress }) {
+  const [name, setName] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const messageCount = Array.from(message).length;
 
   return (
     <article className={`phone-frame ending-page end-message-page ${active ? "is-active" : ""}`} id="end-msg-box" style={pageBgStyle("end-msg-box")}>
@@ -751,7 +753,27 @@ function EndMessageFrame({ active, progress }) {
       <button className="end-action end-payme" type="button"><span className="end-payme-brand">PayMe</span>{" "}贊助一抹人間煙火</button>
       <a className="end-action end-instagram" href="https://www.instagram.com/g.c.d___/" target="_blank" rel="noreferrer">Instagram</a>
       <label className="end-message-label" htmlFor="end-message">你對作狀生活俱樂部的 Re：</label>
-      <textarea id="end-message" className="end-message-input" value={message} onChange={(event) => setMessage(event.target.value)} aria-label="你對作狀生活俱樂部的 Re" />
+      <input
+        id="end-name"
+        className="end-name-input"
+        type="text"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        placeholder="你的名字/"
+        aria-label="你的名字"
+      />
+      <div className="end-message-field">
+        <textarea
+          id="end-message"
+          className="end-message-input"
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          placeholder="有些話未必要有答案"
+          maxLength={500}
+          aria-label="你對作狀生活俱樂部的 Re"
+        />
+        {messageCount > 0 && <output className="end-message-count">{messageCount} / 500</output>}
+      </div>
       <a className="end-action end-send" href="#roller">Send</a>
       <JourneyBottomNav pageId="end-msg-box" progress={progress} />
     </article>

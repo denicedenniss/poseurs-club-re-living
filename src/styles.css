@@ -995,8 +995,8 @@ html {
 
 .end-message-label {
   position: absolute;
-  left: calc(27 / 402 * 100%);
-  top: calc(263 / 700 * 100%);
+  left: calc(23 / 402 * 100%);
+  top: calc(249 / 700 * 100%);
   width: calc(223 / 402 * 100%);
   height: calc(21 / 700 * 100%);
   color: #000000;
@@ -1007,27 +1007,75 @@ html {
   letter-spacing: 0.56px;
 }
 
+.end-name-input,
 .end-message-input {
-  position: absolute;
-  left: calc(27 / 402 * 100%);
-  top: calc(292 / 700 * 100%);
-  width: calc(347 / 402 * 100%);
-  height: calc(226 / 700 * 100%);
-  resize: none;
-  border: 0.5px solid #070102;
+  width: 100%;
+  border: 0;
   border-radius: 0;
   background: #ffffff;
   color: #000000;
-  font: inherit;
-  padding: 8px;
+  font-family: var(--font-serif-hk);
+  font-size: 14.6667px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0;
   outline-offset: -2px;
+}
+
+.end-name-input {
+  position: absolute;
+  left: calc(27 / 402 * 100%);
+  top: calc(277 / 700 * 100%);
+  width: calc(347 / 402 * 100%);
+  height: calc(29 / 700 * 100%);
+  border: 0.5px solid #070102;
+  padding: 4px 8px;
+}
+
+.end-message-field {
+  position: absolute;
+  left: calc(27 / 402 * 100%);
+  top: calc(312 / 700 * 100%);
+  width: calc(347 / 402 * 100%);
+  height: calc(228 / 700 * 100%);
+  border: 0.5px solid #070102;
+  background: #ffffff;
+}
+
+.end-message-input {
+  display: block;
+  height: 100%;
+  resize: none;
+  padding: 8px 8px 28px;
+}
+
+.end-name-input::placeholder,
+.end-message-input::placeholder {
+  color: #bfbfbf;
+  opacity: 1;
+}
+
+.end-message-count {
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  color: #bfbfbf;
+  font-family: var(--font-serif-hk);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  pointer-events: none;
 }
 
 .end-send {
   left: calc(27 / 402 * 100%);
-  top: calc(531 / 700 * 100%);
+  top: calc(547 / 700 * 100%);
   width: calc(347 / 402 * 100%);
   font-family: var(--font-serif-hk);
+}
+
+.end-message-page .journey-bottom-nav {
+  background: #ffffff;
 }
 
 .roller-art {
