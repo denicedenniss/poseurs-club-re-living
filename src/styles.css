@@ -941,9 +941,9 @@ html {
 
 .end-message-copy {
   position: absolute;
-  left: calc(71 / 402 * 100%);
+  left: calc(27 / 402 * 100%);
   top: calc(61 / 700 * 100%);
-  width: calc(263 / 402 * 100%);
+  width: calc(349 / 402 * 100%);
   height: calc(57 / 700 * 100%);
   margin: 0;
   color: #000000;
@@ -1099,10 +1099,6 @@ html {
 
 .end-submit-status.is-error {
   color: #9d1b1b;
-}
-
-.end-submit-status.is-success {
-  color: #000000;
 }
 
 .end-message-page .journey-bottom-nav {

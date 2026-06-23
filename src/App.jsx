@@ -753,11 +753,8 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
   const [name, setName] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [submitState, setSubmitState] = React.useState("idle");
-  const successTimerRef = React.useRef(null);
   const messageCount = Array.from(message).length;
   const hasMessage = message.trim().length > 0;
-
-  React.useEffect(() => () => window.clearTimeout(successTimerRef.current), []);
 
   const handleMessageChange = (event) => {
     const nextMessage = Array.from(event.target.value).slice(0, 500).join("");
@@ -767,7 +764,6 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
 
   const handleSubmit = async () => {
     if (!message.trim()) {
-      setSubmitState("validation");
       return;
     }
 
@@ -782,10 +778,7 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
 
       if (!response.ok) throw new Error("Message submission failed");
 
-      setName("");
-      setMessage("");
-      setSubmitState("success");
-      successTimerRef.current = window.setTimeout(onSubmitSuccess, 1500);
+      onSubmitSuccess();
     } catch {
       setSubmitState("error");
     }
@@ -821,12 +814,10 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
         />
         {messageCount > 0 && <output className="end-message-count">{messageCount} / 500</output>}
       </div>
-      <button className="end-action end-send" type="button" onClick={handleSubmit} disabled={!hasMessage || submitState === "submitting" || submitState === "success"}>
+      <button className="end-action end-send" type="button" onClick={handleSubmit} disabled={!hasMessage || submitState === "submitting"}>
         {submitState === "submitting" ? "Sending..." : "Send"}
       </button>
-      {submitState === "validation" && <p className="end-submit-status is-error" role="alert">請寫下一些話再送出。</p>}
       {submitState === "error" && <p className="end-submit-status is-error" role="alert">Re: 未送到，請再試一次。</p>}
-      {submitState === "success" && <p className="end-submit-status is-success" role="status">Re: 收到了。</p>}
       <JourneyBottomNav pageId="end-msg-box" progress={progress} disableNext />
     </article>
   );
