@@ -666,6 +666,66 @@ function ArticleBottomNav({ previous, next, progress = 0 }) {
   );
 }
 
+function ReTypingLabel({ text, active, onComplete }) {
+  const [phase, setPhase] = React.useState("idle");
+  const [typedTail, setTypedTail] = React.useState("");
+  const prefix = "Re:";
+  const tail = text.startsWith(prefix) ? text.slice(prefix.length) : text;
+
+  React.useEffect(() => {
+    if (!active) {
+      setPhase("idle");
+      setTypedTail("");
+      return undefined;
+    }
+
+    if (phase === "idle") setPhase("blinking");
+    return undefined;
+  }, [active, phase]);
+
+  React.useEffect(() => {
+    if (!active || phase !== "blinking") return undefined;
+
+    const blinkTimer = window.setTimeout(() => setPhase("pause"), 1000);
+    return () => window.clearTimeout(blinkTimer);
+  }, [active, phase]);
+
+  React.useEffect(() => {
+    if (!active || phase !== "pause") return undefined;
+
+    const pauseTimer = window.setTimeout(() => setPhase("typing"), 250);
+    return () => window.clearTimeout(pauseTimer);
+  }, [active, phase]);
+
+  React.useEffect(() => {
+    if (!active || phase !== "typing") return undefined;
+
+    const characters = Array.from(tail);
+    let characterIndex = 0;
+    const typeTimer = window.setInterval(() => {
+      characterIndex += 1;
+      setTypedTail(characters.slice(0, characterIndex).join(""));
+      if (characterIndex === characters.length) {
+        window.clearInterval(typeTimer);
+        setPhase("complete");
+        onComplete?.();
+      }
+    }, 100);
+
+    return () => window.clearInterval(typeTimer);
+  }, [active, onComplete, phase, tail]);
+
+  return (
+    <span className="re-typing-label" aria-label={text}>
+      <span className="re-typing-reserve" aria-hidden="true">{text}</span>
+      <span className="re-typing-live" aria-hidden="true">
+        {active && <span className={`re-typing-prefix ${phase === "blinking" ? "is-blinking" : ""}`}>{prefix}</span>}
+        {(["typing", "complete"].includes(phase)) && typedTail}
+      </span>
+    </span>
+  );
+}
+
 function Article101Frame({ active, progress, onScrollProgress }) {
   return (
     <article className={`phone-frame article-frame ${active ? "is-active" : ""}`} data-node-id="109:338" id="article-1-01" style={pageBgStyle("article-1-01")}>
@@ -827,7 +887,7 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
         {submitState === "submitting" ? "Sending..." : "Send"}
       </button>
       {submitState === "error" && <p className="end-submit-status is-error" role="alert">Re: 未送到，請再試一次。</p>}
-      <JourneyBottomNav pageId="end-msg-box" progress={progress} disableNext />
+      <JourneyBottomNav pageId="end-msg-box" progress={progress} />
     </article>
   );
 }
@@ -836,13 +896,11 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
   const rollerScrollRef = React.useRef(null);
   const handledSendTokenRef = React.useRef(0);
   const [rollerPhase, setRollerPhase] = React.useState("idle");
-  const [typedResponse, setTypedResponse] = React.useState("");
   const [rollerReply, setRollerReply] = React.useState("再見。");
 
   React.useEffect(() => {
     if (!active) {
       setRollerPhase("idle");
-      setTypedResponse("");
       return undefined;
     }
 
@@ -852,38 +910,14 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
     if (enteredAfterSend) handledSendTokenRef.current = startToken;
 
     setRollerReply(enteredAfterSend ? "收到了。" : "再見。");
-    setRollerPhase("blinking");
+    setRollerPhase("intro");
     return undefined;
   }, [active, rollerPhase, startToken]);
 
   React.useEffect(() => {
-    if (!active || rollerPhase !== "blinking") return undefined;
-
-    const blinkTimer = window.setTimeout(() => setRollerPhase("typing"), 1000);
-    return () => window.clearTimeout(blinkTimer);
-  }, [active, rollerPhase]);
-
-  React.useEffect(() => {
-    if (!active || rollerPhase !== "typing") return undefined;
-
-    const response = rollerReply;
-    let length = 0;
-    const typeTimer = window.setInterval(() => {
-      length += 1;
-      setTypedResponse(response.slice(0, length));
-      if (length === response.length) {
-        window.clearInterval(typeTimer);
-        setRollerPhase("fading");
-      }
-    }, 100);
-
-    return () => window.clearInterval(typeTimer);
-  }, [active, rollerPhase]);
-
-  React.useEffect(() => {
     if (!active || rollerPhase !== "fading") return undefined;
 
-    const fadeTimer = window.setTimeout(() => setRollerPhase("rolling"), 1200);
+    const fadeTimer = window.setTimeout(() => setRollerPhase("rolling"), 2000);
     return () => window.clearTimeout(fadeTimer);
   }, [active, rollerPhase]);
 
@@ -893,7 +927,7 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
     const scrollNode = rollerScrollRef.current;
     if (!scrollNode) return undefined;
 
-    const duration = 15000;
+    const duration = 20000;
     const target = Math.max(0, scrollNode.scrollHeight - scrollNode.clientHeight);
     let animationFrame;
     let startTime;
@@ -901,11 +935,7 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
     const roll = (time) => {
       if (!startTime) startTime = time;
       const elapsed = Math.min((time - startTime) / duration, 1);
-      const eased = elapsed < 0.5
-        ? 2 * elapsed * elapsed
-        : 1 - ((-2 * elapsed + 2) ** 2) / 2;
-
-      scrollNode.scrollTop = target * eased;
+      scrollNode.scrollTop = target * elapsed;
 
       if (elapsed < 1) {
         animationFrame = window.requestAnimationFrame(roll);
@@ -938,8 +968,13 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
         </div>
       </div>
       <header className="roller-header" aria-label={`Re: ${rollerReply}`}>
-        {rollerPhase !== "idle" && <span className={`roller-re ${rollerPhase === "blinking" ? "is-blinking" : ""}`}>Re:</span>}
-        {(["typing", "fading", "rolling", "complete"].includes(rollerPhase)) && <span>{typedResponse}</span>}
+        {rollerPhase !== "idle" && (
+          <ReTypingLabel
+            text={`Re: ${rollerReply}`}
+            active={active && rollerPhase !== "idle"}
+            onComplete={() => setRollerPhase("fading")}
+          />
+        )}
       </header>
       <JourneyBottomNav pageId="roller" progress={progress} />
     </article>
@@ -1034,8 +1069,12 @@ function VisualJourneyFrame({
         />
       )}
       {captionTop && <p className="start-caption start-caption-top">{captionTop}</p>}
-      {captionBottom && <p className="start-caption start-caption-bottom">{captionBottom}</p>}
-      {reCaption && <p className="re-caption">{reCaption}</p>}
+      {captionBottom && (
+        <p className="start-caption start-caption-bottom">
+          {captionBottom.startsWith("Re:") ? <ReTypingLabel text={captionBottom} active={active} /> : captionBottom}
+        </p>
+      )}
+      {reCaption && <p className="re-caption"><ReTypingLabel text={reCaption} active={active} /></p>}
       {(coverHeaderMeta || coverHeaderTitle) && (
         <header className="visual-cover-header">
           {coverHeaderMeta && <p className="visual-cover-meta type-a1">{coverHeaderMeta}</p>}

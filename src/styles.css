@@ -1126,7 +1126,7 @@ html {
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .roller-art.is-visible {
@@ -1165,11 +1165,31 @@ html {
   overflow-y: auto;
 }
 
-.roller-re.is-blinking {
-  animation: rollerReBlink 0.5s ease-in-out 2;
+.re-typing-label {
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
 }
 
-@keyframes rollerReBlink {
+.re-typing-reserve {
+  display: block;
+  visibility: hidden;
+}
+
+.re-typing-live {
+  position: absolute;
+  inset: 0;
+  display: block;
+  text-align: inherit;
+  white-space: nowrap;
+}
+
+.re-typing-prefix.is-blinking {
+  display: inline-block;
+  animation: rePrefixBlink 0.5s ease-in-out 2;
+}
+
+@keyframes rePrefixBlink {
   0%,
   100% {
     opacity: 1;
@@ -1554,16 +1574,18 @@ html {
 }
 
 .phone-frame.is-active .article-content-fade {
-  animation: articleContentFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: articleContentFadeIn 2s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes articleContentFadeIn {
   from {
     opacity: 0;
+    transform: translateY(-20px);
   }
 
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
