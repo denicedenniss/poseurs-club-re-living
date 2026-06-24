@@ -990,27 +990,6 @@ function BackFrame({ active, progress }) {
   );
 }
 
-function Re003VideoFrame({ active, progress }) {
-  return (
-    <article className={`phone-frame visual-frame visual-frame-re-003 ${active ? "is-active" : ""}`} id="re-003" style={pageBgStyle("re-003")}>
-      <div className="visual-stage">
-        <video
-          key={active ? "re003-active" : "re003-inactive"}
-          className="visual-original visual-contain re003-video"
-          src={assetSrc("/assets/png-pages/Re003.webm")}
-          autoPlay={active}
-          muted
-          playsInline
-          preload="auto"
-          aria-label="Re003 動畫"
-        />
-      </div>
-      <p className="re-caption"><ReTypingLabel text="Re: I look forward to..." active={active} /></p>
-      <JourneyBottomNav pageId="re-003" progress={progress} />
-    </article>
-  );
-}
-
 function VisualJourneyFrame({
   active,
   pageId,
@@ -1028,10 +1007,17 @@ function VisualJourneyFrame({
   imageRect,
   mountainLine,
   dividerAnimation = false,
+  sequenceAnimation = false,
+  curtainReveal = false,
+  mirageAnimation = false,
 }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
   const [dividerPhase, setDividerPhase] = React.useState("idle");
+  const [sequencePhase, setSequencePhase] = React.useState("idle");
+  const [miragePhase, setMiragePhase] = React.useState("idle");
   const dividerLeaveTimerRef = React.useRef(null);
+  const sequenceLeaveTimerRef = React.useRef(null);
+  const mirageLeaveTimerRef = React.useRef(null);
 
   React.useEffect(() => {
     if (!dividerAnimation) return undefined;
@@ -1046,6 +1032,20 @@ function VisualJourneyFrame({
   }, [active, dividerAnimation, dividerPhase]);
 
   React.useEffect(() => () => window.clearTimeout(dividerLeaveTimerRef.current), []);
+  React.useEffect(() => () => window.clearTimeout(sequenceLeaveTimerRef.current), []);
+  React.useEffect(() => () => window.clearTimeout(mirageLeaveTimerRef.current), []);
+
+  React.useEffect(() => {
+    if (!sequenceAnimation || active) return undefined;
+    setSequencePhase("idle");
+    return undefined;
+  }, [active, sequenceAnimation]);
+
+  React.useEffect(() => {
+    if (!mirageAnimation || active) return undefined;
+    setMiragePhase("idle");
+    return undefined;
+  }, [active, mirageAnimation]);
 
   const handleDividerNext = (nextPageId) => {
     if (dividerPhase === "leaving") return;
@@ -1055,8 +1055,31 @@ function VisualJourneyFrame({
     }, 900);
   };
 
+  const handleSequenceNext = (nextPageId) => {
+    if (sequencePhase === "leaving") return;
+    setSequencePhase("leaving");
+    sequenceLeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 1500);
+  };
+
+  const handleMirageNext = (nextPageId) => {
+    if (miragePhase === "leaving") return;
+    setMiragePhase("leaving");
+    mirageLeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 2000);
+  };
+
   const dividerArtClass = dividerAnimation
     ? `section-divider-art ${dividerPhase === "visible" || dividerPhase === "leaving" ? "is-visible" : ""}`
+    : "";
+  const sequenceArtClass = sequenceAnimation && active
+    ? `animate__animated ${sequencePhase === "leaving" ? "animate__flipOutX" : "animate__flipInX"}`
+    : "";
+  const curtainArtClass = curtainReveal && active ? "zine-curtain-reveal" : "";
+  const mirageArtClass = mirageAnimation && active
+    ? `zine-mirage-${miragePhase === "leaving" ? "exit" : "enter"}`
     : "";
 
   return (
@@ -1073,7 +1096,7 @@ function VisualJourneyFrame({
             onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
           }}
         >
-          <img className={`visual-original visual-${fit} ${dividerArtClass}`} src={imageSrc} alt="" />
+          <img className={`visual-original visual-${fit} ${dividerArtClass} ${sequenceArtClass} ${curtainArtClass} ${mirageArtClass}`} src={imageSrc} alt="" />
         </div>
       )}
       {mountainLine && (
@@ -1103,7 +1126,11 @@ function VisualJourneyFrame({
         </header>
       )}
       {pageNumber && <p className="visual-page-number type-e">{pageNumber}</p>}
-      <JourneyBottomNav pageId={pageId} progress={progress} onNext={dividerAnimation ? handleDividerNext : undefined} />
+      <JourneyBottomNav
+        pageId={pageId}
+        progress={progress}
+        onNext={sequenceAnimation ? handleSequenceNext : mirageAnimation ? handleMirageNext : dividerAnimation ? handleDividerNext : undefined}
+      />
     </article>
   );
 }
@@ -1134,7 +1161,7 @@ function openingTitleStyle(rect) {
   };
 }
 
-function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber, progress }) {
+function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber, progress, flipArtwork = false }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
   const [phase, setPhase] = React.useState("idle");
   const [typedTitle, setTypedTitle] = React.useState("");
@@ -1176,15 +1203,18 @@ function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber,
     setPhase("leaving");
     leaveTimerRef.current = window.setTimeout(() => {
       window.location.hash = nextPageId;
-    }, 900);
+    }, flipArtwork ? 2000 : 900);
   };
 
   const isArtworkVisible = phase === "art-visible" || phase === "leaving";
+  const flipArtworkClass = flipArtwork && isArtworkVisible
+    ? `animate__animated ${phase === "leaving" ? "opening-asset-flip-out animate__flipOutX" : "animate__flipInX"}`
+    : "";
 
   return (
     <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""} ${phase === "leaving" ? "is-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""}`} style={frameRectStyle(art)}>
-        <img src={imageSrc} alt="" />
+        <img className={flipArtworkClass} src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
       <p className="opening-title type-a2" style={openingTitleStyle(title.rect)} aria-label={title.text}>
@@ -1247,11 +1277,11 @@ function TextArticleFrame({ active, pageId, meta, title, body, bodyRect, label, 
 }
 
 const visualPages = [
-  { pageId: "page-3", image: "png-pages/intro/序.png" },
-  { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK" },
+  { pageId: "page-3", image: "png-pages/intro/序.png", sequenceAnimation: true },
+  { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK", curtainReveal: true },
   { pageId: "page-4", image: "png-pages/荒原100/100.png", dividerAnimation: true },
   { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found" },
-  { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png", dividerAnimation: true },
+  { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png", dividerAnimation: true, mirageAnimation: true },
   { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes" },
   {
     pageId: "part-3-a",
@@ -1266,6 +1296,7 @@ const visualPages = [
     imageRect: { x: 140, y: 185, width: 121, height: 270 },
     mountainLine: { name: "Mountain_Line_02", x: 255, y: 390, length: 50, strokeWeight: 1 },
   },
+  { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to..." },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
 ];
 
@@ -1297,6 +1328,7 @@ const openingPages = [
   {
     pageId: "article-2-02-cover",
     image: "png-pages/海市蜃樓 200/202.png",
+    flipArtwork: true,
     art: { x: -9, y: 19, width: 421, height: 616 },
     meta: { text: "第二部 · 海市蜃樓 / 2.02", rect: { x: 137, y: 91, width: 130, height: 20 } },
     title: { text: "《此日期前悲傷》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1376,6 +1408,50 @@ function useActivePage() {
   return activePage;
 }
 
+function ZineAnimationStyles() {
+  return (
+    <style>{`
+      .animate__animated { animation-duration: 1.5s; animation-fill-mode: both; }
+      .animate__flipInX { animation-name: flipInX; backface-visibility: visible !important; }
+      .animate__flipOutX { animation-name: flipOutX; backface-visibility: visible !important; }
+      .opening-asset-flip-out { animation-duration: 2s !important; }
+      .zine-curtain-reveal { animation: curtainRevealTopDown 5s linear both; }
+      .zine-mirage-enter { animation: mirageEnter 3.02s linear both; }
+      .zine-mirage-exit { animation: mirageExit 2s ease-in-out both; pointer-events: none; }
+      @keyframes flipInX {
+        from { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); animation-timing-function: ease-in; opacity: 0; }
+        40% { transform: perspective(400px) rotate3d(1, 0, 0, -20deg); animation-timing-function: ease-in; }
+        60% { transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1; }
+        80% { transform: perspective(400px) rotate3d(1, 0, 0, -5deg); }
+        to { transform: perspective(400px); }
+      }
+      @keyframes flipOutX {
+        from { transform: perspective(400px); }
+        30% { transform: perspective(400px) rotate3d(1, 0, 0, -20deg); opacity: 1; }
+        to { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); opacity: 0; }
+      }
+      @keyframes curtainRevealTopDown {
+        from { clip-path: inset(0 0 100% 0); }
+        to { clip-path: inset(0 0 0 0); }
+      }
+      @keyframes mirageEnter {
+        0% { opacity: 0; filter: blur(22px); }
+        2% { opacity: 1; filter: blur(22px); }
+        4% { opacity: 0; filter: blur(22px); }
+        11% { opacity: 1; filter: blur(22px); }
+        19% { opacity: 0; filter: blur(22px); }
+        26% { opacity: 1; filter: blur(22px); }
+        34% { opacity: 0.12; filter: blur(22px); }
+        100% { opacity: 1; filter: blur(0); }
+      }
+      @keyframes mirageExit {
+        from { opacity: 1; filter: blur(0); }
+        to { opacity: 0; filter: blur(22px); }
+      }
+    `}</style>
+  );
+}
+
 function App() {
   const activePage = useActivePage();
   const [pageScrollProgress, setPageScrollProgress] = React.useState(0);
@@ -1393,6 +1469,7 @@ function App() {
 
   return (
     <main className="preview-page">
+      <ZineAnimationStyles />
       <h1 className="sr-only">作狀生活俱樂部</h1>
       <HomeFrame active={activePage === "home"} />
       <PageTwoFrame active={activePage === "page-2"} />
@@ -1410,7 +1487,6 @@ function App() {
           onScrollProgress={setPageScrollProgress}
         />
       ))}
-      <Re003VideoFrame active={activePage === "re-003"} progress={journeyProgress} />
       <OutroFrame active={activePage === "outro"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
       <EndMessageFrame active={activePage === "end-msg-box"} progress={journeyProgress} onSubmitSuccess={startRollerAfterMessage} />
       <RollerFrame active={activePage === "roller"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} startToken={rollerStartToken} />
