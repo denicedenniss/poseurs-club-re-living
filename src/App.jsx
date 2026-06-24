@@ -990,6 +990,27 @@ function BackFrame({ active, progress }) {
   );
 }
 
+function Re003VideoFrame({ active, progress }) {
+  return (
+    <article className={`phone-frame visual-frame visual-frame-re-003 ${active ? "is-active" : ""}`} id="re-003" style={pageBgStyle("re-003")}>
+      <div className="visual-stage">
+        <video
+          key={active ? "re003-active" : "re003-inactive"}
+          className="visual-original visual-contain re003-video"
+          src={assetSrc("/assets/png-pages/Re003.webm")}
+          autoPlay={active}
+          muted
+          playsInline
+          preload="auto"
+          aria-label="Re003 動畫"
+        />
+      </div>
+      <p className="re-caption"><ReTypingLabel text="Re: I look forward to..." active={active} /></p>
+      <JourneyBottomNav pageId="re-003" progress={progress} />
+    </article>
+  );
+}
+
 function VisualJourneyFrame({
   active,
   pageId,
@@ -1007,10 +1028,8 @@ function VisualJourneyFrame({
   imageRect,
   mountainLine,
   dividerAnimation = false,
-  video,
 }) {
-  const media = video || image;
-  const mediaSrc = media.startsWith("png-pages/") ? assetSrc(`/assets/${media}`) : journeySrc(media);
+  const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
   const [dividerPhase, setDividerPhase] = React.useState("idle");
   const dividerLeaveTimerRef = React.useRef(null);
 
@@ -1043,7 +1062,7 @@ function VisualJourneyFrame({
   return (
     <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""} ${dividerPhase === "leaving" ? "is-divider-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       {imageRect ? (
-        <img className={`visual-original visual-absolute ${dividerArtClass}`} style={frameRectStyle(imageRect)} src={mediaSrc} alt="" />
+        <img className={`visual-original visual-absolute ${dividerArtClass}`} style={frameRectStyle(imageRect)} src={imageSrc} alt="" />
       ) : (
         <div
           className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
@@ -1054,20 +1073,7 @@ function VisualJourneyFrame({
             onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
           }}
         >
-          video ? (
-            <video
-              key={`${pageId}-${active ? "active" : "inactive"}`}
-              className={`visual-original visual-${fit} re003-video ${dividerArtClass}`}
-              src={mediaSrc}
-              autoPlay={active}
-              muted
-              playsInline
-              preload="auto"
-              aria-label="Re003 動畫"
-            />
-          ) : (
-            <img className={`visual-original visual-${fit} ${dividerArtClass}`} src={mediaSrc} alt="" />
-          )
+          <img className={`visual-original visual-${fit} ${dividerArtClass}`} src={imageSrc} alt="" />
         </div>
       )}
       {mountainLine && (
@@ -1260,7 +1266,6 @@ const visualPages = [
     imageRect: { x: 140, y: 185, width: 121, height: 270 },
     mountainLine: { name: "Mountain_Line_02", x: 255, y: 390, length: 50, strokeWeight: 1 },
   },
-  { pageId: "re-003", image: "png-pages/Re003.png", video: "png-pages/Re003.webm", fit: "contain", reCaption: "Re: I look forward to..." },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
 ];
 
@@ -1405,6 +1410,7 @@ function App() {
           onScrollProgress={setPageScrollProgress}
         />
       ))}
+      <Re003VideoFrame active={activePage === "re-003"} progress={journeyProgress} />
       <OutroFrame active={activePage === "outro"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
       <EndMessageFrame active={activePage === "end-msg-box"} progress={journeyProgress} onSubmitSuccess={startRollerAfterMessage} />
       <RollerFrame active={activePage === "roller"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} startToken={rollerStartToken} />
