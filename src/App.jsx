@@ -1007,8 +1007,10 @@ function VisualJourneyFrame({
   imageRect,
   mountainLine,
   dividerAnimation = false,
+  video,
 }) {
-  const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
+  const media = video || image;
+  const mediaSrc = media.startsWith("png-pages/") ? assetSrc(`/assets/${media}`) : journeySrc(media);
   const [dividerPhase, setDividerPhase] = React.useState("idle");
   const dividerLeaveTimerRef = React.useRef(null);
 
@@ -1041,7 +1043,7 @@ function VisualJourneyFrame({
   return (
     <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""} ${dividerPhase === "leaving" ? "is-divider-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       {imageRect ? (
-        <img className={`visual-original visual-absolute ${dividerArtClass}`} style={frameRectStyle(imageRect)} src={imageSrc} alt="" />
+        <img className={`visual-original visual-absolute ${dividerArtClass}`} style={frameRectStyle(imageRect)} src={mediaSrc} alt="" />
       ) : (
         <div
           className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
@@ -1052,7 +1054,20 @@ function VisualJourneyFrame({
             onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
           }}
         >
-          <img className={`visual-original visual-${fit} ${dividerArtClass}`} src={imageSrc} alt="" />
+          video ? (
+            <video
+              key={`${pageId}-${active ? "active" : "inactive"}`}
+              className={`visual-original visual-${fit} re003-video ${dividerArtClass}`}
+              src={mediaSrc}
+              autoPlay={active}
+              muted
+              playsInline
+              preload="auto"
+              aria-label="Re003 動畫"
+            />
+          ) : (
+            <img className={`visual-original visual-${fit} ${dividerArtClass}`} src={mediaSrc} alt="" />
+          )
         </div>
       )}
       {mountainLine && (
@@ -1245,7 +1260,7 @@ const visualPages = [
     imageRect: { x: 140, y: 185, width: 121, height: 270 },
     mountainLine: { name: "Mountain_Line_02", x: 255, y: 390, length: 50, strokeWeight: 1 },
   },
-  { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to..." },
+  { pageId: "re-003", image: "png-pages/Re003.png", video: "png-pages/Re003.webm", fit: "contain", reCaption: "Re: I look forward to..." },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
 ];
 

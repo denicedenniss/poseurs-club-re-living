@@ -845,6 +845,10 @@ html {
   object-fit: contain;
 }
 
+.re003-video {
+  pointer-events: none;
+}
+
 .visual-width {
   height: auto;
   object-fit: contain;
