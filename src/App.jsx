@@ -1010,14 +1010,32 @@ function VisualJourneyFrame({
   sequenceAnimation = false,
   curtainReveal = false,
   mirageAnimation = false,
+  peelAnimation = false,
+  re001Animation = false,
+  blurVisualAnimation = false,
+  waterVisualAnimation = false,
+  mountainSequenceAnimation = false,
+  mountainRevealMs = 2000,
 }) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
   const [dividerPhase, setDividerPhase] = React.useState("idle");
   const [sequencePhase, setSequencePhase] = React.useState("idle");
   const [miragePhase, setMiragePhase] = React.useState("idle");
+  const [peelPhase, setPeelPhase] = React.useState("idle");
+  const [re001Phase, setRe001Phase] = React.useState("idle");
+  const [blurVisualPhase, setBlurVisualPhase] = React.useState("idle");
+  const [waterVisualPhase, setWaterVisualPhase] = React.useState("idle");
+  const [mountainSequencePhase, setMountainSequencePhase] = React.useState("idle");
   const dividerLeaveTimerRef = React.useRef(null);
   const sequenceLeaveTimerRef = React.useRef(null);
   const mirageLeaveTimerRef = React.useRef(null);
+  const peelLeaveTimerRef = React.useRef(null);
+  const re001LeaveTimerRef = React.useRef(null);
+  const blurVisualLeaveTimerRef = React.useRef(null);
+  const waterVisualLeaveTimerRef = React.useRef(null);
+  const mountainSequenceRevealTimerRef = React.useRef(null);
+  const mountainSequenceLineTimerRef = React.useRef(null);
+  const mountainSequenceLeaveTimerRef = React.useRef(null);
 
   React.useEffect(() => {
     if (!dividerAnimation) return undefined;
@@ -1034,6 +1052,15 @@ function VisualJourneyFrame({
   React.useEffect(() => () => window.clearTimeout(dividerLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(sequenceLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(mirageLeaveTimerRef.current), []);
+  React.useEffect(() => () => window.clearTimeout(peelLeaveTimerRef.current), []);
+  React.useEffect(() => () => window.clearTimeout(re001LeaveTimerRef.current), []);
+  React.useEffect(() => () => window.clearTimeout(blurVisualLeaveTimerRef.current), []);
+  React.useEffect(() => () => window.clearTimeout(waterVisualLeaveTimerRef.current), []);
+  React.useEffect(() => () => {
+    window.clearTimeout(mountainSequenceRevealTimerRef.current);
+    window.clearTimeout(mountainSequenceLineTimerRef.current);
+    window.clearTimeout(mountainSequenceLeaveTimerRef.current);
+  }, []);
 
   React.useEffect(() => {
     if (!sequenceAnimation || active) return undefined;
@@ -1046,6 +1073,47 @@ function VisualJourneyFrame({
     setMiragePhase("idle");
     return undefined;
   }, [active, mirageAnimation]);
+
+  React.useEffect(() => {
+    if (!peelAnimation || active) return undefined;
+    setPeelPhase("idle");
+    return undefined;
+  }, [active, peelAnimation]);
+
+  React.useEffect(() => {
+    if (!re001Animation || active) return undefined;
+    setRe001Phase("idle");
+    return undefined;
+  }, [active, re001Animation]);
+
+  React.useEffect(() => {
+    if (!blurVisualAnimation || active) return undefined;
+    setBlurVisualPhase("idle");
+    return undefined;
+  }, [active, blurVisualAnimation]);
+
+  React.useEffect(() => {
+    if (!waterVisualAnimation || active) return undefined;
+    setWaterVisualPhase("idle");
+    return undefined;
+  }, [active, waterVisualAnimation]);
+
+  React.useEffect(() => {
+    if (!mountainSequenceAnimation) return undefined;
+
+    window.clearTimeout(mountainSequenceRevealTimerRef.current);
+    if (!active) {
+      setMountainSequencePhase("idle");
+      return undefined;
+    }
+
+    setMountainSequencePhase("revealing");
+    mountainSequenceRevealTimerRef.current = window.setTimeout(() => {
+      setMountainSequencePhase("line-visible");
+    }, mountainRevealMs);
+
+    return () => window.clearTimeout(mountainSequenceRevealTimerRef.current);
+  }, [active, mountainRevealMs, mountainSequenceAnimation]);
 
   const handleDividerNext = (nextPageId) => {
     if (dividerPhase === "leaving") return;
@@ -1071,7 +1139,51 @@ function VisualJourneyFrame({
     }, 2000);
   };
 
-  const dividerArtClass = dividerAnimation
+  const handlePeelNext = (nextPageId) => {
+    if (peelPhase === "leaving") return;
+    setPeelPhase("leaving");
+    peelLeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 2000);
+  };
+
+  const handleRe001Next = (nextPageId) => {
+    if (re001Phase === "leaving") return;
+    setRe001Phase("leaving");
+    re001LeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 2200);
+  };
+
+  const handleBlurVisualNext = (nextPageId) => {
+    if (blurVisualPhase === "leaving") return;
+    setBlurVisualPhase("leaving");
+    blurVisualLeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 2000);
+  };
+
+  const handleWaterVisualNext = (nextPageId) => {
+    if (waterVisualPhase === "leaving") return;
+    setWaterVisualPhase("leaving");
+    waterVisualLeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 2500);
+  };
+
+  const handleMountainSequenceNext = (nextPageId) => {
+    if (mountainSequencePhase === "line-flashing" || mountainSequencePhase === "leaving") return;
+    window.clearTimeout(mountainSequenceRevealTimerRef.current);
+    setMountainSequencePhase("line-flashing");
+    mountainSequenceLineTimerRef.current = window.setTimeout(() => {
+      setMountainSequencePhase("leaving");
+    }, 180);
+    mountainSequenceLeaveTimerRef.current = window.setTimeout(() => {
+      window.location.hash = nextPageId;
+    }, 2180);
+  };
+
+  const dividerArtClass = dividerAnimation && !peelAnimation && !mountainSequenceAnimation
     ? `section-divider-art ${dividerPhase === "visible" || dividerPhase === "leaving" ? "is-visible" : ""}`
     : "";
   const sequenceArtClass = sequenceAnimation && active
@@ -1081,11 +1193,38 @@ function VisualJourneyFrame({
   const mirageArtClass = mirageAnimation && active
     ? `zine-mirage-${miragePhase === "leaving" ? "exit" : "enter"}`
     : "";
+  const peelArtClass = peelAnimation && active
+    ? `zine-page-peel-${peelPhase === "leaving" ? "exit" : "enter"}`
+    : "";
+  const re001ArtClass = re001Animation && active
+    ? `zine-re001-${re001Phase === "leaving" ? "exit" : "curtain"}`
+    : "";
+  const blurVisualArtClass = blurVisualAnimation && active
+    ? `zine-blur-art-${blurVisualPhase === "leaving" ? "exit" : "enter"}`
+    : "";
+  const waterVisualArtClass = waterVisualAnimation && active
+    ? `zine-water-visual-${waterVisualPhase === "leaving" ? "exit" : "enter"}`
+    : "";
+  const mountainSequenceArtClass = mountainSequenceAnimation && active
+    ? `zine-mountain-${mountainSequencePhase === "leaving" ? "blur-exit" : "curtain-reveal"}`
+    : "";
+  const shouldShowMountainLine = !mountainSequenceAnimation
+    || mountainSequencePhase === "line-visible"
+    || mountainSequencePhase === "line-flashing";
+  const mountainLineClass = `mountain-line-overlay ${mountainSequencePhase === "line-flashing" ? "mountain-line-flash-out" : ""}`;
 
   return (
     <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""} ${dividerPhase === "leaving" ? "is-divider-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       {imageRect ? (
-        <img className={`visual-original visual-absolute ${dividerArtClass}`} style={frameRectStyle(imageRect)} src={imageSrc} alt="" />
+        <img
+          className={`visual-original visual-absolute ${dividerArtClass} ${mountainSequenceArtClass}`}
+          style={{
+            ...frameRectStyle(imageRect),
+            ...(mountainSequenceAnimation ? { "--mountain-reveal-duration": `${mountainRevealMs}ms` } : {}),
+          }}
+          src={imageSrc}
+          alt=""
+        />
       ) : (
         <div
           className={`visual-stage ${scrollable ? "is-scrollable" : ""}`}
@@ -1096,12 +1235,13 @@ function VisualJourneyFrame({
             onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
           }}
         >
-          <img className={`visual-original visual-${fit} ${dividerArtClass} ${sequenceArtClass} ${curtainArtClass} ${mirageArtClass}`} src={imageSrc} alt="" />
+          <img className={`visual-original visual-${fit} ${dividerArtClass} ${sequenceArtClass} ${curtainArtClass} ${mirageArtClass} ${peelArtClass} ${re001ArtClass} ${blurVisualArtClass} ${waterVisualArtClass} ${mountainSequenceArtClass}`} src={imageSrc} alt="" />
+          {peelAnimation && active && peelPhase !== "leaving" && <span className="zine-page-peel-fold" aria-hidden="true" />}
         </div>
       )}
-      {mountainLine && (
+      {mountainLine && shouldShowMountainLine && (
         <span
-          className="mountain-line-overlay"
+          className={mountainLineClass}
           data-figma-layer={mountainLine.name}
           aria-hidden="true"
           style={{
@@ -1129,7 +1269,7 @@ function VisualJourneyFrame({
       <JourneyBottomNav
         pageId={pageId}
         progress={progress}
-        onNext={sequenceAnimation ? handleSequenceNext : mirageAnimation ? handleMirageNext : dividerAnimation ? handleDividerNext : undefined}
+        onNext={sequenceAnimation ? handleSequenceNext : mirageAnimation ? handleMirageNext : peelAnimation ? handlePeelNext : re001Animation ? handleRe001Next : blurVisualAnimation ? handleBlurVisualNext : waterVisualAnimation ? handleWaterVisualNext : mountainSequenceAnimation ? handleMountainSequenceNext : dividerAnimation ? handleDividerNext : undefined}
       />
     </article>
   );
@@ -1161,7 +1301,25 @@ function openingTitleStyle(rect) {
   };
 }
 
-function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber, progress, flipArtwork = false }) {
+function OpeningPageFrame({
+  active,
+  pageId,
+  image,
+  art,
+  meta,
+  title,
+  pageNumber,
+  progress,
+  flipArtwork = false,
+  rotateArtwork = false,
+  waterArtwork = false,
+  blurArtwork = false,
+  hingeArtwork = false,
+  eraserArtwork = false,
+  rollArtwork = false,
+  rotateFlashArtwork = false,
+  fadeDownArtwork = false,
+}) {
   const imageSrc = image.startsWith("png-pages/") ? assetSrc(`/assets/${image}`) : journeySrc(image);
   const [phase, setPhase] = React.useState("idle");
   const [typedTitle, setTypedTitle] = React.useState("");
@@ -1203,18 +1361,42 @@ function OpeningPageFrame({ active, pageId, image, art, meta, title, pageNumber,
     setPhase("leaving");
     leaveTimerRef.current = window.setTimeout(() => {
       window.location.hash = nextPageId;
-    }, flipArtwork ? 2000 : 900);
+    }, eraserArtwork ? 3000 : hingeArtwork ? 3000 : rotateFlashArtwork ? 3000 : fadeDownArtwork ? 3000 : rollArtwork ? 2500 : flipArtwork ? 2000 : rotateArtwork ? 1500 : waterArtwork ? 2000 : blurArtwork ? 2000 : 900);
   };
 
   const isArtworkVisible = phase === "art-visible" || phase === "leaving";
   const flipArtworkClass = flipArtwork && isArtworkVisible
     ? `animate__animated ${phase === "leaving" ? "opening-asset-flip-out animate__flipOutX" : "animate__flipInX"}`
     : "";
+  const rotateArtworkClass = rotateArtwork && isArtworkVisible
+    ? `animate__animated ${phase === "leaving" ? "animate__rotateOutDownLeft" : "animate__rotateInUpLeft"}`
+    : "";
+  const waterArtworkClass = waterArtwork && isArtworkVisible
+    ? `zine-water-art-${phase === "leaving" ? "exit" : "enter"}`
+    : "";
+  const blurArtworkClass = blurArtwork && isArtworkVisible
+    ? `zine-blur-art-${phase === "leaving" ? "exit" : "enter"}`
+    : "";
+  const hingeArtworkClass = hingeArtwork && isArtworkVisible
+    ? `animate__animated ${phase === "leaving" ? "opening-asset-hinge-out animate__hinge" : "animate__flipInX"}`
+    : "";
+  const eraserArtworkClass = eraserArtwork && isArtworkVisible
+    ? `zine-${phase === "leaving" ? "eraser-exit" : "blur-art-enter"}`
+    : "";
+  const rollArtworkClass = rollArtwork && isArtworkVisible
+    ? `animate__animated opening-asset-roll ${phase === "leaving" ? "animate__rollOut" : "animate__rollIn"}`
+    : "";
+  const rotateFlashArtworkClass = rotateFlashArtwork && isArtworkVisible
+    ? `${phase === "leaving" ? "zine-flash-blur-exit" : "animate__animated opening-asset-rotate-in animate__rotateIn"}`
+    : "";
+  const fadeDownArtworkClass = fadeDownArtwork && isArtworkVisible
+    ? `animate__animated opening-asset-fade-down ${phase === "leaving" ? "animate__fadeOutBottomRight" : "animate__fadeInDown"}`
+    : "";
 
   return (
     <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""} ${phase === "leaving" ? "is-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""}`} style={frameRectStyle(art)}>
-        <img className={flipArtworkClass} src={imageSrc} alt="" />
+        <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
       <p className="opening-title type-a2" style={openingTitleStyle(title.rect)} aria-label={title.text}>
@@ -1279,24 +1461,28 @@ function TextArticleFrame({ active, pageId, meta, title, body, bodyRect, label, 
 const visualPages = [
   { pageId: "page-3", image: "png-pages/intro/序.png", sequenceAnimation: true },
   { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK", curtainReveal: true },
-  { pageId: "page-4", image: "png-pages/荒原100/100.png", dividerAnimation: true },
-  { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found" },
+  { pageId: "page-4", image: "png-pages/荒原100/100.png", dividerAnimation: true, peelAnimation: true },
+  { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found", re001Animation: true },
   { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png", dividerAnimation: true, mirageAnimation: true },
-  { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes" },
+  { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes", blurVisualAnimation: true },
   {
     pageId: "part-3-a",
     image: "png-pages/山 300/300.png",
     imageRect: { x: -8, y: 2, width: 410, height: 599 },
     mountainLine: { name: "Mountain_Line_01", x: 289, y: 77, length: 50, strokeWeight: 2 },
     dividerAnimation: true,
+    mountainSequenceAnimation: true,
+    mountainRevealMs: 2000,
   },
   {
     pageId: "part-3-b",
     image: "png-pages/山 300/山002.png",
     imageRect: { x: 140, y: 185, width: 121, height: 270 },
     mountainLine: { name: "Mountain_Line_02", x: 255, y: 390, length: 50, strokeWeight: 1 },
+    mountainSequenceAnimation: true,
+    mountainRevealMs: 3500,
   },
-  { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to..." },
+  { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to...", waterVisualAnimation: true },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
 ];
 
@@ -1304,6 +1490,7 @@ const openingPages = [
   {
     pageId: "article-1-01-cover",
     image: "png-pages/荒原100/101.png",
+    rotateArtwork: true,
     art: { x: -7, y: 22, width: 419, height: 612 },
     meta: { text: "第一部 · 荒原 / 1.01", rect: { x: 146, y: 91, width: 113, height: 20 } },
     title: { text: "《港島散步・趕到散步時領悟》", rect: { x: 89, y: 111, width: 227, height: 20 } },
@@ -1312,6 +1499,7 @@ const openingPages = [
   {
     pageId: "article-1-02-cover",
     image: "png-pages/荒原100/102.png",
+    waterArtwork: true,
     art: { x: -9, y: 37, width: 419, height: 612 },
     meta: { text: "第一部 · 荒原 / 1.02", rect: { x: 146, y: 91, width: 113, height: 20 } },
     title: { text: "《每個人都尋找的生活秘笈》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1320,6 +1508,7 @@ const openingPages = [
   {
     pageId: "article-2-01-cover",
     image: "png-pages/海市蜃樓 200/201.png",
+    blurArtwork: true,
     art: { x: -16, y: 29, width: 433, height: 633 },
     meta: { text: "第二部 · 海市蜃樓 / 2.01", rect: { x: 136, y: 91, width: 130, height: 20 } },
     title: { text: "《自古成功在嘗試》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1337,6 +1526,7 @@ const openingPages = [
   {
     pageId: "article-2-03-cover",
     image: "png-pages/海市蜃樓 200/203.png",
+    hingeArtwork: true,
     art: { x: -24, y: 0, width: 451, height: 660 },
     meta: { text: "第二部 · 海市蜃樓 / 2.03", rect: { x: 136, y: 91, width: 130, height: 20 } },
     title: { text: "《觀望與被觀望的距離》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1345,6 +1535,7 @@ const openingPages = [
   {
     pageId: "article-2-04-cover",
     image: "png-pages/海市蜃樓 200/204.png",
+    eraserArtwork: true,
     art: { x: 34, y: 91, width: 335, height: 489 },
     meta: { text: "第二部 · 海市蜃樓 / 2.04", rect: { x: 137, y: 91, width: 130, height: 20 } },
     title: { text: "《人生潔癖，你也有嗎？》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1353,6 +1544,7 @@ const openingPages = [
   {
     pageId: "article-3-01-cover",
     image: "png-pages/山 300/301.png",
+    rollArtwork: true,
     art: { x: 0, y: 45, width: 403, height: 590 },
     meta: { text: "第二部 · 山 / 3.01", rect: { x: 157, y: 91, width: 91, height: 20 } },
     title: { text: "《作狀生活俱樂部》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1361,6 +1553,7 @@ const openingPages = [
   {
     pageId: "article-3-02-cover",
     image: "png-pages/山 300/302.png",
+    blurArtwork: true,
     art: { x: 2, y: 19, width: 400, height: 584 },
     meta: { text: "第二部 · 山 / 3.02", rect: { x: 156, y: 91, width: 91, height: 20 } },
     title: { text: "《攜帶式避難所》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1369,6 +1562,7 @@ const openingPages = [
   {
     pageId: "article-3-03-cover",
     image: "png-pages/山 300/303.png",
+    rotateFlashArtwork: true,
     art: { x: 21.98, y: 262.4, width: 356.57, height: 123.06 },
     meta: { text: "第二部 · 山 / 3.03", rect: { x: 156, y: 91, width: 91, height: 20 } },
     title: { text: "《西藏遊記: 我所看見的未來》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1377,6 +1571,7 @@ const openingPages = [
   {
     pageId: "article-3-04-cover",
     image: "png-pages/山 300/304.png",
+    blurArtwork: true,
     art: { x: 0, y: 37, width: 403, height: 588 },
     meta: { text: "第二部 · 山 / 3.04", rect: { x: 157, y: 91, width: 91, height: 20 } },
     title: { text: "《未來是這樣嗎？不一定喔!》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1385,6 +1580,7 @@ const openingPages = [
   {
     pageId: "article-3-05-cover",
     image: "png-pages/山 300/305.png",
+    fadeDownArtwork: true,
     art: { x: 1, y: 60, width: 400, height: 584 },
     meta: { text: "第二部 · 山 / 3.05", rect: { x: 157, y: 91, width: 91, height: 20 } },
     title: { text: "《已練成能往心內奔馳》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1414,10 +1610,98 @@ function ZineAnimationStyles() {
       .animate__animated { animation-duration: 1.5s; animation-fill-mode: both; }
       .animate__flipInX { animation-name: flipInX; backface-visibility: visible !important; }
       .animate__flipOutX { animation-name: flipOutX; backface-visibility: visible !important; }
+      .animate__hinge { animation-name: hinge; transform-origin: top left; }
+      .animate__rotateInUpLeft { animation-name: rotateInUpLeft; transform-origin: left bottom; }
+      .animate__rotateOutDownLeft { animation-name: rotateOutDownLeft; transform-origin: left bottom; }
+      .animate__rotateIn { animation-name: rotateIn; transform-origin: center; }
+      .animate__fadeInDown { animation-name: fadeInDown; }
+      .animate__fadeOutBottomRight { animation-name: fadeOutBottomRight; }
+      .animate__rollIn { animation-name: rollIn; }
+      .animate__rollOut { animation-name: rollOut; }
       .opening-asset-flip-out { animation-duration: 2s !important; }
+      .opening-asset-hinge-out { animation-duration: 3s !important; }
+      .opening-asset-roll { animation-duration: 2.5s !important; }
+      .opening-asset-rotate-in,
+      .opening-asset-fade-down { animation-duration: 3s !important; }
       .zine-curtain-reveal { animation: curtainRevealTopDown 5s linear both; }
       .zine-mirage-enter { animation: mirageEnter 3.02s linear both; }
       .zine-mirage-exit { animation: mirageExit 2s ease-in-out both; pointer-events: none; }
+      .zine-blur-art-enter { animation: blurArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .zine-blur-art-exit { animation: blurArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
+      .zine-water-visual-enter { animation: waterVisualEnter 3s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
+      .zine-water-visual-exit { animation: waterVisualExit 2.5s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
+      .zine-flash-blur-exit { animation: flashBlurExit 3s linear both; pointer-events: none; }
+      .zine-mountain-curtain-reveal { animation: mountainCurtainReveal var(--mountain-reveal-duration, 2s) linear both; }
+      .zine-mountain-blur-exit { animation: mountainBlurExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
+      .mountain-line-flash-out { animation: mountainLineFlashOut 0.18s linear both !important; }
+      .zine-water-art-enter { animation: waterArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
+      .zine-water-art-exit { animation: waterArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
+      .zine-re001-curtain { animation: re001CurtainReveal 5s linear both; }
+      .zine-re001-exit { animation: re001FlashFadeOut 2.2s linear both; pointer-events: none; }
+      .zine-eraser-exit {
+        animation: eraserExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
+        -webkit-mask-image:
+          repeating-linear-gradient(102deg, #000 0 42px, rgba(0, 0, 0, 0.72) 52px 78px, transparent 96px 122px, #000 142px 196px),
+          linear-gradient(102deg, transparent 0%, transparent 8%, #000 22%, #000 100%);
+        mask-image:
+          repeating-linear-gradient(102deg, #000 0 42px, rgba(0, 0, 0, 0.72) 52px 78px, transparent 96px 122px, #000 142px 196px),
+          linear-gradient(102deg, transparent 0%, transparent 8%, #000 22%, #000 100%);
+        -webkit-mask-size: 190% 190%, 240% 240%;
+        mask-size: 190% 190%, 240% 240%;
+        -webkit-mask-position: 120% -80%, 120% -80%;
+        mask-position: 120% -80%, 120% -80%;
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        pointer-events: none;
+      }
+      .zine-page-peel-enter { animation: pagePeelIn 2.8s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: top left; }
+      .zine-page-peel-exit { animation: pagePeelExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
+      .zine-page-peel-fold {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(135deg, rgba(248, 248, 248, 0.82), rgba(248, 248, 248, 0.2) 42%, transparent 68%);
+        filter: drop-shadow(8px 8px 7px rgba(0, 0, 0, 0.14));
+        animation: pagePeelFold 2.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .outro-page .outro-canvas {
+        position: relative;
+        width: 402px;
+        min-height: 1168px;
+      }
+      .outro-page .outro-copy {
+        position: absolute;
+        left: 23px;
+        top: 254px;
+        width: 348px;
+        height: 694px;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        transform: none;
+        overflow: visible;
+        font-family: "Noto Serif HK", "Noto Serif TC", serif;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 30px;
+        letter-spacing: 0.03em;
+        text-align: left;
+        white-space: pre-wrap;
+        word-break: normal;
+      }
+      .outro-page .outro-art-bottom {
+        position: absolute;
+        left: 14px;
+        top: 905px;
+        width: 375px;
+        height: 166px;
+        margin: 0;
+        padding: 0;
+        transform: none;
+        object-fit: contain;
+        object-position: center;
+        z-index: auto;
+      }
       @keyframes flipInX {
         from { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); animation-timing-function: ease-in; opacity: 0; }
         40% { transform: perspective(400px) rotate3d(1, 0, 0, -20deg); animation-timing-function: ease-in; }
@@ -1430,9 +1714,56 @@ function ZineAnimationStyles() {
         30% { transform: perspective(400px) rotate3d(1, 0, 0, -20deg); opacity: 1; }
         to { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); opacity: 0; }
       }
+      @keyframes rollIn {
+        from { opacity: 0; transform: translate3d(-100%, 0, 0) rotate3d(0, 0, 1, -120deg); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+      @keyframes rollOut {
+        from { opacity: 1; transform: translate3d(0, 0, 0); }
+        to { opacity: 0; transform: translate3d(100%, 0, 0) rotate3d(0, 0, 1, 120deg); }
+      }
+      @keyframes rotateInUpLeft {
+        from { transform: rotate3d(0, 0, 1, -45deg); opacity: 0; }
+        to { transform: translate3d(0, 0, 0); opacity: 1; }
+      }
+      @keyframes rotateOutDownLeft {
+        from { transform: translate3d(0, 0, 0); opacity: 1; }
+        to { transform: rotate3d(0, 0, 1, 45deg); opacity: 0; }
+      }
+      @keyframes rotateIn {
+        from { transform: rotate3d(0, 0, 1, -200deg); opacity: 0; }
+        to { transform: translate3d(0, 0, 0); opacity: 1; }
+      }
+      @keyframes fadeInDown {
+        from { opacity: 0; transform: translate3d(0, -100%, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+      @keyframes fadeOutBottomRight {
+        from { opacity: 1; transform: translate3d(0, 0, 0); }
+        to { opacity: 0; transform: translate3d(100%, 100%, 0); }
+      }
+      @keyframes hinge {
+        0% { animation-timing-function: ease-in-out; transform: rotate3d(0, 0, 1, 0deg); opacity: 1; }
+        20%, 60% { animation-timing-function: ease-in-out; transform: rotate3d(0, 0, 1, 80deg); opacity: 1; }
+        40%, 80% { animation-timing-function: ease-in-out; transform: rotate3d(0, 0, 1, 60deg); opacity: 1; }
+        100% { transform: translate3d(0, 700px, 0); opacity: 0; }
+      }
       @keyframes curtainRevealTopDown {
         from { clip-path: inset(0 0 100% 0); }
         to { clip-path: inset(0 0 0 0); }
+      }
+      @keyframes mountainCurtainReveal {
+        from { clip-path: inset(0 0 100% 0); }
+        to { clip-path: inset(0 0 0 0); }
+      }
+      @keyframes mountainBlurExit {
+        from { opacity: 1; filter: blur(0); }
+        to { opacity: 0; filter: blur(20px); }
+      }
+      @keyframes mountainLineFlashOut {
+        0% { opacity: 1; }
+        50% { opacity: 0.2; }
+        100% { opacity: 0; }
       }
       @keyframes mirageEnter {
         0% { opacity: 0; filter: blur(22px); }
@@ -1447,6 +1778,92 @@ function ZineAnimationStyles() {
       @keyframes mirageExit {
         from { opacity: 1; filter: blur(0); }
         to { opacity: 0; filter: blur(22px); }
+      }
+      @keyframes blurArtEnter {
+        from { opacity: 0.18; filter: blur(20px); }
+        to { opacity: 1; filter: blur(0); }
+      }
+      @keyframes blurArtExit {
+        from { opacity: 1; filter: blur(0); }
+        to { opacity: 0; filter: blur(20px); }
+      }
+      @keyframes waterArtEnter {
+        from { opacity: 0.2; filter: blur(18px); transform: translateY(24px) scale(0.75); }
+        to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+      }
+      @keyframes waterArtExit {
+        from { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+        to { opacity: 0; filter: blur(18px); transform: translateY(24px) scale(0.75); }
+      }
+      @keyframes waterVisualEnter {
+        from { opacity: 0.2; filter: blur(20px); transform: translateY(28px) scale(0.75); }
+        to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+      }
+      @keyframes waterVisualExit {
+        from { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+        to { opacity: 0; filter: blur(20px); transform: translateY(28px) scale(0.75); }
+      }
+      @keyframes flashBlurExit {
+        0% { opacity: 1; filter: blur(0); }
+        4% { opacity: 0; filter: blur(0); }
+        8% { opacity: 1; filter: blur(0); }
+        12% { opacity: 0.15; filter: blur(2px); }
+        16% { opacity: 0.86; filter: blur(4px); }
+        32% { opacity: 0.16; filter: blur(9px); }
+        48% { opacity: 0.58; filter: blur(13px); }
+        68% { opacity: 0.08; filter: blur(19px); }
+        100% { opacity: 0; filter: blur(24px); }
+      }
+      @keyframes re001CurtainReveal {
+        from { clip-path: inset(0 0 100% 0); }
+        to { clip-path: inset(0 0 0 0); }
+      }
+      @keyframes re001FlashFadeOut {
+        0%, 11%, 22%, 43%, 64% { opacity: 1; }
+        5.5%, 16.5%, 32%, 53.5% { opacity: 0; }
+        100% { opacity: 0; }
+      }
+      @keyframes eraserExit {
+        0% {
+          opacity: 1;
+          -webkit-mask-position: 120% -80%, 120% -80%;
+          mask-position: 120% -80%, 120% -80%;
+        }
+        35% {
+          opacity: 1;
+          -webkit-mask-position: 20% 10%, 24% 8%;
+          mask-position: 20% 10%, 24% 8%;
+        }
+        70% {
+          opacity: 1;
+          -webkit-mask-position: -72% 86%, -70% 84%;
+          mask-position: -72% 86%, -70% 84%;
+        }
+        99% {
+          opacity: 1;
+          -webkit-mask-position: -140% 160%, -140% 160%;
+          mask-position: -140% 160%, -140% 160%;
+        }
+        100% {
+          opacity: 0;
+          -webkit-mask-position: -140% 160%, -140% 160%;
+          mask-position: -140% 160%, -140% 160%;
+        }
+      }
+      @keyframes pagePeelIn {
+        0% { clip-path: polygon(0 0, 0 0, 0 0, 0 0); }
+        12% { clip-path: polygon(0 0, 18% 0, 0 18%, 0 0); }
+        58% { clip-path: polygon(0 0, 100% 0, 42% 58%, 0 100%); }
+        100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      }
+      @keyframes pagePeelFold {
+        0% { clip-path: polygon(0 0, 16% 0, 0 16%); opacity: 0.86; }
+        56% { clip-path: polygon(0 0, 100% 0, 0 100%); opacity: 0.32; }
+        100% { clip-path: polygon(0 0, 100% 0, 0 100%); opacity: 0; }
+      }
+      @keyframes pagePeelExit {
+        from { opacity: 1; filter: blur(0); transform: scale(1); }
+        to { opacity: 0; filter: blur(18px); transform: scale(1.1); }
       }
     `}</style>
   );
