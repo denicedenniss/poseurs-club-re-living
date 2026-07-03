@@ -10,6 +10,7 @@ const introLines = [
 ];
 
 const journeyPages = [
+  "cover",
   "home",
   "page-2",
   "page-3",
@@ -51,8 +52,9 @@ const journeyPages = [
 ];
 
 const PAGE_BG = {
+  cover: "#E0FF00",
   home: "#F8F8F8",
-  "page-2": "#E0FF00",
+  "page-2": "#F8F8F8",
   "page-3": "#E0FF00",
   start: "#E0FF00",
   "page-4": "#F8F8F8",
@@ -487,6 +489,188 @@ function HomeCoverArt() {
   return <img className="cover-art cover-art-original" src={journeySrc("cover.svg")} alt="" aria-hidden="true" />;
 }
 
+function CoverFrame({ active }) {
+  return (
+    <article className={`phone-frame cover-entry-frame ${active ? "is-active" : ""}`} data-node-id="800:2" id="cover" style={pageBgStyle("cover")}>
+      <img
+        data-node-id="803:97"
+        data-figma-layer="Cover 1"
+        src={pngPageSrc("intro/Cover.jpg")}
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-2px",
+          top: "14px",
+          width: "407px",
+          height: "700px",
+          objectFit: "fill",
+        }}
+      />
+      <div
+        data-node-id="803:101"
+        data-figma-layer="Header bar"
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          width: "402px",
+          height: "60px",
+          background: "#F2F2F2",
+        }}
+      />
+      <img
+        data-node-id="804:105"
+        data-figma-layer="icon 1"
+        src={pngPageSrc("intro/icon.png")}
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "14px",
+          top: "11px",
+          width: "36px",
+          height: "36px",
+          objectFit: "contain",
+        }}
+      />
+      <p
+        data-node-id="803:103"
+        data-figma-layer="g.c.d___ Den Lau/ 城市霎眼錄"
+        style={{
+          position: "absolute",
+          left: "61px",
+          top: "15px",
+          width: "110px",
+          height: "26px",
+          margin: 0,
+          color: "#000",
+          fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
+          fontSize: "11px",
+          lineHeight: "13px",
+          letterSpacing: "0.04em",
+          textAlign: "left",
+        }}
+      >
+        <strong style={{ fontWeight: 700 }}>g.c.d___</strong>
+        <br />
+        <span style={{ fontWeight: 400 }}>Den Lau/ 城市霎眼錄</span>
+      </p>
+      <div
+        data-node-id="803:99"
+        data-figma-layer="bottom bar"
+        style={{
+          position: "absolute",
+          left: 0,
+          top: "636px",
+          width: "402px",
+          height: "64px",
+          background: "#F8F8F8",
+        }}
+      />
+      <div
+        data-node-id="803:100"
+        data-figma-layer="typing box"
+        style={{
+          position: "absolute",
+          left: "18px",
+          top: "654px",
+          width: "269px",
+          height: "29px",
+          boxSizing: "border-box",
+          border: "1px solid #DBD9D9",
+          borderRadius: "7px",
+          background: "#FFFFFF",
+        }}
+      />
+      <span
+        data-node-id="804:108"
+        data-figma-layer="typing line 01"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "29px",
+          top: "660px",
+          width: "1px",
+          height: "17px",
+          background: "#B5B5B6",
+        }}
+      />
+      <p
+        data-node-id="803:98"
+        data-figma-layer="陌生人你好！"
+        style={{
+          position: "absolute",
+          left: "35px",
+          top: "657px",
+          width: "105px",
+          height: "23px",
+          margin: 0,
+          color: "#000",
+          fontFamily: '"Noto Serif HK", "Noto Serif TC", serif',
+          fontWeight: 500,
+          fontSize: "16px",
+          lineHeight: "23px",
+          letterSpacing: "0.11em",
+          textAlign: "center",
+          whiteSpace: "nowrap",
+        }}
+      >
+        陌生人你好！
+      </p>
+      <span
+        data-node-id="804:109"
+        data-figma-layer="typing line 02"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "140px",
+          top: "660px",
+          width: "1px",
+          height: "17px",
+          background: "#B5B5B6",
+        }}
+      />
+      <div data-node-id="805:117" data-figma-layer="Sent" aria-hidden="true">
+        <div
+          data-node-id="804:106"
+          data-figma-layer="Rectangle 17"
+          style={{
+            position: "absolute",
+            left: "293px",
+            top: "654px",
+            width: "91px",
+            height: "29px",
+            background: "#221714",
+            borderRadius: "7px",
+          }}
+        />
+        <span
+          data-node-id="804:107"
+          data-figma-layer="傳送"
+          style={{
+            position: "absolute",
+            left: "324px",
+            top: "660px",
+            width: "29px",
+            height: "17px",
+            color: "#FFF",
+            fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
+            fontWeight: 400,
+            fontSize: "14px",
+            lineHeight: "17px",
+            letterSpacing: "0.04em",
+            textAlign: "left",
+            whiteSpace: "nowrap",
+          }}
+        >
+          傳送
+        </span>
+      </div>
+    </article>
+  );
+}
+
 function OpeningCopy() {
   return (
     <section className="opening-copy" aria-label="陌生人你好">
@@ -585,12 +769,117 @@ function JourneyIndex() {
 function PageTwoFrame({ active }) {
   return (
     <article className={`phone-frame page-two-frame ${active ? "is-active" : ""}`} data-node-id="5:106" id="page-2" style={pageBgStyle("page-2")}>
-      <div className="page-two-art" data-node-id="5:108">
-        <img className="page-two-top" src="/assets/page2-title-top.svg" alt="" aria-hidden="true" />
-        <img className="page-two-bottom" src="/assets/page2-title-bottom.svg" alt="" aria-hidden="true" />
-      </div>
-      <JourneyIndex />
-      <DepartButton />
+      <img
+        data-node-id="805:147"
+        data-figma-layer="HOME BG 1"
+        src={pngPageSrc("intro/HOME BG.jpg")}
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-3px",
+          top: 0,
+          width: "407px",
+          height: "700px",
+          objectFit: "fill",
+        }}
+      />
+      <img
+        data-node-id="805:128"
+        data-figma-layer="slogan"
+        src={pngPageSrc("intro/home title.png")}
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "1.9px",
+          top: "3.88px",
+          width: "395.46px",
+          height: "344.84px",
+          objectFit: "fill",
+        }}
+      />
+      <div
+        data-node-id="805:127"
+        data-figma-layer="Ball"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "99px",
+          top: "403px",
+          width: "242px",
+          height: "242px",
+          borderRadius: "50%",
+          background: "#E0FF00",
+        }}
+      />
+      <section
+        data-node-id="5:107"
+        data-figma-layer="第一部 · 荒原 『世界是一個荒原，書裡說的，我很感動。』 —— 節錄自電影《大象席地而坐》"
+        style={{ position: "absolute", left: "44px", top: "362px", width: "318px", height: "77px", color: "#000" }}
+      >
+        <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "19px", letterSpacing: "0.15em" }}>第一部 · 荒原</p>
+        <p style={{ margin: "18px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>『世界是一個荒原，書裡說的，我很感動。』</p>
+        <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>—— 節錄自電影《大象席地而坐》</p>
+      </section>
+      <section
+        data-node-id="5:162"
+        data-figma-layer="第二部 · 海市蜃樓 未來，是改變過去的時光機。 —— 節錄自《人生潔癖，你也有嗎？》"
+        style={{ position: "absolute", left: "44px", top: "454px", width: "268px", height: "77px", color: "#000" }}
+      >
+        <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "19px", letterSpacing: "0.15em" }}>第二部 · 海市蜃樓</p>
+        <p style={{ margin: "18px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>未來，是改變過去的時光機。</p>
+        <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>—— 節錄自《人生潔癖，你也有嗎？》</p>
+      </section>
+      <section
+        data-node-id="5:163"
+        data-figma-layer="第三部 · 山 無論旅程走到哪裡，也請帶上自己"
+        style={{ position: "absolute", left: "44px", top: "553px", width: "238px", height: "57px", color: "#000" }}
+      >
+        <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "19px", letterSpacing: "0.15em" }}>第三部 · 山</p>
+        <p style={{ margin: "18px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em", whiteSpace: "nowrap" }}>
+          無論旅程走到哪裡，也請帶上自己
+        </p>
+      </section>
+      <span
+        data-node-id="805:149"
+        data-figma-layer="typing line 03"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "286px",
+          top: "593px",
+          width: "1px",
+          height: "14px",
+          background: "#000",
+        }}
+      />
+      <a
+        href="#page-3"
+        aria-label="出發"
+        data-node-id="805:124"
+        style={{
+          position: "absolute",
+          left: "32px",
+          top: "645px",
+          width: "340px",
+          height: "29px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxSizing: "border-box",
+          background: "#000",
+          color: "#FFF",
+          textDecoration: "none",
+          fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
+          fontWeight: 400,
+          fontSize: "14px",
+          lineHeight: "22px",
+          letterSpacing: "0.2em",
+        }}
+      >
+        出發!
+      </a>
     </article>
   );
 }
@@ -1026,6 +1315,7 @@ function VisualJourneyFrame({
   const [blurVisualPhase, setBlurVisualPhase] = React.useState("idle");
   const [waterVisualPhase, setWaterVisualPhase] = React.useState("idle");
   const [mountainSequencePhase, setMountainSequencePhase] = React.useState("idle");
+  const [reCaptionExitPhase, setReCaptionExitPhase] = React.useState("idle");
   const dividerLeaveTimerRef = React.useRef(null);
   const sequenceLeaveTimerRef = React.useRef(null);
   const mirageLeaveTimerRef = React.useRef(null);
@@ -1033,6 +1323,8 @@ function VisualJourneyFrame({
   const re001LeaveTimerRef = React.useRef(null);
   const blurVisualLeaveTimerRef = React.useRef(null);
   const waterVisualLeaveTimerRef = React.useRef(null);
+  const reCaptionExitTimerRef = React.useRef(null);
+  const reCaptionPendingNextRef = React.useRef(null);
   const mountainSequenceRevealTimerRef = React.useRef(null);
   const mountainSequenceLineTimerRef = React.useRef(null);
   const mountainSequenceLeaveTimerRef = React.useRef(null);
@@ -1056,6 +1348,7 @@ function VisualJourneyFrame({
   React.useEffect(() => () => window.clearTimeout(re001LeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(blurVisualLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(waterVisualLeaveTimerRef.current), []);
+  React.useEffect(() => () => window.clearTimeout(reCaptionExitTimerRef.current), []);
   React.useEffect(() => () => {
     window.clearTimeout(mountainSequenceRevealTimerRef.current);
     window.clearTimeout(mountainSequenceLineTimerRef.current);
@@ -1097,6 +1390,14 @@ function VisualJourneyFrame({
     setWaterVisualPhase("idle");
     return undefined;
   }, [active, waterVisualAnimation]);
+
+  React.useEffect(() => {
+    if (active) return undefined;
+    setReCaptionExitPhase("idle");
+    reCaptionPendingNextRef.current = null;
+    window.clearTimeout(reCaptionExitTimerRef.current);
+    return undefined;
+  }, [active]);
 
   React.useEffect(() => {
     if (!mountainSequenceAnimation) return undefined;
@@ -1148,28 +1449,43 @@ function VisualJourneyFrame({
   };
 
   const handleRe001Next = (nextPageId) => {
-    if (re001Phase === "leaving") return;
+    if (re001Phase === "leaving" || reCaptionExitPhase !== "idle") return;
     setRe001Phase("leaving");
-    re001LeaveTimerRef.current = window.setTimeout(() => {
-      window.location.hash = nextPageId;
-    }, 2200);
+    startReCaptionExitTyping(nextPageId, 2200);
   };
 
   const handleBlurVisualNext = (nextPageId) => {
-    if (blurVisualPhase === "leaving") return;
+    if (blurVisualPhase === "leaving" || reCaptionExitPhase !== "idle") return;
     setBlurVisualPhase("leaving");
-    blurVisualLeaveTimerRef.current = window.setTimeout(() => {
-      window.location.hash = nextPageId;
-    }, 2000);
+    startReCaptionExitTyping(nextPageId, 2000);
   };
 
   const handleWaterVisualNext = (nextPageId) => {
-    if (waterVisualPhase === "leaving") return;
+    if (waterVisualPhase === "leaving" || reCaptionExitPhase !== "idle") return;
     setWaterVisualPhase("leaving");
-    waterVisualLeaveTimerRef.current = window.setTimeout(() => {
-      window.location.hash = nextPageId;
-    }, 2500);
+    startReCaptionExitTyping(nextPageId, 2500);
   };
+
+  const startReCaptionExitTyping = (nextPageId, imageExitDuration) => {
+    if (!reCaption) {
+      reCaptionExitTimerRef.current = window.setTimeout(() => {
+        window.location.hash = nextPageId;
+      }, imageExitDuration);
+      return;
+    }
+
+    reCaptionPendingNextRef.current = nextPageId;
+    setReCaptionExitPhase("image-leaving");
+    window.clearTimeout(reCaptionExitTimerRef.current);
+    reCaptionExitTimerRef.current = window.setTimeout(() => {
+      setReCaptionExitPhase("typing");
+    }, imageExitDuration);
+  };
+
+  const handleReCaptionExitComplete = React.useCallback(() => {
+    if (reCaptionExitPhase !== "typing" || !reCaptionPendingNextRef.current) return;
+    window.location.hash = reCaptionPendingNextRef.current;
+  }, [reCaptionExitPhase]);
 
   const handleMountainSequenceNext = (nextPageId) => {
     if (mountainSequencePhase === "line-flashing" || mountainSequencePhase === "leaving") return;
@@ -1258,7 +1574,21 @@ function VisualJourneyFrame({
           {captionBottom.startsWith("Re:") ? <ReTypingLabel text={captionBottom} active={active} /> : captionBottom}
         </p>
       )}
-      {reCaption && <p className="re-caption"><ReTypingLabel text={reCaption} active={active} /></p>}
+      {reCaption && reCaptionExitPhase === "idle" && (
+        <p className="re-caption">
+          <ReTypingLabel text={reCaption} active={active} />
+        </p>
+      )}
+      {reCaption && reCaptionExitPhase === "typing" && (
+        <p className="re-caption">
+          <ReTypingLabel
+            key={`${pageId}-exit-re-caption`}
+            text={reCaption}
+            active={active}
+            onComplete={handleReCaptionExitComplete}
+          />
+        </p>
+      )}
       {(coverHeaderMeta || coverHeaderTitle) && (
         <header className="visual-cover-header">
           {coverHeaderMeta && <p className="visual-cover-meta type-a1">{coverHeaderMeta}</p>}
@@ -1315,6 +1645,7 @@ function OpeningPageFrame({
   waterArtwork = false,
   blurArtwork = false,
   hingeArtwork = false,
+  edgeWeatherArtwork = false,
   eraserArtwork = false,
   rollArtwork = false,
   rotateFlashArtwork = false,
@@ -1361,7 +1692,7 @@ function OpeningPageFrame({
     setPhase("leaving");
     leaveTimerRef.current = window.setTimeout(() => {
       window.location.hash = nextPageId;
-    }, eraserArtwork ? 3000 : hingeArtwork ? 3000 : rotateFlashArtwork ? 3000 : fadeDownArtwork ? 3000 : rollArtwork ? 2500 : flipArtwork ? 2000 : rotateArtwork ? 1500 : waterArtwork ? 2000 : blurArtwork ? 2000 : 900);
+    }, eraserArtwork ? 3000 : edgeWeatherArtwork ? 3000 : hingeArtwork ? 3000 : rotateFlashArtwork ? 3000 : fadeDownArtwork ? 3000 : rollArtwork ? 2500 : flipArtwork ? 2000 : rotateArtwork ? 1500 : waterArtwork ? 2000 : blurArtwork ? 2000 : 900);
   };
 
   const isArtworkVisible = phase === "art-visible" || phase === "leaving";
@@ -1380,6 +1711,9 @@ function OpeningPageFrame({
   const hingeArtworkClass = hingeArtwork && isArtworkVisible
     ? `animate__animated ${phase === "leaving" ? "opening-asset-hinge-out animate__hinge" : "animate__flipInX"}`
     : "";
+  const edgeWeatherArtworkClass = edgeWeatherArtwork && isArtworkVisible
+    ? `${phase === "leaving" ? "zine-edge-weather-exit" : "animate__animated animate__flipInX"}`
+    : "";
   const eraserArtworkClass = eraserArtwork && isArtworkVisible
     ? `zine-${phase === "leaving" ? "eraser-exit" : "blur-art-enter"}`
     : "";
@@ -1396,7 +1730,7 @@ function OpeningPageFrame({
   return (
     <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""} ${phase === "leaving" ? "is-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""}`} style={frameRectStyle(art)}>
-        <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} src={imageSrc} alt="" />
+        <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${edgeWeatherArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
       <p className="opening-title type-a2" style={openingTitleStyle(title.rect)} aria-label={title.text}>
@@ -1526,7 +1860,7 @@ const openingPages = [
   {
     pageId: "article-2-03-cover",
     image: "png-pages/海市蜃樓 200/203.png",
-    hingeArtwork: true,
+    edgeWeatherArtwork: true,
     art: { x: -24, y: 0, width: 451, height: 660 },
     meta: { text: "第二部 · 海市蜃樓 / 2.03", rect: { x: 136, y: 91, width: 130, height: 20 } },
     title: { text: "《觀望與被觀望的距離》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -1591,7 +1925,7 @@ const openingPages = [
 const artworkArticles = [];
 
 function useActivePage() {
-  const getPage = () => window.location.hash.slice(1) || "home";
+  const getPage = () => window.location.hash.slice(1) || "cover";
   const [activePage, setActivePage] = React.useState(getPage);
 
   React.useEffect(() => {
@@ -1631,6 +1965,22 @@ function ZineAnimationStyles() {
       .zine-water-visual-enter { animation: waterVisualEnter 3s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-visual-exit { animation: waterVisualExit 2.5s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
       .zine-flash-blur-exit { animation: flashBlurExit 3s linear both; pointer-events: none; }
+      .zine-edge-weather-exit {
+        animation: edgeWeatherExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
+        -webkit-mask-image:
+          radial-gradient(ellipse at center, #000 0%, #000 47%, rgba(0, 0, 0, 0.64) 58%, transparent 73%),
+          repeating-conic-gradient(from 18deg at 51% 48%, #000 0deg 8deg, rgba(0, 0, 0, 0.42) 11deg 15deg, transparent 19deg 25deg);
+        mask-image:
+          radial-gradient(ellipse at center, #000 0%, #000 47%, rgba(0, 0, 0, 0.64) 58%, transparent 73%),
+          repeating-conic-gradient(from 18deg at 51% 48%, #000 0deg 8deg, rgba(0, 0, 0, 0.42) 11deg 15deg, transparent 19deg 25deg);
+        -webkit-mask-size: 170% 170%, 42px 42px;
+        mask-size: 170% 170%, 42px 42px;
+        -webkit-mask-position: center, center;
+        mask-position: center, center;
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        pointer-events: none;
+      }
       .zine-mountain-curtain-reveal { animation: mountainCurtainReveal var(--mountain-reveal-duration, 2s) linear both; }
       .zine-mountain-blur-exit { animation: mountainBlurExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
       .mountain-line-flash-out { animation: mountainLineFlashOut 0.18s linear both !important; }
@@ -1814,6 +2164,48 @@ function ZineAnimationStyles() {
         68% { opacity: 0.08; filter: blur(19px); }
         100% { opacity: 0; filter: blur(24px); }
       }
+      @keyframes edgeWeatherExit {
+        0% {
+          opacity: 1;
+          filter: blur(0);
+          -webkit-mask-size: 210% 210%, 52px 52px;
+          mask-size: 210% 210%, 52px 52px;
+          -webkit-mask-position: center, center;
+          mask-position: center, center;
+        }
+        28% {
+          opacity: 0.92;
+          filter: blur(0.35px);
+          -webkit-mask-size: 144% 144%, 44px 44px;
+          mask-size: 144% 144%, 44px 44px;
+          -webkit-mask-position: center, 6px -4px;
+          mask-position: center, 6px -4px;
+        }
+        58% {
+          opacity: 0.62;
+          filter: blur(1.2px);
+          -webkit-mask-size: 82% 82%, 32px 32px;
+          mask-size: 82% 82%, 32px 32px;
+          -webkit-mask-position: center, -8px 5px;
+          mask-position: center, -8px 5px;
+        }
+        82% {
+          opacity: 0.24;
+          filter: blur(2.6px);
+          -webkit-mask-size: 34% 34%, 24px 24px;
+          mask-size: 34% 34%, 24px 24px;
+          -webkit-mask-position: center, 4px 10px;
+          mask-position: center, 4px 10px;
+        }
+        100% {
+          opacity: 0;
+          filter: blur(4px);
+          -webkit-mask-size: 4% 4%, 18px 18px;
+          mask-size: 4% 4%, 18px 18px;
+          -webkit-mask-position: center, center;
+          mask-position: center, center;
+        }
+      }
       @keyframes re001CurtainReveal {
         from { clip-path: inset(0 0 100% 0); }
         to { clip-path: inset(0 0 0 0); }
@@ -1888,6 +2280,7 @@ function App() {
     <main className="preview-page">
       <ZineAnimationStyles />
       <h1 className="sr-only">作狀生活俱樂部</h1>
+      <CoverFrame active={activePage === "cover"} />
       <HomeFrame active={activePage === "home"} />
       <PageTwoFrame active={activePage === "page-2"} />
       <Article101Frame
