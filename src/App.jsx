@@ -490,23 +490,99 @@ function HomeCoverArt() {
 }
 
 function CoverFrame({ active }) {
+  const message = "陌生人你好！";
+  const [coverStarted, setCoverStarted] = React.useState(false);
+  const [typedCount, setTypedCount] = React.useState(0);
+  const [lineOneVisible, setLineOneVisible] = React.useState(true);
+  const [lineTwoVisible, setLineTwoVisible] = React.useState(false);
+  const [sendState, setSendState] = React.useState("idle");
+  const hasPlayedRef = React.useRef(false);
+  const coverImageRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!active || hasPlayedRef.current) return undefined;
+
+    hasPlayedRef.current = true;
+    setCoverStarted(false);
+    setTypedCount(0);
+    setLineOneVisible(true);
+    setLineTwoVisible(false);
+    setSendState("idle");
+
+    let cancelled = false;
+    const timers = [];
+    const runAfterReady = async () => {
+      if (typeof document !== "undefined" && document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+      if (coverImageRef.current?.decode) {
+        await coverImageRef.current.decode().catch(() => {});
+      }
+      if (cancelled) return;
+
+      timers.push(window.setTimeout(() => setCoverStarted(true), 500));
+      timers.push(window.setTimeout(() => {
+        setLineOneVisible(false);
+        setLineTwoVisible(true);
+        setTypedCount(0);
+        message.split("").forEach((_, index) => {
+          timers.push(window.setTimeout(() => {
+            setTypedCount(index + 1);
+          }, (index + 1) * 250));
+        });
+      }, 3300));
+      timers.push(window.setTimeout(() => setSendState("press"), 5800));
+      timers.push(window.setTimeout(() => setSendState("sent"), 5950));
+      timers.push(window.setTimeout(() => {
+        window.location.hash = "home";
+      }, 6300));
+    };
+
+    runAfterReady();
+
+    return () => {
+      cancelled = true;
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, [active]);
+
+  const typedText = message.slice(0, typedCount);
+  const lineTwoLeft = 35 + Math.round((typedCount / message.length) * 105);
+  const sendPressed = sendState === "press";
+  const sendSent = sendState === "sent" || sendState === "press";
+
   return (
     <article className={`phone-frame cover-entry-frame ${active ? "is-active" : ""}`} data-node-id="800:2" id="cover" style={pageBgStyle("cover")}>
-      <img
+      <div
         data-node-id="803:97"
         data-figma-layer="Cover 1"
-        src={pngPageSrc("intro/Cover.jpg")}
-        alt=""
         aria-hidden="true"
+        className={coverStarted ? "cover-paper-unfold" : ""}
         style={{
           position: "absolute",
           left: "-2px",
           top: "14px",
           width: "407px",
           height: "700px",
-          objectFit: "fill",
+          overflow: "hidden",
+          opacity: coverStarted ? undefined : 0,
+          pointerEvents: "none",
         }}
-      />
+      >
+        <img
+          ref={coverImageRef}
+          src={pngPageSrc("intro/Cover.jpg")}
+          alt=""
+          aria-hidden="true"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+        />
+        <span className="cover-paper-fold" aria-hidden="true" />
+      </div>
       <div
         data-node-id="803:101"
         data-figma-layer="Header bar"
@@ -587,6 +663,7 @@ function CoverFrame({ active }) {
         data-node-id="804:108"
         data-figma-layer="typing line 01"
         aria-hidden="true"
+        className={lineOneVisible ? "cover-cursor-blink" : ""}
         style={{
           position: "absolute",
           left: "29px",
@@ -594,6 +671,7 @@ function CoverFrame({ active }) {
           width: "1px",
           height: "17px",
           background: "#B5B5B6",
+          opacity: lineOneVisible ? undefined : 0,
         }}
       />
       <p
@@ -616,22 +694,34 @@ function CoverFrame({ active }) {
           whiteSpace: "nowrap",
         }}
       >
-        陌生人你好！
+        {typedText}
       </p>
       <span
         data-node-id="804:109"
         data-figma-layer="typing line 02"
         aria-hidden="true"
+        className={lineTwoVisible ? "cover-cursor-blink" : ""}
         style={{
           position: "absolute",
-          left: "140px",
+          left: `${lineTwoLeft}px`,
           top: "660px",
           width: "1px",
           height: "17px",
           background: "#B5B5B6",
+          opacity: lineTwoVisible ? undefined : 0,
         }}
       />
-      <div data-node-id="805:117" data-figma-layer="Sent" aria-hidden="true">
+      <div
+        data-node-id="805:117"
+        data-figma-layer="Sent"
+        aria-hidden="true"
+        style={{
+          pointerEvents: "none",
+          transform: sendPressed ? "scale(0.98)" : "scale(1)",
+          transformOrigin: "338.5px 668.5px",
+          transition: "transform 130ms ease-out",
+        }}
+      >
         <div
           data-node-id="804:106"
           data-figma-layer="Rectangle 17"
@@ -641,8 +731,9 @@ function CoverFrame({ active }) {
             top: "654px",
             width: "91px",
             height: "29px",
-            background: "#221714",
+            background: sendSent ? "#E0FF00" : "#221714",
             borderRadius: "7px",
+            transition: "background 180ms ease-out",
           }}
         />
         <span
@@ -654,7 +745,7 @@ function CoverFrame({ active }) {
             top: "660px",
             width: "29px",
             height: "17px",
-            color: "#FFF",
+            color: sendSent ? "#000" : "#FFF",
             fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
             fontWeight: 400,
             fontSize: "14px",
@@ -662,6 +753,7 @@ function CoverFrame({ active }) {
             letterSpacing: "0.04em",
             textAlign: "left",
             whiteSpace: "nowrap",
+            transition: "color 180ms ease-out",
           }}
         >
           傳送
@@ -1941,6 +2033,24 @@ function useActivePage() {
 function ZineAnimationStyles() {
   return (
     <style>{`
+      .cover-entry-frame .cover-paper-unfold {
+        animation: coverPaperUnfold 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        transform-origin: center center;
+        transform-style: preserve-3d;
+        will-change: transform, clip-path, filter, opacity;
+      }
+      .cover-entry-frame .cover-paper-fold {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 48%, rgba(35, 24, 21, 0.16) 50%, rgba(255, 255, 255, 0.28) 52%, transparent 100%);
+        animation: coverPaperFold 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        mix-blend-mode: multiply;
+      }
+      .cover-entry-frame .cover-cursor-blink {
+        animation: coverCursorBlink 0.8s ease-in-out infinite;
+      }
       .animate__animated { animation-duration: 1.5s; animation-fill-mode: both; }
       .animate__flipInX { animation-name: flipInX; backface-visibility: visible !important; }
       .animate__flipOutX { animation-name: flipOutX; backface-visibility: visible !important; }
@@ -2091,6 +2201,41 @@ function ZineAnimationStyles() {
       @keyframes fadeOutBottomRight {
         from { opacity: 1; transform: translate3d(0, 0, 0); }
         to { opacity: 0; transform: translate3d(100%, 100%, 0); }
+      }
+      @keyframes coverPaperUnfold {
+        0% {
+          opacity: 0.94;
+          clip-path: polygon(49% 0%, 51% 0%, 51% 100%, 49% 100%);
+          transform: perspective(900px) scaleX(0.08) rotateY(-7deg);
+          filter: drop-shadow(0 10px 12px rgba(35, 24, 21, 0.22)) brightness(1.04);
+        }
+        36% {
+          opacity: 1;
+          clip-path: polygon(26% 0%, 74% 0%, 79% 100%, 21% 100%);
+          transform: perspective(900px) scaleX(0.52) rotateY(-4deg);
+          filter: drop-shadow(0 8px 10px rgba(35, 24, 21, 0.16)) brightness(1.02);
+        }
+        72% {
+          clip-path: polygon(5% 0%, 95% 0%, 98% 100%, 2% 100%);
+          transform: perspective(900px) scaleX(0.94) rotateY(-1.2deg);
+          filter: drop-shadow(0 3px 5px rgba(35, 24, 21, 0.08)) brightness(1.01);
+        }
+        100% {
+          opacity: 1;
+          clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+          transform: perspective(900px) scaleX(1) rotateY(0deg);
+          filter: none;
+        }
+      }
+      @keyframes coverPaperFold {
+        0% { opacity: 0.9; transform: scaleX(0.2); }
+        45% { opacity: 0.52; transform: scaleX(0.72); }
+        78% { opacity: 0.22; transform: scaleX(1); }
+        100% { opacity: 0; transform: scaleX(1); }
+      }
+      @keyframes coverCursorBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.2; }
       }
       @keyframes hinge {
         0% { animation-timing-function: ease-in-out; transform: rotate3d(0, 0, 1, 0deg); opacity: 1; }
