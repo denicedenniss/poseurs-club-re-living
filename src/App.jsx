@@ -877,7 +877,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     };
 
     const handleMotion = (event) => {
-      const acceleration = event.acceleration;
+      const acceleration = event.acceleration || event.accelerationIncludingGravity;
       if (!acceleration) return;
       const ax = acceleration.x || 0;
       const ay = acceleration.y || 0;
@@ -930,8 +930,9 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       try {
         const needsOrientationPermission = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
         const needsMotionPermission = typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function";
-        const orientationResult = needsOrientationPermission ? await DeviceOrientationEvent.requestPermission() : "granted";
-        const motionResult = needsMotionPermission ? await DeviceMotionEvent.requestPermission() : "granted";
+        const orientationPermission = needsOrientationPermission ? DeviceOrientationEvent.requestPermission() : Promise.resolve("granted");
+        const motionPermission = needsMotionPermission ? DeviceMotionEvent.requestPermission() : Promise.resolve("granted");
+        const [orientationResult, motionResult] = await Promise.all([orientationPermission, motionPermission]);
         if (orientationResult === "granted" || motionResult === "granted") {
           attachSensorListeners();
         }
@@ -960,8 +961,12 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       animationFrame = window.requestAnimationFrame(animate);
     };
 
+    frameElement = document.getElementById(pageId);
+    const permissionTarget = frameElement || window;
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    window.addEventListener("pointerdown", requestMotionPermission, { passive: true });
+    permissionTarget.addEventListener("pointerdown", requestMotionPermission, { passive: true });
+    permissionTarget.addEventListener("touchstart", requestMotionPermission, { passive: true });
+    permissionTarget.addEventListener("click", requestMotionPermission, { passive: true });
     const canUseOrientationWithoutPrompt = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission !== "function";
     const canUseMotionWithoutPrompt = typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission !== "function";
     if (canUseOrientationWithoutPrompt || canUseMotionWithoutPrompt) {
@@ -973,7 +978,9 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
       window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerdown", requestMotionPermission);
+      permissionTarget.removeEventListener("pointerdown", requestMotionPermission);
+      permissionTarget.removeEventListener("touchstart", requestMotionPermission);
+      permissionTarget.removeEventListener("click", requestMotionPermission);
       window.removeEventListener("deviceorientation", handleOrientation);
       window.removeEventListener("devicemotion", handleMotion);
       listenersAttached = false;
@@ -1003,6 +1010,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         pointerEvents: "none",
         transform: "translate3d(0px, 0px, 0)",
         willChange: "transform",
+        zIndex: 1,
       }}
     />
   );
@@ -1010,7 +1018,16 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
 function HomeFrame({ active }) {
   return (
-    <article className={`phone-frame home-frame ${active ? "is-active" : ""}`} data-node-id="1:2" id="home" style={pageBgStyle("home")}>
+    <article
+      className={`phone-frame home-frame ${active ? "is-active" : ""}`}
+      data-node-id="1:2"
+      id="home"
+      style={{
+        ...pageBgStyle("home"),
+        minHeight: "700px",
+        overflow: "visible",
+      }}
+    >
       <img
         data-node-id="804:114"
         data-figma-layer="HOME BG 1"
@@ -1026,6 +1043,7 @@ function HomeFrame({ active }) {
           objectFit: "fill",
           opacity: 0.28,
           pointerEvents: "none",
+          zIndex: 0,
         }}
       />
       <MovingGreenBall active={active} pageId="home" nodeId="804:110" left={160} top={0} size={242} />
@@ -1043,6 +1061,7 @@ function HomeFrame({ active }) {
           height: "128px",
           objectFit: "contain",
           pointerEvents: "none",
+          zIndex: 2,
         }}
       />
       <p
@@ -1063,6 +1082,7 @@ function HomeFrame({ active }) {
           letterSpacing: "0.03em",
           textAlign: "center",
           whiteSpace: "pre-line",
+          zIndex: 2,
         }}
       >
         {"《作狀生活俱樂部》\n是一冊被改裝成網頁的\n思想散文集。"}
@@ -1085,6 +1105,7 @@ function HomeFrame({ active }) {
           letterSpacing: "0.08em",
           textAlign: "center",
           whiteSpace: "pre-line",
+          zIndex: 2,
         }}
       >
         {"它關於生活、焦慮、自我審視，也關於那些被人說成作狀，卻其實救過自己的事。它改裝成一條手機裡的路：你可以慢慢向下走，由荒原、海市蜃樓，走到山。\n\n若你也是掃着一張海報進來，又想打發時間，如果你一目十行，10分鐘可能就可以走完整個旅程，或者想慢慢咀嚼也無任歡迎。"}
@@ -1115,6 +1136,7 @@ function HomeFrame({ active }) {
           letterSpacing: "0.2em",
           textDecoration: "none",
           boxSizing: "border-box",
+          zIndex: 3,
         }}
       >
         開始吃盡
@@ -1168,7 +1190,16 @@ function JourneyIndex() {
 
 function PageTwoFrame({ active }) {
   return (
-    <article className={`phone-frame page-two-frame ${active ? "is-active" : ""}`} data-node-id="5:106" id="page-2" style={pageBgStyle("page-2")}>
+    <article
+      className={`phone-frame page-two-frame ${active ? "is-active" : ""}`}
+      data-node-id="5:106"
+      id="page-2"
+      style={{
+        ...pageBgStyle("page-2"),
+        minHeight: "700px",
+        overflow: "visible",
+      }}
+    >
       <img
         data-node-id="805:147"
         data-figma-layer="HOME BG 1"
@@ -1184,6 +1215,7 @@ function PageTwoFrame({ active }) {
           objectFit: "fill",
           opacity: 0.28,
           pointerEvents: "none",
+          zIndex: 0,
         }}
       />
       <img
@@ -1200,6 +1232,7 @@ function PageTwoFrame({ active }) {
           height: "344.84px",
           objectFit: "fill",
           pointerEvents: "none",
+          zIndex: 2,
         }}
       />
       <MovingGreenBall active={active} pageId="page-2" nodeId="805:127" left={99} top={403} size={242} />
@@ -1211,7 +1244,13 @@ function PageTwoFrame({ active }) {
           left: "44px",
           top: "362px",
           width: "318px",
+          minWidth: "318px",
+          maxWidth: "318px",
+          height: "239px",
+          boxSizing: "border-box",
+          flexShrink: 0,
           color: "#000",
+          zIndex: 2,
         }}
       >
         <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em" }}>第一部・荒原</p>
@@ -1252,6 +1291,7 @@ function PageTwoFrame({ active }) {
           lineHeight: "20px",
           letterSpacing: "0.2em",
           borderRadius: "9px",
+          zIndex: 3,
         }}
       >
         出發
