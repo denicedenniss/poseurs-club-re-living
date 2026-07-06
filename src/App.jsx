@@ -523,14 +523,14 @@ function CoverFrame({ active }) {
         setLineOneVisible(false);
         setLineTwoVisible(true);
         setTypedCount(0);
-        const typingDelays = [650, 1450, 2050, 3900, 5050, 6600];
+        const typingDelays = [360, 980, 1680, 2780, 4240, 5820];
         message.split("").forEach((_, index) => {
           timers.push(window.setTimeout(() => {
             setTypedCount(index + 1);
           }, typingDelays[index]));
         });
-      }, 4500));
-      timers.push(window.setTimeout(() => setSendState("ready"), 12600));
+      }, 1500));
+      timers.push(window.setTimeout(() => setSendState("ready"), 8900));
     };
 
     runAfterReady();
@@ -542,7 +542,7 @@ function CoverFrame({ active }) {
   }, [active]);
 
   const typedText = message.slice(0, typedCount);
-  const lineTwoLeft = 35 + Math.round((typedCount / message.length) * 105);
+  const lineTwoLeft = 35 + Math.round(typedCount * 20);
   const sendPressed = sendState === "press";
   const sendSent = sendState === "sent" || sendState === "press";
   const sendEnabled = sendState === "ready";
@@ -694,7 +694,7 @@ function CoverFrame({ active }) {
           fontSize: "16px",
           lineHeight: "23px",
           letterSpacing: "0.11em",
-          textAlign: "center",
+          textAlign: "left",
           whiteSpace: "nowrap",
         }}
       >
@@ -749,7 +749,7 @@ function CoverFrame({ active }) {
             top: 0,
             width: "91px",
             height: "29px",
-            background: sendSent ? "#E0FF00" : "#221714",
+            background: sendSent ? "#E0FF00" : "#000000",
             borderRadius: "7px",
             transition: "background 180ms ease-out",
           }}
@@ -818,7 +818,7 @@ function StartButton() {
   );
 }
 
-function HomeGravityBall({ active }) {
+function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
   const ballRef = React.useRef(null);
   const positionRef = React.useRef({ x: 0, y: 0 });
   const targetRef = React.useRef({ x: 0, y: 0 });
@@ -843,14 +843,11 @@ function HomeGravityBall({ active }) {
 
     const frameWidth = 402;
     const frameHeight = 700;
-    const ballLeft = 160;
-    const ballTop = 0;
-    const ballSize = 242;
     const bounds = {
-      minX: -ballLeft,
-      maxX: frameWidth - ballLeft - ballSize,
-      minY: -ballTop,
-      maxY: frameHeight - ballTop - ballSize,
+      minX: -left,
+      maxX: frameWidth - left - size,
+      minY: -top,
+      maxY: frameHeight - top - size,
     };
     let frameElement = null;
     let animationFrame = 0;
@@ -858,22 +855,23 @@ function HomeGravityBall({ active }) {
     let mounted = true;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-    const mapHorizontalTilt = (value) => {
-      const clamped = clamp(value, -18, 0);
-      return (Math.abs(clamped) / 18) * bounds.minX;
+    const mapAxisToBounds = (value, negativeBound, positiveBound) => {
+      const clamped = clamp(value, -18, 18);
+      if (clamped < 0) return (Math.abs(clamped) / 18) * negativeBound;
+      return (clamped / 18) * positiveBound;
     };
-    const mapVerticalTilt = (value) => {
-      const clamped = clamp(value, 0, 18);
-      return (clamped / 18) * bounds.maxY;
+    const mapPointerToBounds = (value, negativeBound, positiveBound) => {
+      if (value < 0) return Math.abs(value) * negativeBound;
+      return value * positiveBound;
     };
 
     const handleOrientation = (event) => {
       if (typeof event.gamma === "number") {
-        targetRef.current.x = mapHorizontalTilt(event.gamma);
+        targetRef.current.x = mapAxisToBounds(event.gamma, bounds.minX, bounds.maxX);
         sensorActiveRef.current = true;
       }
       if (typeof event.beta === "number") {
-        targetRef.current.y = mapVerticalTilt(event.beta);
+        targetRef.current.y = mapAxisToBounds(event.beta, bounds.minY, bounds.maxY);
         sensorActiveRef.current = true;
       }
     };
@@ -907,15 +905,15 @@ function HomeGravityBall({ active }) {
 
     const handlePointerMove = (event) => {
       if (sensorActiveRef.current) return;
-      frameElement = frameElement || document.getElementById("home");
+      frameElement = frameElement || document.getElementById(pageId);
       if (!frameElement) return;
       const rect = frameElement.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const relativeX = clamp((event.clientX - (rect.left + rect.width / 2)) / (rect.width / 2), -1, 1);
       const relativeY = clamp((event.clientY - (rect.top + rect.height / 2)) / (rect.height / 2), -1, 1);
 
-      targetRef.current.x = clamp(relativeX < 0 ? relativeX * 92 : 0, bounds.minX, bounds.maxX);
-      targetRef.current.y = clamp(relativeY > 0 ? relativeY * 110 : 0, bounds.minY, bounds.maxY);
+      targetRef.current.x = clamp(mapPointerToBounds(relativeX, bounds.minX, bounds.maxX), bounds.minX, bounds.maxX);
+      targetRef.current.y = clamp(mapPointerToBounds(relativeY, bounds.minY, bounds.maxY), bounds.minY, bounds.maxY);
     };
 
     const attachSensorListeners = () => {
@@ -986,20 +984,20 @@ function HomeGravityBall({ active }) {
       lastAccelerationRef.current = null;
       ball.style.transform = "translate3d(0px, 0px, 0)";
     };
-  }, [active]);
+  }, [active, left, pageId, size, top]);
 
   return (
     <div
       ref={ballRef}
-      data-node-id="804:110"
+      data-node-id={nodeId}
       data-figma-layer="Ball"
       aria-hidden="true"
       style={{
         position: "absolute",
-        left: "160px",
-        top: 0,
-        width: "242px",
-        height: "242px",
+        left: `${left}px`,
+        top: `${top}px`,
+        width: `${size}px`,
+        height: `${size}px`,
         borderRadius: "50%",
         background: "#E0FF00",
         pointerEvents: "none",
@@ -1030,7 +1028,7 @@ function HomeFrame({ active }) {
           pointerEvents: "none",
         }}
       />
-      <HomeGravityBall active={active} />
+      <MovingGreenBall active={active} pageId="home" nodeId="804:110" left={160} top={0} size={242} />
       <img
         data-node-id="805:115"
         data-figma-layer="home title 1"
@@ -1092,6 +1090,7 @@ function HomeFrame({ active }) {
         {"它關於生活、焦慮、自我審視，也關於那些被人說成作狀，卻其實救過自己的事。它改裝成一條手機裡的路：你可以慢慢向下走，由荒原、海市蜃樓，走到山。\n\n若你也是掃着一張海報進來，又想打發時間，如果你一目十行，10分鐘可能就可以走完整個旅程，或者想慢慢咀嚼也無任歡迎。"}
       </p>
       <a
+        className="zine-action-button"
         data-node-id="805:150"
         data-figma-layer="開始吃盡 Botton"
         href="#page-2"
@@ -1101,19 +1100,19 @@ function HomeFrame({ active }) {
           left: "30px",
           top: "652px",
           width: "340px",
-          height: "29.45px",
+          height: "29px",
           border: "1px solid #000",
           borderRadius: "9px",
-          background: "transparent",
-          color: "#000",
+          background: "#000",
+          color: "#FFF",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: '"Noto Serif HK", "Noto Serif TC", serif',
-          fontWeight: 600,
-          fontSize: "14px",
+          fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
+          fontWeight: 400,
+          fontSize: "14pt",
           lineHeight: "20px",
-          letterSpacing: "0.12em",
+          letterSpacing: "0.2em",
           textDecoration: "none",
           boxSizing: "border-box",
         }}
@@ -1183,12 +1182,14 @@ function PageTwoFrame({ active }) {
           width: "407px",
           height: "700px",
           objectFit: "fill",
+          opacity: 0.28,
+          pointerEvents: "none",
         }}
       />
       <img
         data-node-id="805:128"
         data-figma-layer="slogan"
-        src={pngPageSrc("intro/home title.png")}
+        src={pngPageSrc("intro/1.png")}
         alt=""
         aria-hidden="true"
         style={{
@@ -1198,64 +1199,37 @@ function PageTwoFrame({ active }) {
           width: "395.46px",
           height: "344.84px",
           objectFit: "fill",
+          pointerEvents: "none",
         }}
       />
-      <div
-        data-node-id="805:127"
-        data-figma-layer="Ball"
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          left: "99px",
-          top: "403px",
-          width: "242px",
-          height: "242px",
-          borderRadius: "50%",
-          background: "#E0FF00",
-        }}
-      />
+      <MovingGreenBall active={active} pageId="page-2" nodeId="805:127" left={99} top={403} size={242} />
       <section
         data-node-id="5:107"
-        data-figma-layer="第一部 · 荒原 『世界是一個荒原，書裡說的，我很感動。』 —— 節錄自電影《大象席地而坐》"
-        style={{ position: "absolute", left: "44px", top: "362px", width: "318px", height: "77px", color: "#000" }}
-      >
-        <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "19px", letterSpacing: "0.15em" }}>第一部 · 荒原</p>
-        <p style={{ margin: "18px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>『世界是一個荒原，書裡說的，我很感動。』</p>
-        <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>—— 節錄自電影《大象席地而坐》</p>
-      </section>
-      <section
-        data-node-id="5:162"
-        data-figma-layer="第二部 · 海市蜃樓 未來，是改變過去的時光機。 —— 節錄自《人生潔癖，你也有嗎？》"
-        style={{ position: "absolute", left: "44px", top: "454px", width: "268px", height: "77px", color: "#000" }}
-      >
-        <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "19px", letterSpacing: "0.15em" }}>第二部 · 海市蜃樓</p>
-        <p style={{ margin: "18px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>未來，是改變過去的時光機。</p>
-        <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>—— 節錄自《人生潔癖，你也有嗎？》</p>
-      </section>
-      <section
-        data-node-id="5:163"
-        data-figma-layer="第三部 · 山 無論旅程走到哪裡，也請帶上自己"
-        style={{ position: "absolute", left: "44px", top: "553px", width: "238px", height: "57px", color: "#000" }}
-      >
-        <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "19px", letterSpacing: "0.15em" }}>第三部 · 山</p>
-        <p style={{ margin: "18px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em", whiteSpace: "nowrap" }}>
-          無論旅程走到哪裡，也請帶上自己
-        </p>
-      </section>
-      <span
-        data-node-id="805:149"
-        data-figma-layer="typing line 03"
-        aria-hidden="true"
+        data-figma-layer="目錄 text box"
         style={{
           position: "absolute",
-          left: "286px",
-          top: "593px",
-          width: "1px",
-          height: "14px",
-          background: "#000",
+          left: "44px",
+          top: "362px",
+          width: "318px",
+          color: "#000",
         }}
-      />
+      >
+        <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em" }}>第一部・荒原</p>
+        <p style={{ margin: "20px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>『世界是一個荒原，書裡說的，我很感動。』</p>
+        <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>—— 節錄自電影《大象席地而坐》</p>
+
+        <p style={{ margin: "40px 0 0", fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em" }}>第二部・海市蜃樓</p>
+        <p style={{ margin: "20px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>未來，是改變過去的時光機。</p>
+        <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em" }}>—— 節錄自《人生潔癖，你也有嗎？》</p>
+
+        <p style={{ margin: "40px 0 0", fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em" }}>第三部・山</p>
+        <p style={{ margin: "20px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "14px", lineHeight: "20px", letterSpacing: "0.14em", whiteSpace: "nowrap" }}>
+          無論旅程走到哪裡，也請帶上自己
+          <span className="cover-cursor-blink" data-node-id="805:149" data-figma-layer="typing line 03" aria-hidden="true" style={{ display: "inline-block", width: "1px", height: "14px", marginLeft: "3px", verticalAlign: "-2px", background: "#000" }} />
+        </p>
+      </section>
       <a
+        className="zine-action-button"
         href="#page-3"
         aria-label="出發"
         data-node-id="805:124"
@@ -1274,12 +1248,13 @@ function PageTwoFrame({ active }) {
           textDecoration: "none",
           fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
           fontWeight: 400,
-          fontSize: "14px",
-          lineHeight: "22px",
+          fontSize: "14pt",
+          lineHeight: "20px",
           letterSpacing: "0.2em",
+          borderRadius: "9px",
         }}
       >
-        出發!
+        出發
       </a>
     </article>
   );
@@ -2343,11 +2318,16 @@ function ZineAnimationStyles() {
   return (
     <style>{`
       .cover-entry-frame .cover-soft-reveal {
-        animation: coverSoftReveal 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-        will-change: clip-path, opacity;
+        animation: coverSoftReveal 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+        will-change: clip-path, opacity, filter;
       }
-      .cover-entry-frame .cover-cursor-blink {
+      .cover-cursor-blink {
         animation: coverCursorBlink 0.8s ease-in-out infinite;
+      }
+      .zine-action-button:active {
+        background: #E0FF00 !important;
+        color: #000 !important;
+        transform: scale(0.98);
       }
       .animate__animated { animation-duration: 1.5s; animation-fill-mode: both; }
       .animate__flipInX { animation-name: flipInX; backface-visibility: visible !important; }
@@ -2373,6 +2353,26 @@ function ZineAnimationStyles() {
       .zine-water-visual-enter { animation: waterVisualEnter 3s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-visual-exit { animation: waterVisualExit 2.5s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
       .zine-flash-blur-exit { animation: flashBlurExit 3s linear both; pointer-events: none; }
+      @keyframes coverSoftReveal {
+        0% {
+          opacity: 0;
+          filter: blur(18px);
+          clip-path: inset(0 0 100% 0);
+        }
+        35% {
+          opacity: 0.45;
+          filter: blur(12px);
+        }
+        72% {
+          opacity: 0.88;
+          filter: blur(4px);
+        }
+        100% {
+          opacity: 1;
+          filter: blur(0);
+          clip-path: inset(0 0 0 0);
+        }
+      }
       .zine-edge-weather-exit {
         animation: edgeWeatherExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
         -webkit-mask-image:
@@ -2499,22 +2499,6 @@ function ZineAnimationStyles() {
       @keyframes fadeOutBottomRight {
         from { opacity: 1; transform: translate3d(0, 0, 0); }
         to { opacity: 0; transform: translate3d(100%, 100%, 0); }
-      }
-      @keyframes coverSoftReveal {
-        0% {
-          opacity: 0;
-          clip-path: inset(0 0 100% 0);
-        }
-        18% {
-          opacity: 0.36;
-        }
-        64% {
-          opacity: 0.86;
-        }
-        100% {
-          opacity: 1;
-          clip-path: inset(0 0 0 0);
-        }
       }
       @keyframes coverCursorBlink {
         0%, 100% { opacity: 1; }
