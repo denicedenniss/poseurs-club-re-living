@@ -496,13 +496,11 @@ function CoverFrame({ active }) {
   const [lineOneVisible, setLineOneVisible] = React.useState(true);
   const [lineTwoVisible, setLineTwoVisible] = React.useState(false);
   const [sendState, setSendState] = React.useState("idle");
-  const hasPlayedRef = React.useRef(false);
   const coverImageRef = React.useRef(null);
 
   React.useEffect(() => {
-    if (!active || hasPlayedRef.current) return undefined;
+    if (!active) return undefined;
 
-    hasPlayedRef.current = true;
     setCoverStarted(false);
     setTypedCount(0);
     setLineOneVisible(true);
@@ -520,22 +518,19 @@ function CoverFrame({ active }) {
       }
       if (cancelled) return;
 
-      timers.push(window.setTimeout(() => setCoverStarted(true), 500));
+      setCoverStarted(true);
       timers.push(window.setTimeout(() => {
         setLineOneVisible(false);
         setLineTwoVisible(true);
         setTypedCount(0);
+        const typingDelays = [650, 1450, 2050, 3900, 5050, 6600];
         message.split("").forEach((_, index) => {
           timers.push(window.setTimeout(() => {
             setTypedCount(index + 1);
-          }, (index + 1) * 250));
+          }, typingDelays[index]));
         });
-      }, 3300));
-      timers.push(window.setTimeout(() => setSendState("press"), 5800));
-      timers.push(window.setTimeout(() => setSendState("sent"), 5950));
-      timers.push(window.setTimeout(() => {
-        window.location.hash = "home";
-      }, 6300));
+      }, 4500));
+      timers.push(window.setTimeout(() => setSendState("ready"), 12600));
     };
 
     runAfterReady();
@@ -550,6 +545,16 @@ function CoverFrame({ active }) {
   const lineTwoLeft = 35 + Math.round((typedCount / message.length) * 105);
   const sendPressed = sendState === "press";
   const sendSent = sendState === "sent" || sendState === "press";
+  const sendEnabled = sendState === "ready";
+
+  const handleCoverSend = React.useCallback(() => {
+    if (!sendEnabled) return;
+    setSendState("press");
+    window.setTimeout(() => setSendState("sent"), 130);
+    window.setTimeout(() => {
+      window.location.hash = "home";
+    }, 460);
+  }, [sendEnabled]);
 
   return (
     <article className={`phone-frame cover-entry-frame ${active ? "is-active" : ""}`} data-node-id="800:2" id="cover" style={pageBgStyle("cover")}>
@@ -557,13 +562,13 @@ function CoverFrame({ active }) {
         data-node-id="803:97"
         data-figma-layer="Cover 1"
         aria-hidden="true"
-        className={coverStarted ? "cover-paper-unfold" : ""}
+        className={coverStarted ? "cover-soft-reveal" : ""}
         style={{
           position: "absolute",
-          left: "-2px",
-          top: "14px",
-          width: "407px",
-          height: "700px",
+          left: "-6px",
+          top: "47px",
+          width: "414px",
+          height: "713px",
           overflow: "hidden",
           opacity: coverStarted ? undefined : 0,
           pointerEvents: "none",
@@ -581,7 +586,6 @@ function CoverFrame({ active }) {
             display: "block",
           }}
         />
-        <span className="cover-paper-fold" aria-hidden="true" />
       </div>
       <div
         data-node-id="803:101"
@@ -638,9 +642,9 @@ function CoverFrame({ active }) {
         style={{
           position: "absolute",
           left: 0,
-          top: "636px",
+          top: "629px",
           width: "402px",
-          height: "64px",
+          height: "71px",
           background: "#F8F8F8",
         }}
       />
@@ -650,7 +654,7 @@ function CoverFrame({ active }) {
         style={{
           position: "absolute",
           left: "18px",
-          top: "654px",
+          top: "650px",
           width: "269px",
           height: "29px",
           boxSizing: "border-box",
@@ -667,7 +671,7 @@ function CoverFrame({ active }) {
         style={{
           position: "absolute",
           left: "29px",
-          top: "660px",
+          top: "656px",
           width: "1px",
           height: "17px",
           background: "#B5B5B6",
@@ -680,7 +684,7 @@ function CoverFrame({ active }) {
         style={{
           position: "absolute",
           left: "35px",
-          top: "657px",
+          top: "653px",
           width: "105px",
           height: "23px",
           margin: 0,
@@ -704,21 +708,35 @@ function CoverFrame({ active }) {
         style={{
           position: "absolute",
           left: `${lineTwoLeft}px`,
-          top: "660px",
+          top: "656px",
           width: "1px",
           height: "17px",
           background: "#B5B5B6",
           opacity: lineTwoVisible ? undefined : 0,
         }}
       />
-      <div
+      <button
+        type="button"
         data-node-id="805:117"
         data-figma-layer="Sent"
-        aria-hidden="true"
+        disabled={!sendEnabled}
+        onClick={handleCoverSend}
+        aria-label="傳送"
         style={{
-          pointerEvents: "none",
+          position: "absolute",
+          left: "293px",
+          top: "650px",
+          width: "91px",
+          height: "29px",
+          border: 0,
+          margin: 0,
+          padding: 0,
+          background: "transparent",
+          appearance: "none",
+          cursor: sendEnabled ? "pointer" : "default",
+          pointerEvents: sendEnabled ? "auto" : "none",
           transform: sendPressed ? "scale(0.98)" : "scale(1)",
-          transformOrigin: "338.5px 668.5px",
+          transformOrigin: "center center",
           transition: "transform 130ms ease-out",
         }}
       >
@@ -727,8 +745,8 @@ function CoverFrame({ active }) {
           data-figma-layer="Rectangle 17"
           style={{
             position: "absolute",
-            left: "293px",
-            top: "654px",
+            left: 0,
+            top: 0,
             width: "91px",
             height: "29px",
             background: sendSent ? "#E0FF00" : "#221714",
@@ -741,24 +759,24 @@ function CoverFrame({ active }) {
           data-figma-layer="傳送"
           style={{
             position: "absolute",
-            left: "324px",
-            top: "660px",
-            width: "29px",
-            height: "17px",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             color: sendSent ? "#000" : "#FFF",
             fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
             fontWeight: 400,
             fontSize: "14px",
             lineHeight: "17px",
             letterSpacing: "0.04em",
-            textAlign: "left",
+            textAlign: "center",
             whiteSpace: "nowrap",
             transition: "color 180ms ease-out",
           }}
         >
           傳送
         </span>
-      </div>
+      </button>
     </article>
   );
 }
@@ -800,17 +818,308 @@ function StartButton() {
   );
 }
 
+function HomeGravityBall({ active }) {
+  const ballRef = React.useRef(null);
+  const positionRef = React.useRef({ x: 0, y: 0 });
+  const targetRef = React.useRef({ x: 0, y: 0 });
+  const impulseRef = React.useRef({ x: 0, y: 0 });
+  const sensorActiveRef = React.useRef(false);
+  const permissionRequestedRef = React.useRef(false);
+  const lastShakeRef = React.useRef(0);
+  const lastAccelerationRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const ball = ballRef.current;
+    if (!active || !ball || typeof window === "undefined") {
+      if (ball) ball.style.transform = "translate3d(0px, 0px, 0)";
+      return undefined;
+    }
+
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (reducedMotion) {
+      ball.style.transform = "translate3d(0px, 0px, 0)";
+      return undefined;
+    }
+
+    const frameWidth = 402;
+    const frameHeight = 700;
+    const ballLeft = 160;
+    const ballTop = 0;
+    const ballSize = 242;
+    const bounds = {
+      minX: -ballLeft,
+      maxX: frameWidth - ballLeft - ballSize,
+      minY: -ballTop,
+      maxY: frameHeight - ballTop - ballSize,
+    };
+    let frameElement = null;
+    let animationFrame = 0;
+    let listenersAttached = false;
+    let mounted = true;
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const mapHorizontalTilt = (value) => {
+      const clamped = clamp(value, -18, 0);
+      return (Math.abs(clamped) / 18) * bounds.minX;
+    };
+    const mapVerticalTilt = (value) => {
+      const clamped = clamp(value, 0, 18);
+      return (clamped / 18) * bounds.maxY;
+    };
+
+    const handleOrientation = (event) => {
+      if (typeof event.gamma === "number") {
+        targetRef.current.x = mapHorizontalTilt(event.gamma);
+        sensorActiveRef.current = true;
+      }
+      if (typeof event.beta === "number") {
+        targetRef.current.y = mapVerticalTilt(event.beta);
+        sensorActiveRef.current = true;
+      }
+    };
+
+    const handleMotion = (event) => {
+      const acceleration = event.acceleration;
+      if (!acceleration) return;
+      const ax = acceleration.x || 0;
+      const ay = acceleration.y || 0;
+      const az = acceleration.z || 0;
+      const magnitude = Math.sqrt(ax * ax + ay * ay + az * az);
+      const previous = lastAccelerationRef.current;
+      const delta = previous
+        ? Math.sqrt(
+            (ax - previous.x) * (ax - previous.x) +
+              (ay - previous.y) * (ay - previous.y) +
+              (az - previous.z) * (az - previous.z)
+          )
+        : 0;
+      lastAccelerationRef.current = { x: ax, y: ay, z: az };
+
+      const now = window.performance.now();
+      const normalizedSpike = magnitude / 9.81;
+      const normalizedDelta = delta / 9.81;
+      if (normalizedSpike < 1.45 || normalizedDelta < 0.65 || now - lastShakeRef.current < 1000) return;
+
+      lastShakeRef.current = now;
+      impulseRef.current.x = clamp(impulseRef.current.x - ax * 2.1, -44, 44);
+      impulseRef.current.y = clamp(impulseRef.current.y + ay * 2.1, -44, 44);
+    };
+
+    const handlePointerMove = (event) => {
+      if (sensorActiveRef.current) return;
+      frameElement = frameElement || document.getElementById("home");
+      if (!frameElement) return;
+      const rect = frameElement.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const relativeX = clamp((event.clientX - (rect.left + rect.width / 2)) / (rect.width / 2), -1, 1);
+      const relativeY = clamp((event.clientY - (rect.top + rect.height / 2)) / (rect.height / 2), -1, 1);
+
+      targetRef.current.x = clamp(relativeX < 0 ? relativeX * 92 : 0, bounds.minX, bounds.maxX);
+      targetRef.current.y = clamp(relativeY > 0 ? relativeY * 110 : 0, bounds.minY, bounds.maxY);
+    };
+
+    const attachSensorListeners = () => {
+      if (listenersAttached) return;
+      window.addEventListener("deviceorientation", handleOrientation);
+      window.addEventListener("devicemotion", handleMotion);
+      listenersAttached = true;
+    };
+
+    const requestMotionPermission = async () => {
+      if (permissionRequestedRef.current) return;
+      permissionRequestedRef.current = true;
+
+      try {
+        const needsOrientationPermission = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
+        const needsMotionPermission = typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function";
+        const orientationResult = needsOrientationPermission ? await DeviceOrientationEvent.requestPermission() : "granted";
+        const motionResult = needsMotionPermission ? await DeviceMotionEvent.requestPermission() : "granted";
+        if (orientationResult === "granted" || motionResult === "granted") {
+          attachSensorListeners();
+        }
+      } catch {
+        sensorActiveRef.current = false;
+      }
+    };
+
+    const animate = () => {
+      if (!mounted) return;
+      const position = positionRef.current;
+      const target = targetRef.current;
+      const impulse = impulseRef.current;
+      const nextX = clamp(target.x + impulse.x, bounds.minX, bounds.maxX);
+      const nextY = clamp(target.y + impulse.y, bounds.minY, bounds.maxY);
+
+      position.x += (nextX - position.x) * 0.055;
+      position.y += (nextY - position.y) * 0.055;
+      impulse.x *= 0.91;
+      impulse.y *= 0.91;
+
+      if (Math.abs(impulse.x) < 0.02) impulse.x = 0;
+      if (Math.abs(impulse.y) < 0.02) impulse.y = 0;
+
+      ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerdown", requestMotionPermission, { passive: true });
+    const canUseOrientationWithoutPrompt = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission !== "function";
+    const canUseMotionWithoutPrompt = typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission !== "function";
+    if (canUseOrientationWithoutPrompt || canUseMotionWithoutPrompt) {
+      attachSensorListeners();
+    }
+    animationFrame = window.requestAnimationFrame(animate);
+
+    return () => {
+      mounted = false;
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", requestMotionPermission);
+      window.removeEventListener("deviceorientation", handleOrientation);
+      window.removeEventListener("devicemotion", handleMotion);
+      listenersAttached = false;
+      sensorActiveRef.current = false;
+      positionRef.current = { x: 0, y: 0 };
+      targetRef.current = { x: 0, y: 0 };
+      impulseRef.current = { x: 0, y: 0 };
+      lastAccelerationRef.current = null;
+      ball.style.transform = "translate3d(0px, 0px, 0)";
+    };
+  }, [active]);
+
+  return (
+    <div
+      ref={ballRef}
+      data-node-id="804:110"
+      data-figma-layer="Ball"
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        left: "160px",
+        top: 0,
+        width: "242px",
+        height: "242px",
+        borderRadius: "50%",
+        background: "#E0FF00",
+        pointerEvents: "none",
+        transform: "translate3d(0px, 0px, 0)",
+        willChange: "transform",
+      }}
+    />
+  );
+}
+
 function HomeFrame({ active }) {
   return (
     <article className={`phone-frame home-frame ${active ? "is-active" : ""}`} data-node-id="1:2" id="home" style={pageBgStyle("home")}>
-        <div className="base-bg" />
-        <div className="lime-rail-left" />
-        <div className="lime-rail-right" />
-        <div className="lime-masthead" />
-        <img className="ellipse" src="/assets/figma-ellipse.svg" alt="" aria-hidden="true" />
-        <HomeCoverArt />
-        <OpeningCopy />
-        <StartButton />
+      <img
+        data-node-id="804:114"
+        data-figma-layer="HOME BG 1"
+        src={pngPageSrc("intro/HOME BG.jpg")}
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-3px",
+          top: 0,
+          width: "407px",
+          height: "700px",
+          objectFit: "fill",
+          opacity: 0.28,
+          pointerEvents: "none",
+        }}
+      />
+      <HomeGravityBall active={active} />
+      <img
+        data-node-id="805:115"
+        data-figma-layer="home title 1"
+        src={pngPageSrc("intro/home title.png")}
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          width: "402px",
+          height: "128px",
+          objectFit: "contain",
+          pointerEvents: "none",
+        }}
+      />
+      <p
+        data-node-id="804:112"
+        data-figma-layer="《作狀生活俱樂部》 是一冊被改裝成網頁的 思想散文集。"
+        style={{
+          position: "absolute",
+          left: "32px",
+          top: "187px",
+          width: "339px",
+          height: "125px",
+          margin: 0,
+          color: "#000",
+          fontFamily: '"Noto Serif HK", "Noto Serif TC", serif',
+          fontWeight: 600,
+          fontSize: "32px",
+          lineHeight: "40px",
+          letterSpacing: "0.03em",
+          textAlign: "center",
+          whiteSpace: "pre-line",
+        }}
+      >
+        {"《作狀生活俱樂部》\n是一冊被改裝成網頁的\n思想散文集。"}
+      </p>
+      <p
+        data-node-id="1:80"
+        data-figma-layer="Home body"
+        style={{
+          position: "absolute",
+          left: "50px",
+          top: "336px",
+          width: "300px",
+          height: "222px",
+          margin: 0,
+          color: "#000",
+          fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
+          fontWeight: 400,
+          fontSize: "14px",
+          lineHeight: "154%",
+          letterSpacing: "0.08em",
+          textAlign: "center",
+          whiteSpace: "pre-line",
+        }}
+      >
+        {"它關於生活、焦慮、自我審視，也關於那些被人說成作狀，卻其實救過自己的事。它改裝成一條手機裡的路：你可以慢慢向下走，由荒原、海市蜃樓，走到山。\n\n若你也是掃着一張海報進來，又想打發時間，如果你一目十行，10分鐘可能就可以走完整個旅程，或者想慢慢咀嚼也無任歡迎。"}
+      </p>
+      <a
+        data-node-id="805:150"
+        data-figma-layer="開始吃盡 Botton"
+        href="#page-2"
+        aria-label="開始吃盡"
+        style={{
+          position: "absolute",
+          left: "30px",
+          top: "652px",
+          width: "340px",
+          height: "29.45px",
+          border: "1px solid #000",
+          borderRadius: "9px",
+          background: "transparent",
+          color: "#000",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: '"Noto Serif HK", "Noto Serif TC", serif',
+          fontWeight: 600,
+          fontSize: "14px",
+          lineHeight: "20px",
+          letterSpacing: "0.12em",
+          textDecoration: "none",
+          boxSizing: "border-box",
+        }}
+      >
+        開始吃盡
+      </a>
     </article>
   );
 }
@@ -2033,20 +2342,9 @@ function useActivePage() {
 function ZineAnimationStyles() {
   return (
     <style>{`
-      .cover-entry-frame .cover-paper-unfold {
-        animation: coverPaperUnfold 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-        transform-origin: center center;
-        transform-style: preserve-3d;
-        will-change: transform, clip-path, filter, opacity;
-      }
-      .cover-entry-frame .cover-paper-fold {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background:
-          linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 48%, rgba(35, 24, 21, 0.16) 50%, rgba(255, 255, 255, 0.28) 52%, transparent 100%);
-        animation: coverPaperFold 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-        mix-blend-mode: multiply;
+      .cover-entry-frame .cover-soft-reveal {
+        animation: coverSoftReveal 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        will-change: clip-path, opacity;
       }
       .cover-entry-frame .cover-cursor-blink {
         animation: coverCursorBlink 0.8s ease-in-out infinite;
@@ -2202,36 +2500,21 @@ function ZineAnimationStyles() {
         from { opacity: 1; transform: translate3d(0, 0, 0); }
         to { opacity: 0; transform: translate3d(100%, 100%, 0); }
       }
-      @keyframes coverPaperUnfold {
+      @keyframes coverSoftReveal {
         0% {
-          opacity: 0.94;
-          clip-path: polygon(49% 0%, 51% 0%, 51% 100%, 49% 100%);
-          transform: perspective(900px) scaleX(0.08) rotateY(-7deg);
-          filter: drop-shadow(0 10px 12px rgba(35, 24, 21, 0.22)) brightness(1.04);
+          opacity: 0;
+          clip-path: inset(0 0 100% 0);
         }
-        36% {
-          opacity: 1;
-          clip-path: polygon(26% 0%, 74% 0%, 79% 100%, 21% 100%);
-          transform: perspective(900px) scaleX(0.52) rotateY(-4deg);
-          filter: drop-shadow(0 8px 10px rgba(35, 24, 21, 0.16)) brightness(1.02);
+        18% {
+          opacity: 0.36;
         }
-        72% {
-          clip-path: polygon(5% 0%, 95% 0%, 98% 100%, 2% 100%);
-          transform: perspective(900px) scaleX(0.94) rotateY(-1.2deg);
-          filter: drop-shadow(0 3px 5px rgba(35, 24, 21, 0.08)) brightness(1.01);
+        64% {
+          opacity: 0.86;
         }
         100% {
           opacity: 1;
-          clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-          transform: perspective(900px) scaleX(1) rotateY(0deg);
-          filter: none;
+          clip-path: inset(0 0 0 0);
         }
-      }
-      @keyframes coverPaperFold {
-        0% { opacity: 0.9; transform: scaleX(0.2); }
-        45% { opacity: 0.52; transform: scaleX(0.72); }
-        78% { opacity: 0.22; transform: scaleX(1); }
-        100% { opacity: 0; transform: scaleX(1); }
       }
       @keyframes coverCursorBlink {
         0%, 100% { opacity: 1; }
