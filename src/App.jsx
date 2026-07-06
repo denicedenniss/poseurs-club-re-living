@@ -822,11 +822,15 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
   const ballRef = React.useRef(null);
   const positionRef = React.useRef({ x: 0, y: 0 });
   const targetRef = React.useRef({ x: 0, y: 0 });
-  const impulseRef = React.useRef({ x: 0, y: 0 });
   const sensorActiveRef = React.useRef(false);
   const permissionRequestedRef = React.useRef(false);
-  const lastShakeRef = React.useRef(0);
-  const lastAccelerationRef = React.useRef(null);
+  const permissionStatusRef = React.useRef("waiting");
+  const orientationListenerAttachedRef = React.useRef(false);
+  const [motionDebug, setMotionDebug] = React.useState({
+    status: "waiting",
+    beta: null,
+    gamma: null,
+  });
 
   React.useEffect(() => {
     const ball = ballRef.current;
@@ -851,10 +855,19 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     };
     let frameElement = null;
     let animationFrame = 0;
-    let listenersAttached = false;
     let mounted = true;
+    let suppressNextClick = false;
+    const isTouchLikeDevice = Boolean(
+      window.matchMedia?.("(pointer: coarse)")?.matches ||
+      window.navigator?.maxTouchPoints > 0 ||
+      window.navigator?.msMaxTouchPoints > 0
+    );
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const updateMotionDebug = (next) => {
+      if (!mounted) return;
+      setMotionDebug((current) => ({ ...current, ...next }));
+    };
     const mapAxisToBounds = (value, negativeBound, positiveBound) => {
       const clamped = clamp(value, -18, 18);
       if (clamped < 0) return (Math.abs(clamped) / 18) * negativeBound;
@@ -866,44 +879,27 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     };
 
     const handleOrientation = (event) => {
-      if (typeof event.gamma === "number") {
+      const hasGamma = typeof event.gamma === "number";
+      const hasBeta = typeof event.beta === "number";
+      if (!hasGamma && !hasBeta) return;
+
+      if (hasGamma) {
         targetRef.current.x = mapAxisToBounds(event.gamma, bounds.minX, bounds.maxX);
         sensorActiveRef.current = true;
       }
-      if (typeof event.beta === "number") {
+      if (hasBeta) {
         targetRef.current.y = mapAxisToBounds(event.beta, bounds.minY, bounds.maxY);
         sensorActiveRef.current = true;
       }
-    };
-
-    const handleMotion = (event) => {
-      const acceleration = event.acceleration || event.accelerationIncludingGravity;
-      if (!acceleration) return;
-      const ax = acceleration.x || 0;
-      const ay = acceleration.y || 0;
-      const az = acceleration.z || 0;
-      const magnitude = Math.sqrt(ax * ax + ay * ay + az * az);
-      const previous = lastAccelerationRef.current;
-      const delta = previous
-        ? Math.sqrt(
-            (ax - previous.x) * (ax - previous.x) +
-              (ay - previous.y) * (ay - previous.y) +
-              (az - previous.z) * (az - previous.z)
-          )
-        : 0;
-      lastAccelerationRef.current = { x: ax, y: ay, z: az };
-
-      const now = window.performance.now();
-      const normalizedSpike = magnitude / 9.81;
-      const normalizedDelta = delta / 9.81;
-      if (normalizedSpike < 1.45 || normalizedDelta < 0.65 || now - lastShakeRef.current < 1000) return;
-
-      lastShakeRef.current = now;
-      impulseRef.current.x = clamp(impulseRef.current.x - ax * 2.1, -44, 44);
-      impulseRef.current.y = clamp(impulseRef.current.y + ay * 2.1, -44, 44);
+      updateMotionDebug({
+        status: "granted",
+        beta: hasBeta ? event.beta : null,
+        gamma: hasGamma ? event.gamma : null,
+      });
     };
 
     const handlePointerMove = (event) => {
+      if (isTouchLikeDevice || event.pointerType === "touch" || event.pointerType === "pen") return;
       if (sensorActiveRef.current) return;
       frameElement = frameElement || document.getElementById(pageId);
       if (!frameElement) return;
@@ -916,46 +912,95 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       targetRef.current.y = clamp(mapPointerToBounds(relativeY, bounds.minY, bounds.maxY), bounds.minY, bounds.maxY);
     };
 
-    const attachSensorListeners = () => {
-      if (listenersAttached) return;
+    const attachOrientationListener = () => {
+      if (orientationListenerAttachedRef.current) return;
       window.addEventListener("deviceorientation", handleOrientation);
-      window.addEventListener("devicemotion", handleMotion);
-      listenersAttached = true;
+      orientationListenerAttachedRef.current = true;
     };
 
-    const requestMotionPermission = async () => {
+    const requestIOSMotionPermission = async () => {
+      const orientationAPI = window.DeviceOrientationEvent;
+      const motionAPI = window.DeviceMotionEvent;
+      const hasOrientationAPI = typeof orientationAPI !== "undefined";
+      const hasMotionAPI = typeof motionAPI !== "undefined";
+
+      if (!hasOrientationAPI && !hasMotionAPI) {
+        return "unsupported";
+      }
+
+      let orientationGranted = true;
+      let motionGranted = true;
+
+      if (typeof orientationAPI?.requestPermission === "function") {
+        orientationGranted = (await orientationAPI.requestPermission()) === "granted";
+      }
+
+      if (typeof motionAPI?.requestPermission === "function") {
+        motionGranted = (await motionAPI.requestPermission()) === "granted";
+      }
+
+      return orientationGranted && motionGranted ? "granted" : "denied";
+    };
+
+    const requestMotionPermission = async (event) => {
       if (permissionRequestedRef.current) return;
       permissionRequestedRef.current = true;
 
-      try {
-        const needsOrientationPermission = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
-        const needsMotionPermission = typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function";
-        const orientationPermission = needsOrientationPermission ? DeviceOrientationEvent.requestPermission() : Promise.resolve("granted");
-        const motionPermission = needsMotionPermission ? DeviceMotionEvent.requestPermission() : Promise.resolve("granted");
-        const [orientationResult, motionResult] = await Promise.all([orientationPermission, motionPermission]);
-        if (orientationResult === "granted" || motionResult === "granted") {
-          attachSensorListeners();
-        }
-      } catch {
-        sensorActiveRef.current = false;
+      const navigationTarget = event?.target?.closest?.("a[href]");
+      if (navigationTarget) {
+        event.preventDefault();
+        event.stopPropagation();
+        suppressNextClick = true;
       }
+
+      permissionStatusRef.current = "requesting";
+      updateMotionDebug({ status: "requesting" });
+
+      try {
+        const permissionState = await requestIOSMotionPermission();
+        permissionStatusRef.current = permissionState;
+        updateMotionDebug({ status: permissionState });
+        if (permissionState === "granted") {
+          attachOrientationListener();
+        }
+      } catch (error) {
+        console.error("Motion permission error", error);
+        permissionStatusRef.current = "error";
+        sensorActiveRef.current = false;
+        updateMotionDebug({ status: "error" });
+      } finally {
+        if (navigationTarget) {
+          const href = navigationTarget.getAttribute("href");
+          window.setTimeout(() => {
+            if (href) window.location.href = href;
+          }, 0);
+        }
+      }
+    };
+
+    const handlePermissionPointerDown = (event) => {
+      requestMotionPermission(event);
+    };
+
+    const handlePermissionClick = (event) => {
+      if (suppressNextClick) {
+        event.preventDefault();
+        event.stopPropagation();
+        suppressNextClick = false;
+        return;
+      }
+      requestMotionPermission(event);
     };
 
     const animate = () => {
       if (!mounted) return;
       const position = positionRef.current;
       const target = targetRef.current;
-      const impulse = impulseRef.current;
-      const nextX = clamp(target.x + impulse.x, bounds.minX, bounds.maxX);
-      const nextY = clamp(target.y + impulse.y, bounds.minY, bounds.maxY);
+      const nextX = clamp(target.x, bounds.minX, bounds.maxX);
+      const nextY = clamp(target.y, bounds.minY, bounds.maxY);
 
       position.x += (nextX - position.x) * 0.055;
       position.y += (nextY - position.y) * 0.055;
-      impulse.x *= 0.91;
-      impulse.y *= 0.91;
-
-      if (Math.abs(impulse.x) < 0.02) impulse.x = 0;
-      if (Math.abs(impulse.y) < 0.02) impulse.y = 0;
 
       ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
       animationFrame = window.requestAnimationFrame(animate);
@@ -963,14 +1008,25 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
     frameElement = document.getElementById(pageId);
     const permissionTarget = frameElement || window;
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    permissionTarget.addEventListener("pointerdown", requestMotionPermission, { passive: true });
-    permissionTarget.addEventListener("touchstart", requestMotionPermission, { passive: true });
-    permissionTarget.addEventListener("click", requestMotionPermission, { passive: true });
-    const canUseOrientationWithoutPrompt = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission !== "function";
-    const canUseMotionWithoutPrompt = typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission !== "function";
-    if (canUseOrientationWithoutPrompt || canUseMotionWithoutPrompt) {
-      attachSensorListeners();
+    if (!isTouchLikeDevice) {
+      window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    }
+    permissionTarget.addEventListener("pointerdown", handlePermissionPointerDown, true);
+    permissionTarget.addEventListener("click", handlePermissionClick, true);
+
+    const hasOrientationAPI = typeof window.DeviceOrientationEvent !== "undefined";
+    const needsOrientationPermission = hasOrientationAPI && typeof window.DeviceOrientationEvent.requestPermission === "function";
+    const hasMotionAPI = typeof window.DeviceMotionEvent !== "undefined";
+    const needsMotionPermission = hasMotionAPI && typeof window.DeviceMotionEvent.requestPermission === "function";
+    if (!hasOrientationAPI && !hasMotionAPI) {
+      permissionStatusRef.current = "unsupported";
+      updateMotionDebug({ status: "unsupported" });
+      permissionRequestedRef.current = true;
+    } else if ((hasOrientationAPI && !needsOrientationPermission) || (hasMotionAPI && !needsMotionPermission)) {
+      permissionStatusRef.current = "granted";
+      updateMotionDebug({ status: "granted" });
+      permissionRequestedRef.current = true;
+      attachOrientationListener();
     }
     animationFrame = window.requestAnimationFrame(animate);
 
@@ -978,17 +1034,13 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
       window.removeEventListener("pointermove", handlePointerMove);
-      permissionTarget.removeEventListener("pointerdown", requestMotionPermission);
-      permissionTarget.removeEventListener("touchstart", requestMotionPermission);
-      permissionTarget.removeEventListener("click", requestMotionPermission);
+      permissionTarget.removeEventListener("pointerdown", handlePermissionPointerDown, true);
+      permissionTarget.removeEventListener("click", handlePermissionClick, true);
       window.removeEventListener("deviceorientation", handleOrientation);
-      window.removeEventListener("devicemotion", handleMotion);
-      listenersAttached = false;
+      orientationListenerAttachedRef.current = false;
       sensorActiveRef.current = false;
       positionRef.current = { x: 0, y: 0 };
       targetRef.current = { x: 0, y: 0 };
-      impulseRef.current = { x: 0, y: 0 };
-      lastAccelerationRef.current = null;
       ball.style.transform = "translate3d(0px, 0px, 0)";
     };
   }, [active, left, pageId, size, top]);
@@ -1012,7 +1064,30 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         willChange: "transform",
         zIndex: 1,
       }}
-    />
+    >
+      {active && (
+        <span
+          data-motion-debug="true"
+          style={{
+            position: "fixed",
+            left: "10px",
+            top: "10px",
+            zIndex: 9999,
+            padding: "5px 7px",
+            border: "1px solid #000",
+            background: "rgba(255, 255, 255, 0.9)",
+            color: "#000",
+            fontFamily: "monospace",
+            fontSize: "11px",
+            lineHeight: "15px",
+            whiteSpace: "pre",
+            pointerEvents: "none",
+          }}
+        >
+          {`Motion: ${motionDebug.status}${motionDebug.status === "granted" ? `\nbeta: ${typeof motionDebug.beta === "number" ? motionDebug.beta.toFixed(2) : "--"}\ngamma: ${typeof motionDebug.gamma === "number" ? motionDebug.gamma.toFixed(2) : "--"}` : ""}`}
+        </span>
+      )}
+    </div>
   );
 }
 
