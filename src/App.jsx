@@ -821,7 +821,7 @@ function StartButton() {
 function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
   const ballRef = React.useRef(null);
   const positionRef = React.useRef({ x: 0, y: 0 });
-  const velocityRef = React.useRef({ x: 0.42, y: 0.28 });
+  const velocityRef = React.useRef({ x: 1.05, y: 0.7 });
 
   React.useEffect(() => {
     const ball = ballRef.current;
@@ -865,8 +865,8 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
       velocity.x += Math.sin(performance.now() / 4200) * 0.0009;
       velocity.y += Math.cos(performance.now() / 5100) * 0.0008;
-      velocity.x = clamp(velocity.x, -0.52, 0.52);
-      velocity.y = clamp(velocity.y, -0.38, 0.38);
+      velocity.x = clamp(velocity.x, -1.3, 1.3);
+      velocity.y = clamp(velocity.y, -0.95, 0.95);
 
       ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
       animationFrame = window.requestAnimationFrame(animate);
@@ -878,7 +878,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
       positionRef.current = { x: 0, y: 0 };
-      velocityRef.current = { x: 0.42, y: 0.28 };
+      velocityRef.current = { x: 1.05, y: 0.7 };
       ball.style.transform = "translate3d(0px, 0px, 0)";
     };
   }, [active, left, size, top]);
