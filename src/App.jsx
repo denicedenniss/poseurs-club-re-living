@@ -1191,11 +1191,11 @@ function PageTwoFrame({ active }) {
         <p style={{ margin: "8px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left" }}>『世界是一個荒原，書裡說的，我很感動。』</p>
         <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left" }}>—— 節錄自電影《大象席地而坐》</p>
 
-        <p style={{ margin: "40px 0 0", fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em", color: "#000", textAlign: "left" }}>第二部・海市蜃樓</p>
+        <p style={{ margin: "32px 0 0", fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em", color: "#000", textAlign: "left" }}>第二部・海市蜃樓</p>
         <p style={{ margin: "8px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left" }}>未來，是改變過去的時光機。</p>
         <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left" }}>—— 節錄自《人生潔癖，你也有嗎？》</p>
 
-        <p style={{ margin: "40px 0 0", fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em", color: "#000", textAlign: "left" }}>第三部・山</p>
+        <p style={{ margin: "32px 0 0", fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em", color: "#000", textAlign: "left" }}>第三部・山</p>
         <p style={{ margin: "8px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left", whiteSpace: "nowrap" }}>
           無論旅程走到哪裡，也請帶上自己
           <span className="cover-cursor-blink" data-node-id="805:149" data-figma-layer="typing line 03" aria-hidden="true" style={{ display: "inline-block", width: "1px", height: "14px", marginLeft: "3px", verticalAlign: "-2px", background: "#000" }} />
