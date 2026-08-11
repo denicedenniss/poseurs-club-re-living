@@ -973,7 +973,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         if (position.y >= bounds.maxY) {
           position.y = bounds.maxY;
           if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
-            velocity.y *= -0.22;
+            velocity.y *= -0.34;
             velocity.x *= 0.75;
             dropBounceCount += 1;
           } else {
