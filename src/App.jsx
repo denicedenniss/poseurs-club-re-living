@@ -918,10 +918,10 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     }
     const useTiltGravity = motionPermissionState === "granted";
     const motionScale = reducedMotion ? 0.6 : 1;
-    const tiltGravityStrength = 0.045;
-    const tiltSmoothing = 0.045;
-    const tiltDamping = 0.985;
-    const tiltMaxSpeed = 1.45;
+    const tiltGravityStrength = 0.095;
+    const tiltSmoothing = 0.12;
+    const tiltDamping = 0.975;
+    const tiltMaxSpeed = 2.35;
     const tiltDeadzone = 1.5;
 
     const frameWidth = 402;
