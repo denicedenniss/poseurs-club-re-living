@@ -923,6 +923,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const tiltDamping = 0.965;
     const tiltMaxSpeed = 2.45;
     const tiltDeadzone = 0.45;
+    const frameRestitution = 0.34;
 
     const frameWidth = 402;
     const frameHeight = 700;
@@ -973,7 +974,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         if (position.y >= bounds.maxY) {
           position.y = bounds.maxY;
           if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
-            velocity.y *= -0.34;
+            velocity.y *= -frameRestitution;
             velocity.x *= 0.75;
             dropBounceCount += 1;
           } else {
@@ -1024,11 +1025,11 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
       if (position.x <= bounds.minX || position.x >= bounds.maxX) {
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
-        velocity.x *= -0.82;
+        velocity.x *= -frameRestitution;
       }
       if (position.y <= bounds.minY || position.y >= bounds.maxY) {
         position.y = clamp(position.y, bounds.minY, bounds.maxY);
-        velocity.y *= -0.82;
+        velocity.y *= -frameRestitution;
       }
 
       if (!useTiltGravity) {
