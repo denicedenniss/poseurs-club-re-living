@@ -928,6 +928,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const maxRestitution = 0.62;
     const impactSpeedMin = 0.2;
     const impactSpeedMax = 2.45;
+    const contactEpsilon = 0.75;
 
     const frameWidth = 402;
     const frameHeight = 700;
@@ -1024,8 +1025,21 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
           gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
           gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
-          velocity.x += gravityVector.x;
-          velocity.y += gravityVector.y;
+          const touchingLeft = position.x <= bounds.minX + contactEpsilon;
+          const touchingRight = position.x >= bounds.maxX - contactEpsilon;
+          const touchingTop = position.y <= bounds.minY + contactEpsilon;
+          const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
+          const effectiveGravityX =
+            (touchingLeft && gravityVector.x < 0) || (touchingRight && gravityVector.x > 0)
+              ? 0
+              : gravityVector.x;
+          const effectiveGravityY =
+            (touchingTop && gravityVector.y < 0) || (touchingBottom && gravityVector.y > 0)
+              ? 0
+              : gravityVector.y;
+
+          velocity.x += effectiveGravityX;
+          velocity.y += effectiveGravityY;
           velocity.x *= tiltDamping;
           velocity.y *= tiltDamping;
           velocity.x = clamp(velocity.x, -tiltMaxSpeed, tiltMaxSpeed);
@@ -1040,12 +1054,18 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       }
 
       if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+        const incomingX =
+          (position.x <= bounds.minX && velocity.x < 0) ||
+          (position.x >= bounds.maxX && velocity.x > 0);
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
-        velocity.x *= -dynamicRestitution(velocity.x);
+        if (incomingX) velocity.x *= -dynamicRestitution(velocity.x);
       }
       if (position.y <= bounds.minY || position.y >= bounds.maxY) {
+        const incomingY =
+          (position.y <= bounds.minY && velocity.y < 0) ||
+          (position.y >= bounds.maxY && velocity.y > 0);
         position.y = clamp(position.y, bounds.minY, bounds.maxY);
-        velocity.y *= -dynamicRestitution(velocity.y);
+        if (incomingY) velocity.y *= -dynamicRestitution(velocity.y);
       }
 
       if (!useTiltGravity) {
