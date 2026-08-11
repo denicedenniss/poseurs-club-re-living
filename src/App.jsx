@@ -918,11 +918,11 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     }
     const useTiltGravity = motionPermissionState === "granted";
     const motionScale = reducedMotion ? 0.6 : 1;
-    const tiltGravityStrength = 0.13;
-    const tiltSmoothing = 0.22;
-    const tiltDamping = 0.965;
+    const tiltGravityStrength = 0.16;
+    const tiltSmoothing = 0.35;
+    const tiltDamping = 0.955;
     const tiltMaxSpeed = 2.45;
-    const tiltDeadzone = 0.45;
+    const tiltDeadzone = 0.2;
     const frameRestitution = 0.34;
 
     const frameWidth = 402;
@@ -952,6 +952,8 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       if (Math.abs(value) <= tiltDeadzone) return 0;
       return value - Math.sign(value) * tiltDeadzone;
     };
+    const curveTiltDelta = (value) =>
+      Math.sign(value) * Math.pow(clamp(Math.abs(value) / 18, 0, 1), 0.65);
 
     const handleOrientation = (event) => {
       if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
@@ -1003,8 +1005,8 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         if (tiltBaselineCaptured) {
           const betaDelta = softenTiltDelta(latestTilt.beta - neutralTilt.beta);
           const gammaDelta = softenTiltDelta(latestTilt.gamma - neutralTilt.gamma);
-          const targetGravityX = clamp(gammaDelta / 24, -1, 1) * tiltGravityStrength * motionScale;
-          const targetGravityY = clamp(betaDelta / 24, -1, 1) * tiltGravityStrength * motionScale;
+          const targetGravityX = curveTiltDelta(gammaDelta) * tiltGravityStrength * motionScale;
+          const targetGravityY = curveTiltDelta(betaDelta) * tiltGravityStrength * motionScale;
 
           gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
           gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
