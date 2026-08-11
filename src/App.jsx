@@ -929,6 +929,12 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const impactSpeedMin = 0.2;
     const impactSpeedMax = 2.45;
     const contactEpsilon = 0.75;
+    const stableTiltThreshold = 0.65;
+    const stableRecenterDelay = 1200;
+    const neutralRecenterRate = 0.006;
+    const wallGravityDecay = 0.08;
+    const firstImpactLaunchY = -5.2;
+    const firstImpactLaunchX = 1.15;
 
     const frameWidth = 402;
     const frameHeight = 700;
@@ -943,8 +949,11 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     let mounted = true;
     let dropSettled = false;
     let dropBounceCount = 0;
+    let discoveryLaunchDone = false;
     let tiltBaselineCaptured = false;
+    let stableTiltSince = 0;
     const latestTilt = { beta: null, gamma: null };
+    const previousTilt = { beta: null, gamma: null };
     const neutralTilt = { beta: 0, gamma: 0 };
     const gravityVector = { x: 0, y: 0 };
 
@@ -969,6 +978,12 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     };
     const curveTiltDelta = (value) =>
       Math.sign(value) * Math.pow(clamp(Math.abs(value) / 18, 0, 1), 0.65);
+    const getDiscoveryLaunchX = () => {
+      if (Number.isFinite(latestTilt.gamma) && Math.abs(latestTilt.gamma) > 1.5) {
+        return Math.sign(latestTilt.gamma) * firstImpactLaunchX;
+      }
+      return pageId === "page-2" ? -firstImpactLaunchX : firstImpactLaunchX;
+    };
 
     const handleOrientation = (event) => {
       if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
@@ -990,7 +1005,12 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
         if (position.y >= bounds.maxY) {
           position.y = bounds.maxY;
-          if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
+          if (!discoveryLaunchDone) {
+            velocity.y = firstImpactLaunchY;
+            velocity.x = getDiscoveryLaunchX();
+            discoveryLaunchDone = true;
+            dropBounceCount += 1;
+          } else if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
             velocity.y *= -frameRestitution;
             velocity.x *= 0.75;
             dropBounceCount += 1;
@@ -1018,6 +1038,25 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         }
 
         if (tiltBaselineCaptured) {
+          const now = performance.now();
+          if (previousTilt.beta !== null && previousTilt.gamma !== null) {
+            const tiltMotion = Math.max(
+              Math.abs(latestTilt.beta - previousTilt.beta),
+              Math.abs(latestTilt.gamma - previousTilt.gamma)
+            );
+            if (tiltMotion <= stableTiltThreshold) {
+              if (!stableTiltSince) stableTiltSince = now;
+              if (now - stableTiltSince >= stableRecenterDelay) {
+                neutralTilt.beta += (latestTilt.beta - neutralTilt.beta) * neutralRecenterRate;
+                neutralTilt.gamma += (latestTilt.gamma - neutralTilt.gamma) * neutralRecenterRate;
+              }
+            } else {
+              stableTiltSince = 0;
+            }
+          }
+          previousTilt.beta = latestTilt.beta;
+          previousTilt.gamma = latestTilt.gamma;
+
           const betaDelta = softenTiltDelta(latestTilt.beta - neutralTilt.beta);
           const gammaDelta = softenTiltDelta(latestTilt.gamma - neutralTilt.gamma);
           const targetGravityX = curveTiltDelta(gammaDelta) * tiltGravityStrength * motionScale;
@@ -1029,14 +1068,14 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
           const touchingRight = position.x >= bounds.maxX - contactEpsilon;
           const touchingTop = position.y <= bounds.minY + contactEpsilon;
           const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
-          const effectiveGravityX =
-            (touchingLeft && gravityVector.x < 0) || (touchingRight && gravityVector.x > 0)
-              ? 0
-              : gravityVector.x;
-          const effectiveGravityY =
-            (touchingTop && gravityVector.y < 0) || (touchingBottom && gravityVector.y > 0)
-              ? 0
-              : gravityVector.y;
+          const cancelGravityX =
+            (touchingLeft && gravityVector.x < 0) || (touchingRight && gravityVector.x > 0);
+          const cancelGravityY =
+            (touchingTop && gravityVector.y < 0) || (touchingBottom && gravityVector.y > 0);
+          if (cancelGravityX) gravityVector.x += (0 - gravityVector.x) * wallGravityDecay;
+          if (cancelGravityY) gravityVector.y += (0 - gravityVector.y) * wallGravityDecay;
+          const effectiveGravityX = cancelGravityX ? 0 : gravityVector.x;
+          const effectiveGravityY = cancelGravityY ? 0 : gravityVector.y;
 
           velocity.x += effectiveGravityX;
           velocity.y += effectiveGravityY;
