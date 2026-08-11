@@ -924,6 +924,10 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const tiltMaxSpeed = 2.45;
     const tiltDeadzone = 0.2;
     const frameRestitution = 0.34;
+    const minRestitution = 0.24;
+    const maxRestitution = 0.62;
+    const impactSpeedMin = 0.2;
+    const impactSpeedMax = 2.45;
 
     const frameWidth = 402;
     const frameHeight = 700;
@@ -948,6 +952,16 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     ball.style.transform = `translate3d(0px, ${dropStartY.toFixed(2)}px, 0)`;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const dynamicRestitution = (normalVelocity) => {
+      const impactSpeed = Math.abs(normalVelocity);
+      const t = clamp(
+        (impactSpeed - impactSpeedMin) / (impactSpeedMax - impactSpeedMin),
+        0,
+        1
+      );
+      const eased = t * t * (3 - 2 * t);
+      return minRestitution + (maxRestitution - minRestitution) * eased;
+    };
     const softenTiltDelta = (value) => {
       if (Math.abs(value) <= tiltDeadzone) return 0;
       return value - Math.sign(value) * tiltDeadzone;
@@ -1027,11 +1041,11 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
       if (position.x <= bounds.minX || position.x >= bounds.maxX) {
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
-        velocity.x *= -frameRestitution;
+        velocity.x *= -dynamicRestitution(velocity.x);
       }
       if (position.y <= bounds.minY || position.y >= bounds.maxY) {
         position.y = clamp(position.y, bounds.minY, bounds.maxY);
-        velocity.y *= -frameRestitution;
+        velocity.y *= -dynamicRestitution(velocity.y);
       }
 
       if (!useTiltGravity) {
