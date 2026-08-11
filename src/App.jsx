@@ -624,6 +624,11 @@ function CoverFrame({ active }) {
     setSendState("press");
     const permissionState = await requestMotionPermissionIfSupported();
     setMotionPermissionState(permissionState);
+    try {
+      window.sessionStorage?.setItem("motionPermissionState", permissionState);
+    } catch {
+      // Keep the Cover flow working if storage is unavailable.
+    }
     window.setTimeout(() => setSendState("sent"), 130);
     window.setTimeout(() => {
       window.location.hash = "home";
@@ -905,6 +910,13 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     }
 
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    let motionPermissionState = "unsupported";
+    try {
+      motionPermissionState = window.sessionStorage?.getItem("motionPermissionState") || "unsupported";
+    } catch {
+      motionPermissionState = "unsupported";
+    }
+    void motionPermissionState;
     const motionScale = reducedMotion ? 0.6 : 1;
 
     const frameWidth = 402;
