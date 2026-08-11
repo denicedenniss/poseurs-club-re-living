@@ -531,6 +531,34 @@ function HomeCoverArt() {
   return <img className="cover-art cover-art-original" src={journeySrc("cover.svg")} alt="" aria-hidden="true" />;
 }
 
+async function requestMotionPermissionIfSupported() {
+  if (typeof window === "undefined") return "unsupported";
+
+  const orientationAPI = window.DeviceOrientationEvent;
+  const motionAPI = window.DeviceMotionEvent;
+  const canRequestOrientation = typeof orientationAPI?.requestPermission === "function";
+  const canRequestMotion = typeof motionAPI?.requestPermission === "function";
+
+  if (!canRequestOrientation && !canRequestMotion) return "unsupported";
+
+  try {
+    let orientationGranted = true;
+    let motionGranted = true;
+
+    if (canRequestOrientation) {
+      orientationGranted = (await orientationAPI.requestPermission()) === "granted";
+    }
+
+    if (canRequestMotion) {
+      motionGranted = (await motionAPI.requestPermission()) === "granted";
+    }
+
+    return orientationGranted && motionGranted ? "granted" : "denied";
+  } catch {
+    return "error";
+  }
+}
+
 function CoverFrame({ active }) {
   const message = "陌生人你好！";
   const [coverStarted, setCoverStarted] = React.useState(false);
@@ -538,6 +566,7 @@ function CoverFrame({ active }) {
   const [lineOneVisible, setLineOneVisible] = React.useState(true);
   const [lineTwoVisible, setLineTwoVisible] = React.useState(false);
   const [sendState, setSendState] = React.useState("idle");
+  const [, setMotionPermissionState] = React.useState("unsupported");
   const coverImageRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -548,6 +577,7 @@ function CoverFrame({ active }) {
     setLineOneVisible(true);
     setLineTwoVisible(false);
     setSendState("idle");
+    setMotionPermissionState("unsupported");
 
     let cancelled = false;
     const timers = [];
@@ -589,9 +619,11 @@ function CoverFrame({ active }) {
   const sendSent = sendState === "sent" || sendState === "press";
   const sendEnabled = sendState === "ready";
 
-  const handleCoverSend = React.useCallback(() => {
+  const handleCoverSend = React.useCallback(async () => {
     if (!sendEnabled) return;
     setSendState("press");
+    const permissionState = await requestMotionPermissionIfSupported();
+    setMotionPermissionState(permissionState);
     window.setTimeout(() => setSendState("sent"), 130);
     window.setTimeout(() => {
       window.location.hash = "home";
@@ -1679,6 +1711,8 @@ function VisualJourneyFrame({
   const mountainSequenceRevealTimerRef = React.useRef(null);
   const mountainSequenceLineTimerRef = React.useRef(null);
   const mountainSequenceLeaveTimerRef = React.useRef(null);
+  const [reCaptionEntryComplete, setReCaptionEntryComplete] = React.useState(false);
+  const shouldStabilizeReCaptionEntry = pageId === "re-002" || pageId === "re-003";
 
   React.useEffect(() => {
     if (!dividerAnimation) return undefined;
@@ -1745,6 +1779,7 @@ function VisualJourneyFrame({
   React.useEffect(() => {
     if (active) return undefined;
     setReCaptionExitPhase("idle");
+    setReCaptionEntryComplete(false);
     reCaptionPendingNextRef.current = null;
     window.clearTimeout(reCaptionExitTimerRef.current);
     return undefined;
@@ -1825,6 +1860,14 @@ function VisualJourneyFrame({
       return;
     }
 
+    if (shouldStabilizeReCaptionEntry) {
+      window.clearTimeout(reCaptionExitTimerRef.current);
+      reCaptionExitTimerRef.current = window.setTimeout(() => {
+        window.location.hash = nextPageId;
+      }, imageExitDuration);
+      return;
+    }
+
     reCaptionPendingNextRef.current = nextPageId;
     setReCaptionExitPhase("image-leaving");
     window.clearTimeout(reCaptionExitTimerRef.current);
@@ -1837,6 +1880,11 @@ function VisualJourneyFrame({
     if (reCaptionExitPhase !== "typing" || !reCaptionPendingNextRef.current) return;
     window.location.hash = reCaptionPendingNextRef.current;
   }, [reCaptionExitPhase]);
+
+  const handleReCaptionEntryComplete = React.useCallback(() => {
+    if (!shouldStabilizeReCaptionEntry) return;
+    setReCaptionEntryComplete(true);
+  }, [shouldStabilizeReCaptionEntry]);
 
   const handleMountainSequenceNext = (nextPageId) => {
     if (mountainSequencePhase === "line-flashing" || mountainSequencePhase === "leaving") return;
@@ -1927,7 +1975,15 @@ function VisualJourneyFrame({
       )}
       {reCaption && reCaptionExitPhase === "idle" && (
         <p className="re-caption">
-          <ReTypingLabel text={reCaption} active={active} />
+          {shouldStabilizeReCaptionEntry && reCaptionEntryComplete ? (
+            reCaption
+          ) : (
+            <ReTypingLabel
+              text={reCaption}
+              active={active}
+              onComplete={shouldStabilizeReCaptionEntry ? handleReCaptionEntryComplete : undefined}
+            />
+          )}
         </p>
       )}
       {reCaption && reCaptionExitPhase === "typing" && (
