@@ -927,8 +927,15 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       minY: -top,
       maxY: frameHeight - top - size,
     };
+    const dropStartY = -top - size - 24;
     let animationFrame = 0;
     let mounted = true;
+    let dropSettled = false;
+    let dropBounceCount = 0;
+
+    positionRef.current = { x: 0, y: dropStartY };
+    velocityRef.current = { x: 1.05, y: 0 };
+    ball.style.transform = `translate3d(0px, ${dropStartY.toFixed(2)}px, 0)`;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
@@ -936,6 +943,28 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       if (!mounted) return;
       const position = positionRef.current;
       const velocity = velocityRef.current;
+
+      if (!dropSettled) {
+        velocity.y += 0.42 * motionScale;
+        position.y += velocity.y * motionScale;
+
+        if (position.y >= 0) {
+          position.y = 0;
+          if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
+            velocity.y *= -0.22;
+            velocity.x *= 0.75;
+            dropBounceCount += 1;
+          } else {
+            dropSettled = true;
+            velocity.x = 1.05;
+            velocity.y = 0.7;
+          }
+        }
+
+        ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
+        animationFrame = window.requestAnimationFrame(animate);
+        return;
+      }
 
       position.x += velocity.x * motionScale;
       position.y += velocity.y * motionScale;
@@ -967,7 +996,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       velocityRef.current = { x: 1.05, y: 0.7 };
       ball.style.transform = "translate3d(0px, 0px, 0)";
     };
-  }, [active, left, size, top]);
+  }, [active, left, pageId, size, top]);
 
   return (
     <div
