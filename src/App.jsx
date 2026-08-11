@@ -916,8 +916,13 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     } catch {
       motionPermissionState = "unsupported";
     }
-    void motionPermissionState;
+    const useTiltGravity = motionPermissionState === "granted";
     const motionScale = reducedMotion ? 0.6 : 1;
+    const tiltGravityStrength = 0.045;
+    const tiltSmoothing = 0.045;
+    const tiltDamping = 0.985;
+    const tiltMaxSpeed = 1.45;
+    const tiltDeadzone = 1.5;
 
     const frameWidth = 402;
     const frameHeight = 700;
@@ -932,12 +937,29 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     let mounted = true;
     let dropSettled = false;
     let dropBounceCount = 0;
+    let tiltBaselineCaptured = false;
+    const latestTilt = { beta: null, gamma: null };
+    const neutralTilt = { beta: 0, gamma: 0 };
+    const gravityVector = { x: 0, y: 0 };
 
     positionRef.current = { x: 0, y: dropStartY };
     velocityRef.current = { x: 1.05, y: 0 };
     ball.style.transform = `translate3d(0px, ${dropStartY.toFixed(2)}px, 0)`;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const softenTiltDelta = (value) => {
+      if (Math.abs(value) <= tiltDeadzone) return 0;
+      return value - Math.sign(value) * tiltDeadzone;
+    };
+
+    const handleOrientation = (event) => {
+      if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
+      if (Number.isFinite(event.gamma)) latestTilt.gamma = event.gamma;
+    };
+
+    if (useTiltGravity) {
+      window.addEventListener("deviceorientation", handleOrientation, { passive: true });
+    }
 
     const animate = () => {
       if (!mounted) return;
@@ -966,8 +988,39 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         return;
       }
 
-      position.x += velocity.x * motionScale;
-      position.y += velocity.y * motionScale;
+      if (useTiltGravity) {
+        if (!tiltBaselineCaptured) {
+          velocity.x = 0;
+          velocity.y = 0;
+          if (latestTilt.beta !== null && latestTilt.gamma !== null) {
+            neutralTilt.beta = latestTilt.beta;
+            neutralTilt.gamma = latestTilt.gamma;
+            tiltBaselineCaptured = true;
+          }
+        }
+
+        if (tiltBaselineCaptured) {
+          const betaDelta = softenTiltDelta(latestTilt.beta - neutralTilt.beta);
+          const gammaDelta = softenTiltDelta(latestTilt.gamma - neutralTilt.gamma);
+          const targetGravityX = clamp(gammaDelta / 35, -1, 1) * tiltGravityStrength * motionScale;
+          const targetGravityY = clamp(betaDelta / 35, -1, 1) * tiltGravityStrength * motionScale;
+
+          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
+          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
+          velocity.x += gravityVector.x;
+          velocity.y += gravityVector.y;
+          velocity.x *= tiltDamping;
+          velocity.y *= tiltDamping;
+          velocity.x = clamp(velocity.x, -tiltMaxSpeed, tiltMaxSpeed);
+          velocity.y = clamp(velocity.y, -tiltMaxSpeed, tiltMaxSpeed);
+        }
+
+        position.x += velocity.x;
+        position.y += velocity.y;
+      } else {
+        position.x += velocity.x * motionScale;
+        position.y += velocity.y * motionScale;
+      }
 
       if (position.x <= bounds.minX || position.x >= bounds.maxX) {
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
@@ -978,10 +1031,12 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         velocity.y *= -0.82;
       }
 
-      velocity.x += Math.sin(performance.now() / 4200) * 0.0009;
-      velocity.y += Math.cos(performance.now() / 5100) * 0.0008;
-      velocity.x = clamp(velocity.x, -1.3, 1.3);
-      velocity.y = clamp(velocity.y, -0.95, 0.95);
+      if (!useTiltGravity) {
+        velocity.x += Math.sin(performance.now() / 4200) * 0.0009;
+        velocity.y += Math.cos(performance.now() / 5100) * 0.0008;
+        velocity.x = clamp(velocity.x, -1.3, 1.3);
+        velocity.y = clamp(velocity.y, -0.95, 0.95);
+      }
 
       ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
       animationFrame = window.requestAnimationFrame(animate);
@@ -992,6 +1047,9 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     return () => {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
+      if (useTiltGravity) {
+        window.removeEventListener("deviceorientation", handleOrientation);
+      }
       positionRef.current = { x: 0, y: 0 };
       velocityRef.current = { x: 1.05, y: 0.7 };
       ball.style.transform = "translate3d(0px, 0px, 0)";
