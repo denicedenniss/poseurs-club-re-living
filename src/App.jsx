@@ -924,10 +924,11 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const tiltMaxSpeed = 2.45;
     const tiltDeadzone = 0.2;
     const frameRestitution = 0.34;
-    const minRestitution = 0.24;
-    const maxRestitution = 0.62;
-    const impactSpeedMin = 0.2;
+    const minRestitution = 0.58;
+    const maxRestitution = 0.88;
+    const impactSpeedMin = 0.15;
     const impactSpeedMax = 2.45;
+    const collisionGraceMs = 120;
     const contactEpsilon = 0.75;
     const stableTiltThreshold = 0.65;
     const stableRecenterDelay = 1200;
@@ -956,6 +957,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const previousTilt = { beta: null, gamma: null };
     const neutralTilt = { beta: 0, gamma: 0 };
     const gravityVector = { x: 0, y: 0 };
+    const recentImpactUntil = { left: 0, right: 0, top: 0, bottom: 0 };
 
     positionRef.current = { x: 0, y: dropStartY };
     velocityRef.current = { x: 1.05, y: 0 };
@@ -1006,8 +1008,12 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         if (position.y >= bounds.maxY) {
           position.y = bounds.maxY;
           if (!discoveryLaunchDone) {
-            velocity.y = firstImpactLaunchY;
+            velocity.y = -Math.max(
+              Math.abs(velocity.y) * dynamicRestitution(velocity.y),
+              Math.abs(firstImpactLaunchY)
+            );
             velocity.x = getDiscoveryLaunchX();
+            recentImpactUntil.bottom = performance.now() + collisionGraceMs;
             discoveryLaunchDone = true;
             dropBounceCount += 1;
           } else if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
@@ -1064,14 +1070,21 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
           gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
           gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
+          const impactGraceNow = performance.now();
+          const recentLeftImpact = impactGraceNow <= recentImpactUntil.left;
+          const recentRightImpact = impactGraceNow <= recentImpactUntil.right;
+          const recentTopImpact = impactGraceNow <= recentImpactUntil.top;
+          const recentBottomImpact = impactGraceNow <= recentImpactUntil.bottom;
           const touchingLeft = position.x <= bounds.minX + contactEpsilon;
           const touchingRight = position.x >= bounds.maxX - contactEpsilon;
           const touchingTop = position.y <= bounds.minY + contactEpsilon;
           const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
           const cancelGravityX =
-            (touchingLeft && gravityVector.x < 0) || (touchingRight && gravityVector.x > 0);
+            ((touchingLeft || recentLeftImpact) && gravityVector.x < 0) ||
+            ((touchingRight || recentRightImpact) && gravityVector.x > 0);
           const cancelGravityY =
-            (touchingTop && gravityVector.y < 0) || (touchingBottom && gravityVector.y > 0);
+            ((touchingTop || recentTopImpact) && gravityVector.y < 0) ||
+            ((touchingBottom || recentBottomImpact) && gravityVector.y > 0);
           if (cancelGravityX) gravityVector.x += (0 - gravityVector.x) * wallGravityDecay;
           if (cancelGravityY) gravityVector.y += (0 - gravityVector.y) * wallGravityDecay;
           const effectiveGravityX = cancelGravityX ? 0 : gravityVector.x;
@@ -1093,18 +1106,24 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       }
 
       if (position.x <= bounds.minX || position.x >= bounds.maxX) {
-        const incomingX =
-          (position.x <= bounds.minX && velocity.x < 0) ||
-          (position.x >= bounds.maxX && velocity.x > 0);
+        const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
+        const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
-        if (incomingX) velocity.x *= -dynamicRestitution(velocity.x);
+        if (incomingLeft || incomingRight) {
+          const now = performance.now();
+          velocity.x *= -dynamicRestitution(velocity.x);
+          recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
+        }
       }
       if (position.y <= bounds.minY || position.y >= bounds.maxY) {
-        const incomingY =
-          (position.y <= bounds.minY && velocity.y < 0) ||
-          (position.y >= bounds.maxY && velocity.y > 0);
+        const incomingTop = position.y <= bounds.minY && velocity.y < 0;
+        const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
         position.y = clamp(position.y, bounds.minY, bounds.maxY);
-        if (incomingY) velocity.y *= -dynamicRestitution(velocity.y);
+        if (incomingTop || incomingBottom) {
+          const now = performance.now();
+          velocity.y *= -dynamicRestitution(velocity.y);
+          recentImpactUntil[incomingTop ? "top" : "bottom"] = now + collisionGraceMs;
+        }
       }
 
       if (!useTiltGravity) {
