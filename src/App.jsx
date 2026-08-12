@@ -956,6 +956,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     let tiltBaselineCaptured = false;
     let stableTiltSince = 0;
     const latestTilt = { beta: null, gamma: null };
+    const latestMotionGravity = { x: 0, y: 0, valid: false };
     const previousTilt = { beta: null, gamma: null };
     const neutralTilt = { beta: 0, gamma: 0 };
     const gravityVector = { x: 0, y: 0 };
@@ -981,6 +982,20 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       const direction = Math.sign(reflected) || (normalVelocity < 0 ? 1 : -1);
       return direction * Math.max(Math.abs(reflected), minReboundSpeed);
     };
+    const getScreenAngle = () => {
+      const rawAngle =
+        typeof window.screen?.orientation?.angle === "number"
+          ? window.screen.orientation.angle
+          : window.orientation || 0;
+      return ((rawAngle % 360) + 360) % 360;
+    };
+    const mapMotionGravityToScreen = (x, y) => {
+      const angle = getScreenAngle();
+      if (angle === 90) return { x: y, y: x };
+      if (angle === 180) return { x: -x, y };
+      if (angle === 270) return { x: -y, y: -x };
+      return { x, y: -y };
+    };
     const softenTiltDelta = (value) => {
       if (Math.abs(value) <= tiltDeadzone) return 0;
       return value - Math.sign(value) * tiltDeadzone;
@@ -998,8 +1013,18 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
       if (Number.isFinite(event.gamma)) latestTilt.gamma = event.gamma;
     };
+    const handleMotion = (event) => {
+      const gravity = event.accelerationIncludingGravity;
+      if (!gravity) return;
+      if (!Number.isFinite(gravity.x) || !Number.isFinite(gravity.y)) return;
+      const mappedGravity = mapMotionGravityToScreen(gravity.x, gravity.y);
+      latestMotionGravity.x = mappedGravity.x;
+      latestMotionGravity.y = mappedGravity.y;
+      latestMotionGravity.valid = true;
+    };
 
     if (useTiltGravity) {
+      window.addEventListener("devicemotion", handleMotion, { passive: true });
       window.addEventListener("deviceorientation", handleOrientation, { passive: true });
     }
 
@@ -1010,37 +1035,75 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
       if (!dropSettled) {
         velocity.y += 0.42 * motionScale;
-        position.y += velocity.y * motionScale;
 
-        if (position.y >= bounds.maxY) {
-          position.y = bounds.maxY;
-          if (!discoveryLaunchDone) {
-            velocity.y = -Math.max(
-              Math.abs(velocity.y) * dynamicRestitution(velocity.y),
-              Math.abs(firstImpactLaunchY)
-            );
-            velocity.x = getDiscoveryLaunchX();
-            recentImpactUntil.bottom = performance.now() + collisionGraceMs;
-            discoveryLaunchDone = true;
-            dropBounceCount += 1;
-          } else if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
-            velocity.y *= -frameRestitution;
-            velocity.x *= 0.75;
-            dropBounceCount += 1;
-          } else {
-            dropSettled = true;
-            velocity.x = 1.05;
-            velocity.y = 0.7;
+        const stepX = velocity.x * motionScale;
+        const stepY = velocity.y * motionScale;
+        const dropTravel = Math.max(Math.abs(stepX), Math.abs(stepY));
+        const dropSteps = Math.max(1, Math.ceil(dropTravel / Math.max(size * 0.12, 12)));
+
+        for (let step = 0; step < dropSteps; step += 1) {
+          position.x += stepX / dropSteps;
+          position.y += stepY / dropSteps;
+
+          if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+            const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
+            const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
+            position.x = clamp(position.x, bounds.minX, bounds.maxX);
+            if (incomingLeft || incomingRight) {
+              const now = performance.now();
+              velocity.x = getReboundVelocity(velocity.x);
+              recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
+            }
+          }
+
+          if (position.y <= bounds.minY || position.y >= bounds.maxY) {
+            const incomingTop = position.y <= bounds.minY && velocity.y < 0;
+            const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
+            position.y = clamp(position.y, bounds.minY, bounds.maxY);
+            if (incomingBottom) {
+              if (!discoveryLaunchDone) {
+                velocity.y = -Math.max(
+                  Math.abs(velocity.y) * dynamicRestitution(velocity.y),
+                  Math.abs(firstImpactLaunchY)
+                );
+                velocity.x = getDiscoveryLaunchX();
+                recentImpactUntil.bottom = performance.now() + collisionGraceMs;
+                discoveryLaunchDone = true;
+                dropBounceCount += 1;
+              } else if (Math.abs(velocity.y) > 1.15 && dropBounceCount < 2) {
+                velocity.y *= -frameRestitution;
+                velocity.x *= 0.75;
+                dropBounceCount += 1;
+              } else {
+                dropSettled = true;
+                velocity.x = 1.05;
+                velocity.y = 0.7;
+              }
+            } else if (incomingTop) {
+              const now = performance.now();
+              velocity.y = getReboundVelocity(velocity.y);
+              recentImpactUntil.top = now + collisionGraceMs;
+            }
           }
         }
 
+        position.x = clamp(position.x, bounds.minX, bounds.maxX);
+        position.y = clamp(position.y, bounds.minY, bounds.maxY);
         ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
         animationFrame = window.requestAnimationFrame(animate);
         return;
       }
 
       if (useTiltGravity) {
-        if (!tiltBaselineCaptured) {
+        if (latestMotionGravity.valid) {
+          const targetGravityX =
+            clamp(latestMotionGravity.x / 9.81, -1, 1) * tiltGravityStrength * motionScale;
+          const targetGravityY =
+            clamp(latestMotionGravity.y / 9.81, -1, 1) * tiltGravityStrength * motionScale;
+
+          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
+          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
+        } else if (!tiltBaselineCaptured) {
           velocity.x = 0;
           velocity.y = 0;
           if (latestTilt.beta !== null && latestTilt.gamma !== null) {
@@ -1077,77 +1140,83 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
 
           gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
           gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
-          const impactGraceNow = performance.now();
-          const recentLeftImpact = impactGraceNow <= recentImpactUntil.left;
-          const recentRightImpact = impactGraceNow <= recentImpactUntil.right;
-          const recentTopImpact = impactGraceNow <= recentImpactUntil.top;
-          const recentBottomImpact = impactGraceNow <= recentImpactUntil.bottom;
-          const touchingLeft = position.x <= bounds.minX + contactEpsilon;
-          const touchingRight = position.x >= bounds.maxX - contactEpsilon;
-          const touchingTop = position.y <= bounds.minY + contactEpsilon;
-          const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
-          const restingLeft =
-            touchingLeft && !recentLeftImpact && Math.abs(velocity.x) < restingVelocityThreshold;
-          const restingRight =
-            touchingRight && !recentRightImpact && Math.abs(velocity.x) < restingVelocityThreshold;
-          const restingTop =
-            touchingTop && !recentTopImpact && Math.abs(velocity.y) < restingVelocityThreshold;
-          const restingBottom =
-            touchingBottom && !recentBottomImpact && Math.abs(velocity.y) < restingVelocityThreshold;
-          const cancelGravityX =
-            ((restingLeft || recentLeftImpact) && gravityVector.x < 0) ||
-            ((restingRight || recentRightImpact) && gravityVector.x > 0);
-          const cancelGravityY =
-            ((restingTop || recentTopImpact) && gravityVector.y < 0) ||
-            ((restingBottom || recentBottomImpact) && gravityVector.y > 0);
-          if (cancelGravityX) gravityVector.x += (0 - gravityVector.x) * wallGravityDecay;
-          if (cancelGravityY) gravityVector.y += (0 - gravityVector.y) * wallGravityDecay;
-          const effectiveGravityX = cancelGravityX ? 0 : gravityVector.x;
-          const effectiveGravityY = cancelGravityY ? 0 : gravityVector.y;
-
-          velocity.x += effectiveGravityX;
-          velocity.y += effectiveGravityY;
-          velocity.x *= tiltDamping;
-          velocity.y *= tiltDamping;
-          velocity.x = clamp(velocity.x, -tiltMaxSpeed, tiltMaxSpeed);
-          velocity.y = clamp(velocity.y, -tiltMaxSpeed, tiltMaxSpeed);
         }
 
-        position.x += velocity.x;
-        position.y += velocity.y;
+        const impactGraceNow = performance.now();
+        const recentLeftImpact = impactGraceNow <= recentImpactUntil.left;
+        const recentRightImpact = impactGraceNow <= recentImpactUntil.right;
+        const recentTopImpact = impactGraceNow <= recentImpactUntil.top;
+        const recentBottomImpact = impactGraceNow <= recentImpactUntil.bottom;
+        const touchingLeft = position.x <= bounds.minX + contactEpsilon;
+        const touchingRight = position.x >= bounds.maxX - contactEpsilon;
+        const touchingTop = position.y <= bounds.minY + contactEpsilon;
+        const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
+        const restingLeft =
+          touchingLeft && !recentLeftImpact && Math.abs(velocity.x) < restingVelocityThreshold;
+        const restingRight =
+          touchingRight && !recentRightImpact && Math.abs(velocity.x) < restingVelocityThreshold;
+        const restingTop =
+          touchingTop && !recentTopImpact && Math.abs(velocity.y) < restingVelocityThreshold;
+        const restingBottom =
+          touchingBottom && !recentBottomImpact && Math.abs(velocity.y) < restingVelocityThreshold;
+        const cancelGravityX =
+          ((restingLeft || recentLeftImpact) && gravityVector.x < 0) ||
+          ((restingRight || recentRightImpact) && gravityVector.x > 0);
+        const cancelGravityY =
+          ((restingTop || recentTopImpact) && gravityVector.y < 0) ||
+          ((restingBottom || recentBottomImpact) && gravityVector.y > 0);
+        if (cancelGravityX) gravityVector.x += (0 - gravityVector.x) * wallGravityDecay;
+        if (cancelGravityY) gravityVector.y += (0 - gravityVector.y) * wallGravityDecay;
+        const effectiveGravityX = cancelGravityX ? 0 : gravityVector.x;
+        const effectiveGravityY = cancelGravityY ? 0 : gravityVector.y;
+
+        velocity.x += effectiveGravityX;
+        velocity.y += effectiveGravityY;
+        velocity.x *= tiltDamping;
+        velocity.y *= tiltDamping;
+        velocity.x = clamp(velocity.x, -tiltMaxSpeed, tiltMaxSpeed);
+        velocity.y = clamp(velocity.y, -tiltMaxSpeed, tiltMaxSpeed);
       } else {
-        position.x += velocity.x * motionScale;
-        position.y += velocity.y * motionScale;
-      }
-
-      if (position.x <= bounds.minX || position.x >= bounds.maxX) {
-        const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
-        const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
-        position.x = clamp(position.x, bounds.minX, bounds.maxX);
-        if (incomingLeft || incomingRight) {
-          const now = performance.now();
-          velocity.x = getReboundVelocity(velocity.x);
-          recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
-        }
-      }
-      if (position.y <= bounds.minY || position.y >= bounds.maxY) {
-        const incomingTop = position.y <= bounds.minY && velocity.y < 0;
-        const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
-        position.y = clamp(position.y, bounds.minY, bounds.maxY);
-        if (incomingTop || incomingBottom) {
-          const now = performance.now();
-          velocity.y = getReboundVelocity(velocity.y);
-          recentImpactUntil[incomingTop ? "top" : "bottom"] = now + collisionGraceMs;
-        }
-      }
-
-      if (!useTiltGravity) {
         velocity.x += Math.sin(performance.now() / 4200) * 0.0009;
         velocity.y += Math.cos(performance.now() / 5100) * 0.0008;
         velocity.x = clamp(velocity.x, -1.3, 1.3);
         velocity.y = clamp(velocity.y, -0.95, 0.95);
       }
 
+      const frameStepX = useTiltGravity ? velocity.x : velocity.x * motionScale;
+      const frameStepY = useTiltGravity ? velocity.y : velocity.y * motionScale;
+      const travel = Math.max(Math.abs(frameStepX), Math.abs(frameStepY));
+      const steps = Math.max(1, Math.ceil(travel / Math.max(size * 0.12, 12)));
+
+      for (let step = 0; step < steps; step += 1) {
+        position.x += frameStepX / steps;
+        position.y += frameStepY / steps;
+
+        if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+          const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
+          const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
+          position.x = clamp(position.x, bounds.minX, bounds.maxX);
+          if (incomingLeft || incomingRight) {
+            const now = performance.now();
+            velocity.x = getReboundVelocity(velocity.x);
+            recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
+          }
+        }
+
+        if (position.y <= bounds.minY || position.y >= bounds.maxY) {
+          const incomingTop = position.y <= bounds.minY && velocity.y < 0;
+          const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
+          position.y = clamp(position.y, bounds.minY, bounds.maxY);
+          if (incomingTop || incomingBottom) {
+            const now = performance.now();
+            velocity.y = getReboundVelocity(velocity.y);
+            recentImpactUntil[incomingTop ? "top" : "bottom"] = now + collisionGraceMs;
+          }
+        }
+      }
+
+      position.x = clamp(position.x, bounds.minX, bounds.maxX);
+      position.y = clamp(position.y, bounds.minY, bounds.maxY);
       ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
       animationFrame = window.requestAnimationFrame(animate);
     };
@@ -1158,6 +1227,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
       if (useTiltGravity) {
+        window.removeEventListener("devicemotion", handleMotion);
         window.removeEventListener("deviceorientation", handleOrientation);
       }
       positionRef.current = { x: 0, y: 0 };
