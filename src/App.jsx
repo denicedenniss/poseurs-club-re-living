@@ -624,6 +624,11 @@ function CoverFrame({ active }) {
     setSendState("press");
     const permissionState = await requestMotionPermissionIfSupported();
     setMotionPermissionState(permissionState);
+    try {
+      window.sessionStorage?.setItem("motionPermissionState", permissionState);
+    } catch {
+      // Keep the Cover flow working if storage is unavailable.
+    }
     window.setTimeout(() => setSendState("sent"), 130);
     window.setTimeout(() => {
       window.location.hash = "home";
@@ -893,56 +898,359 @@ function StartButton() {
 }
 
 function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
-  const ballRef = React.useRef(null);
-  const positionRef = React.useRef({ x: 0, y: 0 });
-  const velocityRef = React.useRef({ x: 1.05, y: 0.7 });
+  const ballRefs = React.useRef([]);
+  const ballStatesRef = React.useRef([]);
 
   React.useEffect(() => {
-    const ball = ballRef.current;
-    if (!active || !ball || typeof window === "undefined") {
-      if (ball) ball.style.transform = "translate3d(0px, 0px, 0)";
+    const balls = ballRefs.current.filter(Boolean);
+    if (!active || balls.length === 0 || typeof window === "undefined") {
+      balls.forEach((ball) => {
+        ball.style.transform = "translate3d(0px, 0px, 0)";
+      });
       return undefined;
     }
 
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    let motionPermissionState = "unsupported";
+    try {
+      motionPermissionState = window.sessionStorage?.getItem("motionPermissionState") || "unsupported";
+    } catch {
+      motionPermissionState = "unsupported";
+    }
+    const useTiltGravity = motionPermissionState === "granted";
     const motionScale = reducedMotion ? 0.6 : 1;
+    const tiltGravityStrength = 0.16;
+    const tiltSmoothing = 0.35;
+    const tiltDamping = 0.955;
+    const tiltMaxSpeed = 2.45;
+    const tiltDeadzone = 0.2;
+    const frameRestitution = 0.34;
+    const minRestitution = 0.68;
+    const maxRestitution = 0.92;
+    const impactSpeedMin = 0.15;
+    const impactSpeedMax = 2.45;
+    const minReboundSpeed = 1.25;
+    const collisionGraceMs = 180;
+    const restingVelocityThreshold = 0.25;
+    const contactEpsilon = 0.75;
+    const stableTiltThreshold = 0.65;
+    const stableRecenterDelay = 1200;
+    const neutralRecenterRate = 0.006;
+    const wallGravityDecay = 0.08;
+    const firstImpactLaunchY = -5.2;
+    const firstImpactLaunchX = 1.15;
+    const ballSize = 150;
+    const ballConfigs = [
+      { left: 18, delay: 0, fallbackX: pageId === "page-2" ? -firstImpactLaunchX : firstImpactLaunchX },
+      { left: 126, delay: 180, fallbackX: pageId === "page-2" ? firstImpactLaunchX : -firstImpactLaunchX },
+      { left: 234, delay: 360, fallbackX: pageId === "page-2" ? -firstImpactLaunchX : firstImpactLaunchX },
+    ];
 
     const frameWidth = 402;
     const frameHeight = 700;
-    const bounds = {
-      minX: -left,
-      maxX: frameWidth - left - size,
-      minY: -top,
-      maxY: frameHeight - top - size,
-    };
     let animationFrame = 0;
     let mounted = true;
+    let tiltBaselineCaptured = false;
+    let stableTiltSince = 0;
+    const latestTilt = { beta: null, gamma: null };
+    const latestMotionGravity = { x: 0, y: 0, valid: false };
+    const previousTilt = { beta: null, gamma: null };
+    const neutralTilt = { beta: 0, gamma: 0 };
+    const gravityVector = { x: 0, y: 0 };
+
+    ballStatesRef.current = ballConfigs.map((config, index) => {
+      const safeLeft = Math.min(frameWidth - ballSize, Math.max(0, config.left));
+      const bounds = {
+        minX: -safeLeft,
+        maxX: frameWidth - safeLeft - ballSize,
+        minY: -top,
+        maxY: frameHeight - top - ballSize,
+      };
+      const dropStartY = -top - ballSize - 24;
+      const state = {
+        bounds,
+        config,
+        dropSettled: false,
+        dropBounceCount: 0,
+        discoveryLaunchDone: false,
+        dropStarted: false,
+        startAt: performance.now() + config.delay,
+        position: { x: 0, y: dropStartY },
+        velocity: { x: 1.05, y: 0 },
+        recentImpactUntil: { left: 0, right: 0, top: 0, bottom: 0 },
+      };
+      const ball = balls[index];
+      if (ball) {
+        ball.style.left = `${safeLeft}px`;
+        ball.style.top = `${top}px`;
+        ball.style.width = `${ballSize}px`;
+        ball.style.height = `${ballSize}px`;
+        ball.style.transform = `translate3d(0px, ${dropStartY.toFixed(2)}px, 0)`;
+      }
+      return state;
+    });
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const dynamicRestitution = (normalVelocity) => {
+      const impactSpeed = Math.abs(normalVelocity);
+      const t = clamp(
+        (impactSpeed - impactSpeedMin) / (impactSpeedMax - impactSpeedMin),
+        0,
+        1
+      );
+      const eased = t * t * (3 - 2 * t);
+      return minRestitution + (maxRestitution - minRestitution) * eased;
+    };
+    const getReboundVelocity = (normalVelocity) => {
+      const reflected = -normalVelocity * dynamicRestitution(normalVelocity);
+      const direction = Math.sign(reflected) || (normalVelocity < 0 ? 1 : -1);
+      return direction * Math.max(Math.abs(reflected), minReboundSpeed);
+    };
+    const getScreenAngle = () => {
+      const rawAngle =
+        typeof window.screen?.orientation?.angle === "number"
+          ? window.screen.orientation.angle
+          : window.orientation || 0;
+      return ((rawAngle % 360) + 360) % 360;
+    };
+    const mapMotionGravityToScreen = (x, y) => {
+      const angle = getScreenAngle();
+      if (angle === 90) return { x: y, y: x };
+      if (angle === 180) return { x: -x, y };
+      if (angle === 270) return { x: -y, y: -x };
+      return { x, y: -y };
+    };
+    const softenTiltDelta = (value) => {
+      if (Math.abs(value) <= tiltDeadzone) return 0;
+      return value - Math.sign(value) * tiltDeadzone;
+    };
+    const curveTiltDelta = (value) =>
+      Math.sign(value) * Math.pow(clamp(Math.abs(value) / 18, 0, 1), 0.65);
+    const getDiscoveryLaunchX = (state) => {
+      if (Number.isFinite(latestTilt.gamma) && Math.abs(latestTilt.gamma) > 1.5) {
+        return Math.sign(latestTilt.gamma) * firstImpactLaunchX;
+      }
+      return state.config.fallbackX;
+    };
+
+    const handleOrientation = (event) => {
+      if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
+      if (Number.isFinite(event.gamma)) latestTilt.gamma = event.gamma;
+    };
+    const handleMotion = (event) => {
+      const gravity = event.accelerationIncludingGravity;
+      if (!gravity) return;
+      if (!Number.isFinite(gravity.x) || !Number.isFinite(gravity.y)) return;
+      const mappedGravity = mapMotionGravityToScreen(gravity.x, gravity.y);
+      latestMotionGravity.x = mappedGravity.x;
+      latestMotionGravity.y = mappedGravity.y;
+      latestMotionGravity.valid = true;
+    };
+
+    if (useTiltGravity) {
+      window.addEventListener("devicemotion", handleMotion, { passive: true });
+      window.addEventListener("deviceorientation", handleOrientation, { passive: true });
+    }
 
     const animate = () => {
       if (!mounted) return;
-      const position = positionRef.current;
-      const velocity = velocityRef.current;
+      const now = performance.now();
 
-      position.x += velocity.x * motionScale;
-      position.y += velocity.y * motionScale;
+      if (useTiltGravity) {
+        if (latestMotionGravity.valid) {
+          const targetGravityX =
+            clamp(latestMotionGravity.x / 9.81, -1, 1) * tiltGravityStrength * motionScale;
+          const targetGravityY =
+            clamp(latestMotionGravity.y / 9.81, -1, 1) * tiltGravityStrength * motionScale;
 
-      if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
+          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
+        } else if (!tiltBaselineCaptured) {
+          velocity.x = 0;
+          velocity.y = 0;
+          if (latestTilt.beta !== null && latestTilt.gamma !== null) {
+            neutralTilt.beta = latestTilt.beta;
+            neutralTilt.gamma = latestTilt.gamma;
+            tiltBaselineCaptured = true;
+          }
+        }
+
+        if (tiltBaselineCaptured) {
+          const now = performance.now();
+          if (previousTilt.beta !== null && previousTilt.gamma !== null) {
+            const tiltMotion = Math.max(
+              Math.abs(latestTilt.beta - previousTilt.beta),
+              Math.abs(latestTilt.gamma - previousTilt.gamma)
+            );
+            if (tiltMotion <= stableTiltThreshold) {
+              if (!stableTiltSince) stableTiltSince = now;
+              if (now - stableTiltSince >= stableRecenterDelay) {
+                neutralTilt.beta += (latestTilt.beta - neutralTilt.beta) * neutralRecenterRate;
+                neutralTilt.gamma += (latestTilt.gamma - neutralTilt.gamma) * neutralRecenterRate;
+              }
+            } else {
+              stableTiltSince = 0;
+            }
+          }
+          previousTilt.beta = latestTilt.beta;
+          previousTilt.gamma = latestTilt.gamma;
+
+          const betaDelta = softenTiltDelta(latestTilt.beta - neutralTilt.beta);
+          const gammaDelta = softenTiltDelta(latestTilt.gamma - neutralTilt.gamma);
+          const targetGravityX = curveTiltDelta(gammaDelta) * tiltGravityStrength * motionScale;
+          const targetGravityY = curveTiltDelta(betaDelta) * tiltGravityStrength * motionScale;
+
+          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
+          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
+        }
+      }
+
+      ballStatesRef.current.forEach((state, index) => {
+        const ball = balls[index];
+        if (!ball) return;
+
+        const { position, velocity, bounds, recentImpactUntil } = state;
+
+        if (!state.dropSettled) {
+          if (now >= state.startAt) {
+            state.dropStarted = true;
+          }
+
+          if (state.dropStarted) {
+            velocity.y += 0.42 * motionScale;
+
+            const stepX = velocity.x * motionScale;
+            const stepY = velocity.y * motionScale;
+            const dropTravel = Math.max(Math.abs(stepX), Math.abs(stepY));
+            const dropSteps = Math.max(1, Math.ceil(dropTravel / Math.max(ballSize * 0.12, 12)));
+
+            for (let step = 0; step < dropSteps; step += 1) {
+              position.x += stepX / dropSteps;
+              position.y += stepY / dropSteps;
+
+              if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+                const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
+                const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
+                position.x = clamp(position.x, bounds.minX, bounds.maxX);
+                if (incomingLeft || incomingRight) {
+                  velocity.x = getReboundVelocity(velocity.x);
+                  recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
+                }
+              }
+
+              if (position.y <= bounds.minY || position.y >= bounds.maxY) {
+                const incomingTop = position.y <= bounds.minY && velocity.y < 0;
+                const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
+                position.y = clamp(position.y, bounds.minY, bounds.maxY);
+                if (incomingBottom) {
+                  if (!state.discoveryLaunchDone) {
+                    velocity.y = -Math.max(
+                      Math.abs(velocity.y) * dynamicRestitution(velocity.y),
+                      Math.abs(firstImpactLaunchY)
+                    );
+                    velocity.x = getDiscoveryLaunchX(state);
+                    recentImpactUntil.bottom = now + collisionGraceMs;
+                    state.discoveryLaunchDone = true;
+                    state.dropBounceCount += 1;
+                  } else if (Math.abs(velocity.y) > 1.15 && state.dropBounceCount < 2) {
+                    velocity.y *= -frameRestitution;
+                    velocity.x *= 0.75;
+                    state.dropBounceCount += 1;
+                  } else {
+                    state.dropSettled = true;
+                    velocity.x = 1.05;
+                    velocity.y = 0.7;
+                  }
+                } else if (incomingTop) {
+                  velocity.y = getReboundVelocity(velocity.y);
+                  recentImpactUntil.top = now + collisionGraceMs;
+                }
+              }
+            }
+          }
+
+          position.x = clamp(position.x, bounds.minX, bounds.maxX);
+          position.y = clamp(position.y, bounds.minY, bounds.maxY);
+          ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
+          return;
+        }
+
+        if (useTiltGravity) {
+          const recentLeftImpact = now <= recentImpactUntil.left;
+          const recentRightImpact = now <= recentImpactUntil.right;
+          const recentTopImpact = now <= recentImpactUntil.top;
+          const recentBottomImpact = now <= recentImpactUntil.bottom;
+          const touchingLeft = position.x <= bounds.minX + contactEpsilon;
+          const touchingRight = position.x >= bounds.maxX - contactEpsilon;
+          const touchingTop = position.y <= bounds.minY + contactEpsilon;
+          const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
+          const restingLeft =
+            touchingLeft && !recentLeftImpact && Math.abs(velocity.x) < restingVelocityThreshold;
+          const restingRight =
+            touchingRight && !recentRightImpact && Math.abs(velocity.x) < restingVelocityThreshold;
+          const restingTop =
+            touchingTop && !recentTopImpact && Math.abs(velocity.y) < restingVelocityThreshold;
+          const restingBottom =
+            touchingBottom && !recentBottomImpact && Math.abs(velocity.y) < restingVelocityThreshold;
+          const cancelGravityX =
+            ((restingLeft || recentLeftImpact) && gravityVector.x < 0) ||
+            ((restingRight || recentRightImpact) && gravityVector.x > 0);
+          const cancelGravityY =
+            ((restingTop || recentTopImpact) && gravityVector.y < 0) ||
+            ((restingBottom || recentBottomImpact) && gravityVector.y > 0);
+          if (cancelGravityX) gravityVector.x += (0 - gravityVector.x) * wallGravityDecay;
+          if (cancelGravityY) gravityVector.y += (0 - gravityVector.y) * wallGravityDecay;
+          const effectiveGravityX = cancelGravityX ? 0 : gravityVector.x;
+          const effectiveGravityY = cancelGravityY ? 0 : gravityVector.y;
+
+          velocity.x += effectiveGravityX;
+          velocity.y += effectiveGravityY;
+          velocity.x *= tiltDamping;
+          velocity.y *= tiltDamping;
+          velocity.x = clamp(velocity.x, -tiltMaxSpeed, tiltMaxSpeed);
+          velocity.y = clamp(velocity.y, -tiltMaxSpeed, tiltMaxSpeed);
+        } else {
+          velocity.x += Math.sin((now + index * 700) / 4200) * 0.0009;
+          velocity.y += Math.cos((now + index * 900) / 5100) * 0.0008;
+          velocity.x = clamp(velocity.x, -1.3, 1.3);
+          velocity.y = clamp(velocity.y, -0.95, 0.95);
+        }
+
+        const frameStepX = useTiltGravity ? velocity.x : velocity.x * motionScale;
+        const frameStepY = useTiltGravity ? velocity.y : velocity.y * motionScale;
+        const travel = Math.max(Math.abs(frameStepX), Math.abs(frameStepY));
+        const steps = Math.max(1, Math.ceil(travel / Math.max(ballSize * 0.12, 12)));
+
+        for (let step = 0; step < steps; step += 1) {
+          position.x += frameStepX / steps;
+          position.y += frameStepY / steps;
+
+          if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+            const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
+            const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
+            position.x = clamp(position.x, bounds.minX, bounds.maxX);
+            if (incomingLeft || incomingRight) {
+              velocity.x = getReboundVelocity(velocity.x);
+              recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
+            }
+          }
+
+          if (position.y <= bounds.minY || position.y >= bounds.maxY) {
+            const incomingTop = position.y <= bounds.minY && velocity.y < 0;
+            const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
+            position.y = clamp(position.y, bounds.minY, bounds.maxY);
+            if (incomingTop || incomingBottom) {
+              velocity.y = getReboundVelocity(velocity.y);
+              recentImpactUntil[incomingTop ? "top" : "bottom"] = now + collisionGraceMs;
+            }
+          }
+        }
+
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
-        velocity.x *= -0.82;
-      }
-      if (position.y <= bounds.minY || position.y >= bounds.maxY) {
         position.y = clamp(position.y, bounds.minY, bounds.maxY);
-        velocity.y *= -0.82;
-      }
+        ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
+      });
 
-      velocity.x += Math.sin(performance.now() / 4200) * 0.0009;
-      velocity.y += Math.cos(performance.now() / 5100) * 0.0008;
-      velocity.x = clamp(velocity.x, -1.3, 1.3);
-      velocity.y = clamp(velocity.y, -0.95, 0.95);
-
-      ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
       animationFrame = window.requestAnimationFrame(animate);
     };
 
@@ -951,32 +1259,44 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     return () => {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
-      positionRef.current = { x: 0, y: 0 };
-      velocityRef.current = { x: 1.05, y: 0.7 };
-      ball.style.transform = "translate3d(0px, 0px, 0)";
+      if (useTiltGravity) {
+        window.removeEventListener("devicemotion", handleMotion);
+        window.removeEventListener("deviceorientation", handleOrientation);
+      }
+      ballStatesRef.current = [];
+      balls.forEach((ball) => {
+        ball.style.transform = "translate3d(0px, 0px, 0)";
+      });
     };
-  }, [active, left, size, top]);
+  }, [active, pageId, top]);
 
   return (
-    <div
-      ref={ballRef}
-      data-node-id={nodeId}
-      data-figma-layer="Ball"
-      aria-hidden="true"
-      style={{
-        position: "absolute",
-        left: `${left}px`,
-        top: `${top}px`,
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: "50%",
-        background: "#E0FF00",
-        pointerEvents: "none",
-        transform: "translate3d(0px, 0px, 0)",
-        willChange: "transform",
-        zIndex: 1,
-      }}
-    />
+    <>
+      {[0, 1, 2].map((ballIndex) => (
+        <div
+          key={ballIndex}
+          ref={(element) => {
+            ballRefs.current[ballIndex] = element;
+          }}
+          data-node-id={`${nodeId}-${ballIndex + 1}`}
+          data-figma-layer="Ball"
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: "0px",
+            top: `${top}px`,
+            width: "150px",
+            height: "150px",
+            borderRadius: "50%",
+            background: "#E0FF00",
+            pointerEvents: "none",
+            transform: "translate3d(0px, 0px, 0)",
+            willChange: "transform",
+            zIndex: 1,
+          }}
+        />
+      ))}
+    </>
   );
 }
 
