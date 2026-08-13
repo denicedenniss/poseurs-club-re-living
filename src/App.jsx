@@ -939,8 +939,8 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const wallGravityDecay = 0.08;
     const firstImpactLaunchY = -5.2;
     const firstImpactLaunchX = 1.15;
-    const ballSize = 150;
-    const separationThreshold = 150;
+    const ballSize = 180;
+    const separationThreshold = 180;
     const separationStrength = 0.018;
     const maxSeparationImpulse = 0.45;
     const ballConfigs = [
