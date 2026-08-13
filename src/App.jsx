@@ -2892,7 +2892,7 @@ function ZineAnimationStyles() {
       .mountain-line-flash-out { animation: mountainLineFlashOut 0.18s linear both !important; }
       .zine-water-art-enter { animation: waterArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-art-exit { animation: waterArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
-      .zine-re001-curtain { animation: re001CurtainReveal 5s linear both; }
+      .zine-re001-curtain { animation: re001FadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
       .zine-re001-exit { animation: re001FlashFadeOut 2.2s linear both; pointer-events: none; }
       .zine-eraser-exit {
         animation: eraserExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
@@ -3116,9 +3116,9 @@ function ZineAnimationStyles() {
           mask-position: center, center;
         }
       }
-      @keyframes re001CurtainReveal {
-        from { clip-path: inset(0 0 100% 0); }
-        to { clip-path: inset(0 0 0 0); }
+      @keyframes re001FadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       @keyframes re001FlashFadeOut {
         0%, 11%, 22%, 43%, 64% { opacity: 1; }
