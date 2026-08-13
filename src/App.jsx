@@ -941,8 +941,8 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const firstImpactLaunchX = 1.15;
     const ballSize = 180;
     const separationThreshold = 180;
-    const separationStrength = 0.018;
-    const maxSeparationImpulse = 0.45;
+    const pairSolverIterations = 4;
+    const pairVelocityResponse = 0.18;
     const ballConfigs = [
       { left: 18, delay: 0, fallbackX: pageId === "page-2" ? -firstImpactLaunchX : firstImpactLaunchX },
       { left: 126, delay: 180, fallbackX: pageId === "page-2" ? firstImpactLaunchX : -firstImpactLaunchX },
@@ -1036,46 +1036,64 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       }
       return state.config.fallbackX;
     };
-    const applyBallSeparation = () => {
+    const resolveBallContacts = () => {
       const states = ballStatesRef.current;
-      for (let firstIndex = 0; firstIndex < states.length; firstIndex += 1) {
-        for (let secondIndex = firstIndex + 1; secondIndex < states.length; secondIndex += 1) {
-          const first = states[firstIndex];
-          const second = states[secondIndex];
-          if ((!first.dropStarted && !first.dropSettled) || (!second.dropStarted && !second.dropSettled)) {
-            continue;
+      for (let iteration = 0; iteration < pairSolverIterations; iteration += 1) {
+        let solved = true;
+        for (let firstIndex = 0; firstIndex < states.length; firstIndex += 1) {
+          for (let secondIndex = firstIndex + 1; secondIndex < states.length; secondIndex += 1) {
+            const first = states[firstIndex];
+            const second = states[secondIndex];
+            if ((!first.dropStarted && !first.dropSettled) || (!second.dropStarted && !second.dropSettled)) {
+              continue;
+            }
+
+            let dx =
+              second.baseLeft +
+              second.position.x +
+              ballSize / 2 -
+              (first.baseLeft + first.position.x + ballSize / 2);
+            let dy = second.position.y + ballSize / 2 - (first.position.y + ballSize / 2);
+            let distance = Math.hypot(dx, dy);
+            if (distance >= separationThreshold) continue;
+
+            solved = false;
+            if (distance < 0.001) {
+              const angle = (firstIndex + secondIndex + 1) * 2.399963229728653;
+              dx = Math.cos(angle);
+              dy = Math.sin(angle);
+              distance = 1;
+            }
+
+            const penetration = separationThreshold - distance;
+            const normalX = dx / distance;
+            const normalY = dy / distance;
+            const correctionX = normalX * penetration * 0.5;
+            const correctionY = normalY * penetration * 0.5;
+
+            first.position.x -= correctionX;
+            first.position.y -= correctionY;
+            second.position.x += correctionX;
+            second.position.y += correctionY;
+
+            first.position.x = clamp(first.position.x, first.bounds.minX, first.bounds.maxX);
+            first.position.y = clamp(first.position.y, first.bounds.minY, first.bounds.maxY);
+            second.position.x = clamp(second.position.x, second.bounds.minX, second.bounds.maxX);
+            second.position.y = clamp(second.position.y, second.bounds.minY, second.bounds.maxY);
+
+            const relativeVelocityX = second.velocity.x - first.velocity.x;
+            const relativeVelocityY = second.velocity.y - first.velocity.y;
+            const normalVelocity = relativeVelocityX * normalX + relativeVelocityY * normalY;
+            if (normalVelocity < 0) {
+              const impulse = -normalVelocity * pairVelocityResponse;
+              first.velocity.x -= normalX * impulse;
+              first.velocity.y -= normalY * impulse;
+              second.velocity.x += normalX * impulse;
+              second.velocity.y += normalY * impulse;
+            }
           }
-
-          let dx =
-            second.baseLeft +
-            second.position.x +
-            ballSize / 2 -
-            (first.baseLeft + first.position.x + ballSize / 2);
-          let dy =
-            top +
-            second.position.y +
-            ballSize / 2 -
-            (top + first.position.y + ballSize / 2);
-          let distance = Math.hypot(dx, dy);
-          if (distance >= separationThreshold) continue;
-
-          if (distance < 0.001) {
-            const angle = (firstIndex + secondIndex + 1) * 2.399963229728653;
-            dx = Math.cos(angle);
-            dy = Math.sin(angle);
-            distance = 1;
-          }
-
-          const overlap = separationThreshold - distance;
-          const impulse = Math.min(overlap * separationStrength, maxSeparationImpulse);
-          const normalX = dx / distance;
-          const normalY = dy / distance;
-
-          first.velocity.x -= normalX * impulse;
-          first.velocity.y -= normalY * impulse;
-          second.velocity.x += normalX * impulse;
-          second.velocity.y += normalY * impulse;
         }
+        if (solved) break;
       }
     };
 
@@ -1149,8 +1167,6 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
         }
       }
 
-      applyBallSeparation();
-
       ballStatesRef.current.forEach((state, index) => {
         const ball = balls[index];
         if (!ball) return;
@@ -1212,11 +1228,13 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
                   recentImpactUntil.top = now + collisionGraceMs;
                 }
               }
+              resolveBallContacts();
             }
           }
 
           position.x = clamp(position.x, bounds.minX, bounds.maxX);
           position.y = clamp(position.y, bounds.minY, bounds.maxY);
+          resolveBallContacts();
           ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
           return;
         }
@@ -1290,11 +1308,22 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
               recentImpactUntil[incomingTop ? "top" : "bottom"] = now + collisionGraceMs;
             }
           }
+          resolveBallContacts();
         }
 
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
         position.y = clamp(position.y, bounds.minY, bounds.maxY);
+        resolveBallContacts();
         ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
+      });
+
+      resolveBallContacts();
+      ballStatesRef.current.forEach((state, index) => {
+        const ball = balls[index];
+        if (!ball) return;
+        state.position.x = clamp(state.position.x, state.bounds.minX, state.bounds.maxX);
+        state.position.y = clamp(state.position.y, state.bounds.minY, state.bounds.maxY);
+        ball.style.transform = `translate3d(${state.position.x.toFixed(2)}px, ${state.position.y.toFixed(2)}px, 0)`;
       });
 
       animationFrame = window.requestAnimationFrame(animate);
