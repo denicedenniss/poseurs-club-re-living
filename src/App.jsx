@@ -2181,7 +2181,9 @@ function VisualJourneyFrame({
   const [reCaptionEntryComplete, setReCaptionEntryComplete] = React.useState(false);
   const [re001CaptionVisible, setRe001CaptionVisible] = React.useState(false);
   const [re001CaptionComplete, setRe001CaptionComplete] = React.useState(false);
+  const [startCaptionPhase, setStartCaptionPhase] = React.useState("idle");
   const shouldStabilizeReCaptionEntry = pageId === "re-002" || pageId === "re-003";
+  const isStartReCaption = pageId === "start" && captionBottom?.startsWith("Re:");
 
   React.useEffect(() => {
     if (!dividerAnimation) return undefined;
@@ -2230,6 +2232,16 @@ function VisualJourneyFrame({
     setPeelPhase("idle");
     return undefined;
   }, [active, peelAnimation]);
+
+  React.useEffect(() => {
+    if (!isStartReCaption) return undefined;
+    if (!active) {
+      setStartCaptionPhase("idle");
+      return undefined;
+    }
+    setStartCaptionPhase("waiting");
+    return undefined;
+  }, [active, isStartReCaption]);
 
   React.useEffect(() => {
     if (!re001Animation) return undefined;
@@ -2391,6 +2403,16 @@ function VisualJourneyFrame({
     setReCaptionEntryComplete(true);
   }, [shouldStabilizeReCaptionEntry]);
 
+  const handleStartVisualAnimationEnd = React.useCallback((event) => {
+    if (!isStartReCaption || !active || startCaptionPhase !== "waiting") return;
+    if (event.animationName !== "curtainRevealTopDown") return;
+    setStartCaptionPhase("typing");
+  }, [active, isStartReCaption, startCaptionPhase]);
+
+  const handleStartCaptionComplete = React.useCallback(() => {
+    setStartCaptionPhase("complete");
+  }, []);
+
   const handleMountainSequenceNext = (nextPageId) => {
     if (mountainSequencePhase === "line-flashing" || mountainSequencePhase === "leaving") return;
     window.clearTimeout(mountainSequenceRevealTimerRef.current);
@@ -2463,7 +2485,12 @@ function VisualJourneyFrame({
           {pageId === "re-001" ? (
             <Re001WarpImage className={visualImageClass} src={imageSrc} />
           ) : (
-            <img className={visualImageClass} src={imageSrc} alt="" />
+            <img
+              className={visualImageClass}
+              src={imageSrc}
+              alt=""
+              onAnimationEnd={isStartReCaption ? handleStartVisualAnimationEnd : undefined}
+            />
           )}
           {peelAnimation && active && peelPhase !== "leaving" && <span className="zine-page-peel-fold" aria-hidden="true" />}
         </div>
@@ -2482,9 +2509,17 @@ function VisualJourneyFrame({
         />
       )}
       {captionTop && <p className="start-caption start-caption-top">{captionTop}</p>}
-      {captionBottom && (
+      {captionBottom && (!isStartReCaption || startCaptionPhase === "typing" || startCaptionPhase === "complete") && (
         <p className="start-caption start-caption-bottom">
-          {captionBottom.startsWith("Re:") ? <ReTypingLabel text={captionBottom} active={active} /> : captionBottom}
+          {isStartReCaption && startCaptionPhase === "complete" ? (
+            captionBottom
+          ) : captionBottom.startsWith("Re:") ? (
+            <ReTypingLabel
+              text={captionBottom}
+              active={active}
+              onComplete={isStartReCaption ? handleStartCaptionComplete : undefined}
+            />
+          ) : captionBottom}
         </p>
       )}
       {reCaption && reCaptionExitPhase === "idle" && (!re001Animation || re001CaptionVisible) && (
