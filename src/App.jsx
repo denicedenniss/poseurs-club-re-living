@@ -2079,22 +2079,34 @@ function Re001WarpImage({ className, src }) {
           <feTurbulence
             type="fractalNoise"
             baseFrequency="0.008 0.012"
-            numOctaves="2"
+            numOctaves="1"
             seed="11"
             result="re001WarpNoise"
+          />
+          <feOffset
+            in="re001WarpNoise"
+            dx="0"
+            dy="0"
+            result="re001WarpMovingNoise"
           >
             <animate
-              attributeName="baseFrequency"
-              dur="12s"
-              values="0.008 0.012;0.011 0.016;0.007 0.013;0.010 0.014;0.008 0.012"
-              calcMode="spline"
-              keySplines="0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1"
+              attributeName="dx"
+              dur="14s"
+              values="0;36;72;36;0"
+              calcMode="linear"
               repeatCount="indefinite"
             />
-          </feTurbulence>
+            <animate
+              attributeName="dy"
+              dur="14s"
+              values="0;24;0;-24;0"
+              calcMode="linear"
+              repeatCount="indefinite"
+            />
+          </feOffset>
           <feDisplacementMap
             in="SourceGraphic"
-            in2="re001WarpNoise"
+            in2="re001WarpMovingNoise"
             scale="6"
             xChannelSelector="R"
             yChannelSelector="G"
