@@ -2091,14 +2091,14 @@ function Re001WarpImage({ className, src }) {
           >
             <animate
               attributeName="dx"
-              dur="14s"
+              dur="10s"
               values="36;72;36;0;36"
               calcMode="linear"
               repeatCount="indefinite"
             />
             <animate
               attributeName="dy"
-              dur="14s"
+              dur="10s"
               values="0;24;0;-24;0"
               calcMode="linear"
               repeatCount="indefinite"
@@ -2107,7 +2107,7 @@ function Re001WarpImage({ className, src }) {
           <feDisplacementMap
             in="SourceGraphic"
             in2="re001WarpMovingNoise"
-            scale="15"
+            scale="18"
             xChannelSelector="R"
             yChannelSelector="G"
           />
@@ -2173,10 +2173,13 @@ function VisualJourneyFrame({
   const waterVisualLeaveTimerRef = React.useRef(null);
   const reCaptionExitTimerRef = React.useRef(null);
   const reCaptionPendingNextRef = React.useRef(null);
+  const re001CaptionTimerRef = React.useRef(null);
+  const re001EntryTimerRef = React.useRef(null);
   const mountainSequenceRevealTimerRef = React.useRef(null);
   const mountainSequenceLineTimerRef = React.useRef(null);
   const mountainSequenceLeaveTimerRef = React.useRef(null);
   const [reCaptionEntryComplete, setReCaptionEntryComplete] = React.useState(false);
+  const [re001CaptionVisible, setRe001CaptionVisible] = React.useState(false);
   const shouldStabilizeReCaptionEntry = pageId === "re-002" || pageId === "re-003";
 
   React.useEffect(() => {
@@ -2195,7 +2198,11 @@ function VisualJourneyFrame({
   React.useEffect(() => () => window.clearTimeout(sequenceLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(mirageLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(peelLeaveTimerRef.current), []);
-  React.useEffect(() => () => window.clearTimeout(re001LeaveTimerRef.current), []);
+  React.useEffect(() => () => {
+    window.clearTimeout(re001LeaveTimerRef.current);
+    window.clearTimeout(re001CaptionTimerRef.current);
+    window.clearTimeout(re001EntryTimerRef.current);
+  }, []);
   React.useEffect(() => () => window.clearTimeout(blurVisualLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(waterVisualLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(reCaptionExitTimerRef.current), []);
@@ -2224,10 +2231,41 @@ function VisualJourneyFrame({
   }, [active, peelAnimation]);
 
   React.useEffect(() => {
-    if (!re001Animation || active) return undefined;
-    setRe001Phase("idle");
-    return undefined;
+    if (!re001Animation) return undefined;
+
+    window.clearTimeout(re001CaptionTimerRef.current);
+    window.clearTimeout(re001EntryTimerRef.current);
+
+    if (!active) {
+      setRe001Phase("idle");
+      setRe001CaptionVisible(false);
+      return undefined;
+    }
+
+    setRe001Phase("entering");
+    setRe001CaptionVisible(false);
+
+    re001EntryTimerRef.current = window.setTimeout(() => {
+      setRe001Phase("entered");
+    }, 1000);
+
+    re001CaptionTimerRef.current = window.setTimeout(() => {
+      setRe001CaptionVisible(true);
+    }, 3000);
+
+    return () => {
+      window.clearTimeout(re001CaptionTimerRef.current);
+      window.clearTimeout(re001EntryTimerRef.current);
+    };
   }, [active, re001Animation]);
+
+  React.useEffect(() => {
+    if (!re001Animation || re001Phase !== "leaving") return undefined;
+    window.clearTimeout(re001CaptionTimerRef.current);
+    window.clearTimeout(re001EntryTimerRef.current);
+    setRe001CaptionVisible(false);
+    return undefined;
+  }, [re001Animation, re001Phase]);
 
   React.useEffect(() => {
     if (!blurVisualAnimation || active) return undefined;
@@ -2377,7 +2415,11 @@ function VisualJourneyFrame({
     ? `zine-page-peel-${peelPhase === "leaving" ? "exit" : "enter"}`
     : "";
   const re001ArtClass = re001Animation && active
-    ? `zine-re001-${re001Phase === "leaving" ? "exit" : "curtain"}`
+    ? re001Phase === "leaving"
+      ? "zine-re001-exit"
+      : re001Phase === "entering"
+        ? "zine-re001-curtain"
+        : ""
     : "";
   const blurVisualArtClass = blurVisualAnimation && active
     ? `zine-blur-art-${blurVisualPhase === "leaving" ? "exit" : "enter"}`
@@ -2443,7 +2485,7 @@ function VisualJourneyFrame({
           {captionBottom.startsWith("Re:") ? <ReTypingLabel text={captionBottom} active={active} /> : captionBottom}
         </p>
       )}
-      {reCaption && reCaptionExitPhase === "idle" && (
+      {reCaption && reCaptionExitPhase === "idle" && (!re001Animation || re001CaptionVisible) && (
         <p className="re-caption">
           {shouldStabilizeReCaptionEntry && reCaptionEntryComplete ? (
             reCaption
