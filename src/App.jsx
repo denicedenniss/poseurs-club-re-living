@@ -2061,7 +2061,7 @@ function Re001WarpImage({ className, src }) {
   return (
     <svg
       className={`${className} zine-re001-warp-svg`}
-      viewBox="0 0 4500 6576"
+      viewBox="0 0 439 642"
       preserveAspectRatio="xMidYMid meet"
       style={{ overflow: "visible" }}
       aria-hidden="true"
@@ -2070,10 +2070,10 @@ function Re001WarpImage({ className, src }) {
       <defs>
         <filter
           id="re001-organic-warp-filter"
-          x="-8%"
-          y="-8%"
-          width="116%"
-          height="116%"
+          x="-12%"
+          y="-12%"
+          width="124%"
+          height="124%"
           colorInterpolationFilters="sRGB"
         >
           <feTurbulence
@@ -2115,8 +2115,8 @@ function Re001WarpImage({ className, src }) {
         xlinkHref={src}
         x="0"
         y="0"
-        width="4500"
-        height="6576"
+        width="439"
+        height="642"
         preserveAspectRatio="xMidYMid meet"
         filter="url(#re001-organic-warp-filter)"
       />
