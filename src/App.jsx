@@ -2180,6 +2180,7 @@ function VisualJourneyFrame({
   const mountainSequenceLeaveTimerRef = React.useRef(null);
   const [reCaptionEntryComplete, setReCaptionEntryComplete] = React.useState(false);
   const [re001CaptionVisible, setRe001CaptionVisible] = React.useState(false);
+  const [re001CaptionComplete, setRe001CaptionComplete] = React.useState(false);
   const shouldStabilizeReCaptionEntry = pageId === "re-002" || pageId === "re-003";
 
   React.useEffect(() => {
@@ -2239,11 +2240,13 @@ function VisualJourneyFrame({
     if (!active) {
       setRe001Phase("idle");
       setRe001CaptionVisible(false);
+      setRe001CaptionComplete(false);
       return undefined;
     }
 
     setRe001Phase("entering");
     setRe001CaptionVisible(false);
+    setRe001CaptionComplete(false);
 
     re001EntryTimerRef.current = window.setTimeout(() => {
       setRe001Phase("entered");
@@ -2263,7 +2266,6 @@ function VisualJourneyFrame({
     if (!re001Animation || re001Phase !== "leaving") return undefined;
     window.clearTimeout(re001CaptionTimerRef.current);
     window.clearTimeout(re001EntryTimerRef.current);
-    setRe001CaptionVisible(false);
     return undefined;
   }, [re001Animation, re001Phase]);
 
@@ -2363,7 +2365,7 @@ function VisualJourneyFrame({
       return;
     }
 
-    if (shouldStabilizeReCaptionEntry) {
+    if (re001Animation || shouldStabilizeReCaptionEntry) {
       window.clearTimeout(reCaptionExitTimerRef.current);
       reCaptionExitTimerRef.current = window.setTimeout(() => {
         window.location.hash = nextPageId;
@@ -2487,18 +2489,26 @@ function VisualJourneyFrame({
       )}
       {reCaption && reCaptionExitPhase === "idle" && (!re001Animation || re001CaptionVisible) && (
         <p className="re-caption">
-          {shouldStabilizeReCaptionEntry && reCaptionEntryComplete ? (
+          {re001Animation && (re001CaptionComplete || re001Phase === "leaving") ? (
+            reCaption
+          ) : shouldStabilizeReCaptionEntry && reCaptionEntryComplete ? (
             reCaption
           ) : (
             <ReTypingLabel
               text={reCaption}
               active={active}
-              onComplete={shouldStabilizeReCaptionEntry ? handleReCaptionEntryComplete : undefined}
+              onComplete={
+                re001Animation
+                  ? () => setRe001CaptionComplete(true)
+                  : shouldStabilizeReCaptionEntry
+                    ? handleReCaptionEntryComplete
+                    : undefined
+              }
             />
           )}
         </p>
       )}
-      {reCaption && reCaptionExitPhase === "typing" && (
+      {reCaption && !re001Animation && reCaptionExitPhase === "typing" && (
         <p className="re-caption">
           <ReTypingLabel
             key={`${pageId}-exit-re-caption`}
