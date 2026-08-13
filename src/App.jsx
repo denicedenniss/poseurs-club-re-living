@@ -2085,7 +2085,7 @@ function Re001WarpImage({ className, src }) {
           >
             <animate
               attributeName="baseFrequency"
-              dur="23s"
+              dur="12s"
               values="0.008 0.012;0.011 0.016;0.007 0.013;0.010 0.014;0.008 0.012"
               calcMode="spline"
               keySplines="0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1"
@@ -2101,7 +2101,7 @@ function Re001WarpImage({ className, src }) {
           >
             <animate
               attributeName="scale"
-              dur="28s"
+              dur="16s"
               values="5.2;6.4;5.6;6.8;5.2"
               calcMode="spline"
               keySplines="0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1"
@@ -2670,7 +2670,7 @@ const visualPages = [
   { pageId: "page-3", image: "png-pages/intro/序.png", sequenceAnimation: true },
   { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK", curtainReveal: true },
   { pageId: "page-4", image: "png-pages/荒原100/100.png", dividerAnimation: true, peelAnimation: true },
-  { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found", re001Animation: true },
+  { pageId: "re-001", image: "png-pages/Re001-web.png", fit: "contain", reCaption: "Re: 404 not found", re001Animation: true },
   { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png", dividerAnimation: true, mirageAnimation: true },
   { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes", blurVisualAnimation: true },
   {
@@ -2892,7 +2892,7 @@ function ZineAnimationStyles() {
       .mountain-line-flash-out { animation: mountainLineFlashOut 0.18s linear both !important; }
       .zine-water-art-enter { animation: waterArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-art-exit { animation: waterArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
-      .zine-re001-curtain { animation: re001FadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .zine-re001-curtain { animation: re001BlurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
       .zine-re001-exit { animation: re001FlashFadeOut 2.2s linear both; pointer-events: none; }
       .zine-eraser-exit {
         animation: eraserExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
@@ -3116,9 +3116,15 @@ function ZineAnimationStyles() {
           mask-position: center, center;
         }
       }
-      @keyframes re001FadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+      @keyframes re001BlurFadeIn {
+        from {
+          opacity: 0;
+          filter: blur(10px);
+        }
+        to {
+          opacity: 1;
+          filter: blur(0);
+        }
       }
       @keyframes re001FlashFadeOut {
         0%, 11%, 22%, 43%, 64% { opacity: 1; }
