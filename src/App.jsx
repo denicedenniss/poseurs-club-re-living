@@ -2107,14 +2107,14 @@ function Re001WarpImage({ className, src }) {
           <feDisplacementMap
             in="SourceGraphic"
             in2="re001WarpMovingNoise"
-            scale="6"
+            scale="12"
             xChannelSelector="R"
             yChannelSelector="G"
           >
             <animate
               attributeName="scale"
               dur="16s"
-              values="5.2;6.4;5.6;6.8;5.2"
+              values="12;15;13;18;12"
               calcMode="spline"
               keySplines="0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1;0.22 1 0.36 1"
               repeatCount="indefinite"
