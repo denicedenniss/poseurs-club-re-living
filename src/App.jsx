@@ -940,6 +940,9 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const firstImpactLaunchY = -5.2;
     const firstImpactLaunchX = 1.15;
     const ballSize = 150;
+    const separationThreshold = 150;
+    const separationStrength = 0.018;
+    const maxSeparationImpulse = 0.45;
     const ballConfigs = [
       { left: 18, delay: 0, fallbackX: pageId === "page-2" ? -firstImpactLaunchX : firstImpactLaunchX },
       { left: 126, delay: 180, fallbackX: pageId === "page-2" ? firstImpactLaunchX : -firstImpactLaunchX },
@@ -970,6 +973,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       const state = {
         bounds,
         config,
+        baseLeft: safeLeft,
         dropSettled: false,
         dropBounceCount: 0,
         discoveryLaunchDone: false,
@@ -1032,6 +1036,48 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       }
       return state.config.fallbackX;
     };
+    const applyBallSeparation = () => {
+      const states = ballStatesRef.current;
+      for (let firstIndex = 0; firstIndex < states.length; firstIndex += 1) {
+        for (let secondIndex = firstIndex + 1; secondIndex < states.length; secondIndex += 1) {
+          const first = states[firstIndex];
+          const second = states[secondIndex];
+          if ((!first.dropStarted && !first.dropSettled) || (!second.dropStarted && !second.dropSettled)) {
+            continue;
+          }
+
+          let dx =
+            second.baseLeft +
+            second.position.x +
+            ballSize / 2 -
+            (first.baseLeft + first.position.x + ballSize / 2);
+          let dy =
+            top +
+            second.position.y +
+            ballSize / 2 -
+            (top + first.position.y + ballSize / 2);
+          let distance = Math.hypot(dx, dy);
+          if (distance >= separationThreshold) continue;
+
+          if (distance < 0.001) {
+            const angle = (firstIndex + secondIndex + 1) * 2.399963229728653;
+            dx = Math.cos(angle);
+            dy = Math.sin(angle);
+            distance = 1;
+          }
+
+          const overlap = separationThreshold - distance;
+          const impulse = Math.min(overlap * separationStrength, maxSeparationImpulse);
+          const normalX = dx / distance;
+          const normalY = dy / distance;
+
+          first.velocity.x -= normalX * impulse;
+          first.velocity.y -= normalY * impulse;
+          second.velocity.x += normalX * impulse;
+          second.velocity.y += normalY * impulse;
+        }
+      }
+    };
 
     const handleOrientation = (event) => {
       if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
@@ -1066,8 +1112,6 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
           gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
           gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
         } else if (!tiltBaselineCaptured) {
-          velocity.x = 0;
-          velocity.y = 0;
           if (latestTilt.beta !== null && latestTilt.gamma !== null) {
             neutralTilt.beta = latestTilt.beta;
             neutralTilt.gamma = latestTilt.gamma;
@@ -1104,6 +1148,8 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
           gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
         }
       }
+
+      applyBallSeparation();
 
       ballStatesRef.current.forEach((state, index) => {
         const ball = balls[index];
