@@ -2127,6 +2127,26 @@ function Re001WarpImage({ className, src }) {
   );
 }
 
+function OutroRoadMarquee() {
+  const backgroundSrc = assetSrc("/assets/png-pages/Outro/山路漫長底.png");
+  const typographySrc = assetSrc("/assets/png-pages/Outro/山路漫長字.png");
+
+  return (
+    <div className="outro-road-artwork" aria-hidden="true">
+      <img className="outro-road-background" src={backgroundSrc} alt="" />
+      <div className="outro-road-marquee-window">
+        <div className="outro-road-marquee-track">
+          {[0, 1].map((tile) => (
+            <div className="outro-road-marquee-tile" key={tile}>
+              <img className="outro-road-typography" src={typographySrc} alt="" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function VisualJourneyFrame({
   active,
   pageId,
@@ -2482,7 +2502,9 @@ function VisualJourneyFrame({
             onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
           }}
         >
-          {pageId === "re-001" ? (
+          {pageId === "outro-road" ? (
+            <OutroRoadMarquee />
+          ) : pageId === "re-001" ? (
             <Re001WarpImage className={visualImageClass} src={imageSrc} />
           ) : (
             <img
@@ -2984,6 +3006,55 @@ function ZineAnimationStyles() {
       .zine-water-art-exit { animation: waterArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
       .zine-re001-curtain { animation: re001BlurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
       .zine-re001-exit { animation: re001FlashFadeOut 2.2s linear both; pointer-events: none; }
+      .visual-frame-outro-road .visual-stage {
+        height: 600px;
+        inset: 0 0 auto;
+      }
+      .outro-road-artwork,
+      .outro-road-marquee-window {
+        position: absolute;
+        inset: 0;
+        width: 402px;
+        height: 600px;
+        overflow: hidden;
+      }
+      .outro-road-background {
+        position: absolute;
+        left: 2px;
+        top: 0;
+        width: 398px;
+        height: 600px;
+        max-width: none;
+        display: block;
+      }
+      .outro-road-marquee-track {
+        position: absolute;
+        left: -10px;
+        top: -20px;
+        width: 421px;
+        height: 1145.228px;
+        animation: outroRoadMarquee 22s linear infinite;
+        will-change: transform;
+      }
+      .outro-road-marquee-tile {
+        position: relative;
+        width: 421px;
+        height: 572.614px;
+        overflow: hidden;
+      }
+      .outro-road-typography {
+        position: absolute;
+        left: 0;
+        top: -25.884px;
+        width: 421px;
+        height: 2382px;
+        max-width: none;
+        display: block;
+      }
+      @keyframes outroRoadMarquee {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(0, -572.614px, 0); }
+      }
       .zine-eraser-exit {
         animation: eraserExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
         -webkit-mask-image:
