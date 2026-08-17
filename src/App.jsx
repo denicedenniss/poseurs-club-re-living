@@ -2129,19 +2129,14 @@ function Re001WarpImage({ className, src }) {
 
 function OutroRoadMarquee() {
   const backgroundSrc = assetSrc("/assets/png-pages/Outro/山路漫長底.png");
-  const typographySrc = assetSrc("/assets/png-pages/Outro/山路漫長字.png");
+  const typographySrc = assetSrc("/assets/png-pages/Outro/山路漫長字-long.png");
 
   return (
     <div className="outro-road-artwork" aria-hidden="true">
       <img className="outro-road-background" src={backgroundSrc} alt="" />
-      <div className="outro-road-marquee-window">
-        <div className="outro-road-marquee-track">
-          {[0, 1].map((tile) => (
-            <div className="outro-road-marquee-tile" key={tile}>
-              <img className="outro-road-typography" src={typographySrc} alt="" />
-            </div>
-          ))}
-        </div>
+      <div className="outro-road-marquee-track">
+        <img className="outro-road-typography-track" src={typographySrc} alt="" />
+        <img className="outro-road-typography-track" src={typographySrc} alt="" />
       </div>
     </div>
   );
@@ -3010,13 +3005,11 @@ function ZineAnimationStyles() {
         height: 600px;
         inset: 0 0 auto;
       }
-      .outro-road-artwork,
-      .outro-road-marquee-window {
+      .outro-road-artwork {
         position: absolute;
         inset: 0;
         width: 402px;
         height: 600px;
-        overflow: hidden;
       }
       .outro-road-background {
         position: absolute;
@@ -3032,28 +3025,19 @@ function ZineAnimationStyles() {
         left: -10px;
         top: -20px;
         width: 421px;
-        height: 1145.228px;
-        animation: outroRoadMarquee 22s linear infinite;
+        height: 4580.912px;
+        animation: outroRoadMarquee 88s linear infinite;
         will-change: transform;
       }
-      .outro-road-marquee-tile {
-        position: relative;
+      .outro-road-typography-track {
         width: 421px;
-        height: 572.614px;
-        overflow: hidden;
-      }
-      .outro-road-typography {
-        position: absolute;
-        left: 0;
-        top: -25.884px;
-        width: 421px;
-        height: 2382px;
+        height: 2290.456px;
         max-width: none;
         display: block;
       }
       @keyframes outroRoadMarquee {
         from { transform: translate3d(0, 0, 0); }
-        to { transform: translate3d(0, -572.614px, 0); }
+        to { transform: translate3d(0, -2290.456px, 0); }
       }
       .zine-eraser-exit {
         animation: eraserExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
