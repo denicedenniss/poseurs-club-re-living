@@ -2466,7 +2466,11 @@ function VisualJourneyFrame({
         : ""
     : "";
   const blurVisualArtClass = blurVisualAnimation && active
-    ? `zine-blur-art-${blurVisualPhase === "leaving" ? "exit" : "enter"}`
+    ? blurVisualPhase === "leaving"
+      ? "zine-blur-art-exit"
+      : pageId === "re-002"
+        ? "zine-re002-stretch-enter"
+        : "zine-blur-art-enter"
     : "";
   const waterVisualArtClass = waterVisualAnimation && active
     ? `zine-water-visual-${waterVisualPhase === "leaving" ? "exit" : "enter"}`
@@ -2484,7 +2488,7 @@ function VisualJourneyFrame({
     <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""} ${dividerPhase === "leaving" ? "is-divider-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       {imageRect ? (
         <img
-          className={`visual-original visual-absolute ${dividerArtClass} ${mountainSequenceArtClass}`}
+          className={`visual-original visual-absolute ${dividerArtClass} ${blurVisualArtClass} ${mountainSequenceArtClass}`}
           style={{
             ...frameRectStyle(imageRect),
             ...(mountainSequenceAnimation ? { "--mountain-reveal-duration": `${mountainRevealMs}ms` } : {}),
@@ -2784,7 +2788,13 @@ const visualPages = [
   { pageId: "page-4", image: "png-pages/荒原100/100.png", dividerAnimation: true, peelAnimation: true },
   { pageId: "re-001", image: "png-pages/Re001-web.png", fit: "contain", reCaption: "Re: 404 not found", re001Animation: true },
   { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png", dividerAnimation: true, mirageAnimation: true },
-  { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes", blurVisualAnimation: true },
+  {
+    pageId: "re-002",
+    image: "png-pages/Re002.png",
+    imageRect: { x: -21, y: -26, width: 442, height: 646 },
+    reCaption: "Re: Yes",
+    blurVisualAnimation: true,
+  },
   {
     pageId: "part-3-a",
     image: "png-pages/山 300/300.png",
@@ -2960,6 +2970,10 @@ function ZineAnimationStyles() {
       .zine-mirage-enter { animation: mirageEnter 3.02s linear both; }
       .zine-mirage-exit { animation: mirageExit 2s ease-in-out both; pointer-events: none; }
       .zine-blur-art-enter { animation: blurArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .zine-re002-stretch-enter {
+        animation: re002StretchEnter 3.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        transform-origin: 50% 0%;
+      }
       .zine-blur-art-exit { animation: blurArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
       .zine-water-visual-enter { animation: waterVisualEnter 3s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-visual-exit { animation: waterVisualExit 2.5s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
@@ -3197,6 +3211,10 @@ function ZineAnimationStyles() {
       @keyframes blurArtEnter {
         from { opacity: 0.18; filter: blur(20px); }
         to { opacity: 1; filter: blur(0); }
+      }
+      @keyframes re002StretchEnter {
+        from { transform: scaleY(0.18); }
+        to { transform: none; }
       }
       @keyframes blurArtExit {
         from { opacity: 1; filter: blur(0); }
