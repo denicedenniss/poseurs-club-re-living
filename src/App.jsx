@@ -97,7 +97,7 @@ const GOOGLE_APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbx8
 
 function pageBgStyle(pageId) {
   const pageBackground = PAGE_BG[pageId] || "#F8F8F8";
-  const bottomBarBackground = pageId === "part-3-a" || pageBackground === "#E0FF00"
+  const bottomBarBackground = pageBackground === "#E0FF00"
     ? "#E0FF00"
     : "#F2F2F2";
 
@@ -153,6 +153,7 @@ const textArticles = [
 自從西醫成主流，人被強行劈開了一半——心靈與身體分離。以致我們思考如何照顧自己時，總慣性地將它們分開。人成熟到某個階段，便會計劃如何好好照顧自己。或者這樣說：我們都在尋找應對世界的生活秘笈。
 
 我以為找到秘笈，就能將安穩變為常態。原來只是幻想，事實上無常才是常態，上一刻安穩，下一刻手足無措。我學習照顧自己：理解情緒、處理工作、鍛鍊身體、好好吃飯休息。即便全部做妥，仍無法逃避生存的無力——尤其當你認為自己已在各方面用盡全力。
+
 到底有誰已找到生活的秘笈？抑或根本沒有秘笈？
 
 「世界是一個荒原，書裡說的，我很感動。」
@@ -222,6 +223,7 @@ Re: 作為實驗品
 
 Re: 報告出爐
 二十一天後，宣布實驗成功，完整的痛苦消化報告出爐，翻著報告的每一頁：分離的哀悼消化了，事後檢討也檢討了，悲傷五個階段都像景點一樣逐一打過卡了。我完成計劃的當刻，我有點感到很驚嘆，我驚嘆的是在低潮中極力捱過的生產力，KPI (關鍵績效指標 Key Performance Indicators) 極高，而且所有SOP (標準作業程序 Standard Operating Procedure) 全數走完。最後筋疲力盡，身心透支，幸好瘦了一點，需要靜養一段時日，不再研究、不再記錄，只單純吃喝睡覺。
+
 我曾以為是二十一天這個限期救了我。因為目標明確畫在日曆上，我追趕KPI、完成SOP。可以這樣說，但又不盡如此。二十一天給我的，只是一個「也許能完成」的盼望。真正讓我完成的，不是限期，而是我願意溫柔陪伴自己——縱使前進三步又退兩步，仍對自己誠實、允許，甚至為小得尷尬的進度而歡喜。
 
 Re: 濕透的衣裳
@@ -456,9 +458,12 @@ function splitArticleBody(body, highlightTexts = []) {
   return blocks;
 }
 
-function articleBlockClass(block) {
+function articleBlockClass(block, pageId) {
   if (block.type === "D") return "type-d article-emphasis";
   if (block.type === "B") return "type-b article-note";
+  if (pageId === "article-1-02" && block.text.startsWith("我以為找到秘笈")) {
+    return "type-c article-1-02-tight-tracking";
+  }
   return "type-c";
 }
 
@@ -2699,7 +2704,9 @@ function OpeningPageFrame({
     ? `zine-blur-art-${phase === "leaving" ? "exit" : "enter"}`
     : "";
   const hingeArtworkClass = hingeArtwork && isArtworkVisible
-    ? `animate__animated ${phase === "leaving" ? "opening-asset-hinge-out animate__hinge" : "animate__flipInX"}`
+    ? phase === "leaving"
+      ? "zine-hinge-swing-exit"
+      : "animate__animated animate__flipInX"
     : "";
   const edgeWeatherArtworkClass = edgeWeatherArtwork && isArtworkVisible
     ? `${phase === "leaving" ? "zine-edge-weather-exit" : "animate__animated animate__flipInX"}`
@@ -2719,7 +2726,7 @@ function OpeningPageFrame({
 
   return (
     <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""} ${phase === "leaving" ? "is-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
-      <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""}`} style={frameRectStyle(art)}>
+      <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""} ${hingeArtwork && phase === "leaving" ? "is-hinge-swinging" : ""}`} style={frameRectStyle(art)}>
         <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${edgeWeatherArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
@@ -2774,7 +2781,7 @@ function TextArticleFrame({ active, pageId, meta, title, body, bodyRect, label, 
         }}
       >
         {splitArticleBody(body, highlightTexts).map((block, index) => (
-          <p className={articleBlockClass(block)} key={`${pageId}-${block.type}-${index}`}>{articleBlockContent(block, pageId)}</p>
+          <p className={articleBlockClass(block, pageId)} key={`${pageId}-${block.type}-${index}`}>{articleBlockContent(block, pageId)}</p>
         ))}
       </section>
       <JourneyBottomNav pageId={pageId} progress={progress} />
@@ -2856,7 +2863,7 @@ const openingPages = [
   {
     pageId: "article-2-03-cover",
     image: "png-pages/海市蜃樓 200/203.png",
-    edgeWeatherArtwork: true,
+    hingeArtwork: true,
     art: { x: -24, y: 0, width: 451, height: 660 },
     meta: { text: "第二部 · 海市蜃樓 / 2.03", rect: { x: 136, y: 91, width: 130, height: 20 } },
     title: { text: "《觀望與被觀望的距離》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -2963,6 +2970,15 @@ function ZineAnimationStyles() {
       .animate__rollOut { animation-name: rollOut; }
       .opening-asset-flip-out { animation-duration: 2s !important; }
       .opening-asset-hinge-out { animation-duration: 3s !important; }
+      .opening-main-asset.is-hinge-swinging {
+        overflow: visible;
+        z-index: 4;
+      }
+      .zine-hinge-swing-exit {
+        animation: hingeSwingExit 3s linear both;
+        transform-origin: 12% 8%;
+        pointer-events: none;
+      }
       .opening-asset-roll { animation-duration: 2.5s !important; }
       .opening-asset-rotate-in,
       .opening-asset-fade-down { animation-duration: 3s !important; }
@@ -3020,7 +3036,10 @@ function ZineAnimationStyles() {
       .zine-water-art-enter { animation: waterArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-art-exit { animation: waterArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
       .zine-re001-curtain { animation: re001BlurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
-      .zine-re001-exit { animation: re001FlashFadeOut 2.2s linear both; pointer-events: none; }
+      .zine-re001-exit { animation: re001FadeOut 1s ease-out both; pointer-events: none; }
+      .text-article-scroll p.article-1-02-tight-tracking {
+        letter-spacing: 0.8px;
+      }
       .visual-frame-outro-road .visual-stage {
         height: 600px;
         inset: 0 0 auto;
@@ -3177,6 +3196,34 @@ function ZineAnimationStyles() {
         40%, 80% { animation-timing-function: ease-in-out; transform: rotate3d(0, 0, 1, 60deg); opacity: 1; }
         100% { transform: translate3d(0, 700px, 0); opacity: 0; }
       }
+      @keyframes hingeSwingExit {
+        0% {
+          transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        }
+        11.6667% {
+          animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+          transform: translate3d(42px, 18px, 0) rotate(0deg) scale(0.56);
+        }
+        35% {
+          animation-timing-function: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+          transform: translate3d(96px, 62px, 0) rotate(68deg) scale(0.56);
+        }
+        52% {
+          animation-timing-function: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+          transform: translate3d(78px, 88px, 0) rotate(50deg) scale(0.56);
+        }
+        68% {
+          animation-timing-function: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+          transform: translate3d(96px, 104px, 0) rotate(76deg) scale(0.56);
+        }
+        78.3333% {
+          animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+          transform: translate3d(90px, 118px, 0) rotate(64deg) scale(0.56);
+        }
+        100% {
+          transform: translate3d(90px, 760px, 0) rotate(64deg) scale(0.56);
+        }
+      }
       @keyframes curtainRevealTopDown {
         from { clip-path: inset(0 0 100% 0); }
         to { clip-path: inset(0 0 0 0); }
@@ -3299,10 +3346,9 @@ function ZineAnimationStyles() {
           filter: blur(0);
         }
       }
-      @keyframes re001FlashFadeOut {
-        0%, 11%, 22%, 43%, 64% { opacity: 1; }
-        5.5%, 16.5%, 32%, 53.5% { opacity: 0; }
-        100% { opacity: 0; }
+      @keyframes re001FadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
       }
       @keyframes eraserExit {
         0% {
