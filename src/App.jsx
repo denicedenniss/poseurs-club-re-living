@@ -2085,21 +2085,21 @@ function Re001WarpImage({ className, src }) {
           />
           <feOffset
             in="re001WarpNoise"
-            dx="0"
-            dy="0"
+            dx="36"
+            dy="-28.3"
             result="re001WarpMovingNoise"
           >
             <animate
               attributeName="dx"
               dur="10s"
-              values="36;72;36;0;36"
+              values="36;56;64.3;56;36;16;7.7;16;36"
               calcMode="linear"
               repeatCount="indefinite"
             />
             <animate
               attributeName="dy"
               dur="10s"
-              values="0;24;0;-24;0"
+              values="-28.3;-20;0;20;28.3;20;0;-20;-28.3"
               calcMode="linear"
               repeatCount="indefinite"
             />
@@ -3274,7 +3274,7 @@ function ZineAnimationStyles() {
       @keyframes re001BlurFadeIn {
         from {
           opacity: 0;
-          filter: blur(10px);
+          filter: blur(4px);
         }
         to {
           opacity: 1;
