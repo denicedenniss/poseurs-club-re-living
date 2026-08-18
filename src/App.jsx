@@ -2971,7 +2971,7 @@ function ZineAnimationStyles() {
       .zine-mirage-exit { animation: mirageExit 2s ease-in-out both; pointer-events: none; }
       .zine-blur-art-enter { animation: blurArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
       .zine-re002-stretch-enter {
-        animation: re002StretchEnter 3.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation: re002StretchEnter 4.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         transform-origin: 50% 0%;
       }
       .zine-blur-art-exit { animation: blurArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
