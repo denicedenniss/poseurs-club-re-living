@@ -344,7 +344,7 @@ Re: 到埗
 一直以來，我對西藏的想像，總帶著一種貼近靈魂的神秘感。無論是當地人的生活、宗教、建築、香巴拉的傳說、藏人對信仰的投入，還是他們與大自然共存的方式，都令我無比好奇。我本就熱愛自然，一個與我日常環境截然不同的世界會是何種面貌？高原地區多樣化的景色，高山與湖泊（藏語稱「措」），究竟有多壯麗？最後，就是一個最坦率的理由——我想攝影，把這些一切一切，我都想用鏡頭把它們記錄下來。
 
 Re: 記憶球
-終於，我來到了西藏，遊覽了好幾座寺廟。其中的壁畫、雕像、建築與法器，有的金碧輝煌，有的五彩斑斕，有的則細緻得令人屏息。那些人手繪畫對稱得有點不對稱的自然線條，都刻劃着匠人的手繪溫感。這一切都令我目不暇給。然而，多數寺廟內部禁止拍照。那些巨碩的佛像瀰漫著藏香，窗框透出的光線混雜着煙霧，像似電影感的情景，但卻無法把它們收進鏡頭裡。所以我都跟自己說：「那就用眼睛和腦袋記着這些畫面吧！」我也不敢喧嘩，靜靜地觀察着在寺廟裡修行的僧侶和參拜的信眾。有時寂靜無聲，有時聽到僧人們喃喃低語的誦經聲，混雜着導遊講解的內容。有抱着襁褓嬰兒來到的人、正在把銀紙插在佛像旁的人、正在專心跪拜的人、拿着電話的僧人、正在走路聊天的僧人，也有即使旅客人來人往參觀欣賞，也依舊專心頌經的僧人，彷彿把在寺廟裡的眾生相與瞬間當下，一一收進眼底。
+終於，我來到了西藏，遊覽了好幾座寺廟。其中的壁畫、雕像、建築與法器，有的金碧輝煌，有的五彩斑斕，有的則細緻得令人屏息。那些人手繪畫對稱得有點不對稱的自然線條，都刻劃着匠人的手繪溫感。這一切都令我目不暇給。然而，多數寺廟內部禁止拍照。那些巨碩的佛像瀰漫著藏香，窗框透出的光線混雜着煙霧，像似電影感的情景，但卻無法把它們收進鏡頭裡。所以我都跟自己說：「那就用眼睛和腦袋記着這些畫面吧！」我也不敢喧嘩，靜靜地觀察着在寺廟裡修行的僧侶和參拜的信眾。有時寂靜無聲，有時聽到僧人們喃喃低語的誦經聲，混雜着導遊講解的內容。有抱着襁褓嬰兒來到的人、正在把銀紙插在佛像旁的人、正在專心跪拜的人、拿着電話的僧人、正在走路聊天的僧人，也有即使旅客人來人往參觀欣賞，也依舊專心頌經的僧人，彷彿把在寺廟裡的眾生相與瞬間當下，——收進眼底。
 
 Re: 所有當下的集結
 然後一下回神，耳機響起導遊導賞的說話：「佛教中提到——未來是許多個現在的集結，所以我們只能活好每一個現在。」這句話像小石頭掉進湖裡，在我心中泛起漣漪。我想著，未來就似千百個瞬間集結在一個玻璃球，然後這些瞬間最終為未來調和出一種色彩。我突然理解，眼前這些不同的片刻，原來就是「每一個現在」——它們不只是畫面，也是選擇。
@@ -459,10 +459,23 @@ function splitArticleBody(body, highlightTexts = []) {
 }
 
 function articleBlockClass(block, pageId) {
+  if (
+    block.type === "D" &&
+    pageId === "article-3-05" &&
+    block.text.startsWith("今天我聽了《三人行》")
+  ) {
+    return "type-d article-emphasis article-3-05-tight-tracking";
+  }
   if (block.type === "D") return "type-d article-emphasis";
   if (block.type === "B") return "type-b article-note";
   if (pageId === "article-1-02" && block.text.startsWith("我以為找到秘笈")) {
     return "type-c article-1-02-tight-tracking";
+  }
+  if (pageId === "article-2-04" && block.text.startsWith("我們必須接納自身的無能為力")) {
+    return "type-c article-2-04-tight-tracking";
+  }
+  if (pageId === "article-3-02" && block.text.startsWith("叔本華說過人追求慾望是本能")) {
+    return "type-c article-3-02-tight-tracking";
   }
   return "type-c";
 }
@@ -2481,7 +2494,11 @@ function VisualJourneyFrame({
     ? `zine-water-visual-${waterVisualPhase === "leaving" ? "exit" : "enter"}`
     : "";
   const mountainSequenceArtClass = mountainSequenceAnimation && active
-    ? `zine-mountain-${mountainSequencePhase === "leaving" ? "blur-exit" : "curtain-reveal"}`
+    ? mountainSequencePhase === "leaving"
+      ? "zine-mountain-blur-exit"
+      : pageId === "part-3-a"
+        ? "zine-mountain-fade-enter"
+        : "zine-mountain-curtain-reveal"
     : "";
   const shouldShowMountainLine = !mountainSequenceAnimation
     || mountainSequencePhase === "line-visible"
@@ -2723,11 +2740,17 @@ function OpeningPageFrame({
   const fadeDownArtworkClass = fadeDownArtwork && isArtworkVisible
     ? `animate__animated opening-asset-fade-down ${phase === "leaving" ? "animate__fadeOutBottomRight" : "animate__fadeInDown"}`
     : "";
+  const artworkWrapperStyle = fadeDownArtwork
+    ? frameRectStyle({ x: 0, y: 0, width: 402, height: 700 })
+    : frameRectStyle(art);
+  const artworkImageStyle = fadeDownArtwork
+    ? { ...frameRectStyle(art), position: "absolute", maxWidth: "none" }
+    : undefined;
 
   return (
     <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""} ${phase === "leaving" ? "is-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
-      <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""} ${hingeArtwork && phase === "leaving" ? "is-hinge-swinging" : ""}`} style={frameRectStyle(art)}>
-        <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${edgeWeatherArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} src={imageSrc} alt="" />
+      <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""} ${hingeArtwork && phase === "leaving" ? "is-hinge-swinging" : ""} ${rotateFlashArtwork ? "is-rotate-flash-motion" : ""} ${fadeDownArtwork ? "is-full-frame-motion" : ""}`} style={artworkWrapperStyle}>
+        <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${edgeWeatherArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} style={artworkImageStyle} src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
       <p className="opening-title type-a2" style={openingTitleStyle(title.rect)} aria-label={title.text}>
@@ -2809,7 +2832,7 @@ const visualPages = [
     mountainLine: { name: "Mountain_Line_01", x: 289, y: 77, length: 50, strokeWeight: 2 },
     dividerAnimation: true,
     mountainSequenceAnimation: true,
-    mountainRevealMs: 2000,
+    mountainRevealMs: 1500,
   },
   {
     pageId: "part-3-b",
@@ -2817,7 +2840,7 @@ const visualPages = [
     imageRect: { x: 140, y: 185, width: 121, height: 270 },
     mountainLine: { name: "Mountain_Line_02", x: 255, y: 390, length: 50, strokeWeight: 1 },
     mountainSequenceAnimation: true,
-    mountainRevealMs: 3500,
+    mountainRevealMs: 4000,
   },
   { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to...", waterVisualAnimation: true },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
@@ -2974,6 +2997,12 @@ function ZineAnimationStyles() {
         overflow: visible;
         z-index: 4;
       }
+      .opening-main-asset.is-rotate-flash-motion {
+        overflow: visible;
+      }
+      .opening-main-asset.is-full-frame-motion {
+        overflow: visible;
+      }
       .zine-hinge-swing-exit {
         animation: hingeSwingExit 3s linear both;
         transform-origin: 12% 8%;
@@ -3031,6 +3060,7 @@ function ZineAnimationStyles() {
         pointer-events: none;
       }
       .zine-mountain-curtain-reveal { animation: mountainCurtainReveal var(--mountain-reveal-duration, 2s) linear both; }
+      .zine-mountain-fade-enter { animation: mountainFadeEnter 1.5s ease-out both; }
       .zine-mountain-blur-exit { animation: mountainBlurExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
       .mountain-line-flash-out { animation: mountainLineFlashOut 0.18s linear both !important; }
       .zine-water-art-enter { animation: waterArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
@@ -3038,7 +3068,17 @@ function ZineAnimationStyles() {
       .zine-re001-curtain { animation: re001BlurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
       .zine-re001-exit { animation: re001FadeOut 1s ease-out both; pointer-events: none; }
       .text-article-scroll p.article-1-02-tight-tracking {
-        letter-spacing: 0.8px;
+        letter-spacing: 0.4px;
+      }
+      .text-article-scroll p.article-2-04-tight-tracking,
+      .text-article-scroll p.article-3-02-tight-tracking {
+        letter-spacing: 0.4px;
+      }
+      .text-article-scroll p.article-3-05-tight-tracking {
+        letter-spacing: -1.6px;
+      }
+      .visual-frame-part-3-a .journey-bottom-nav {
+        height: 99px;
       }
       .visual-frame-outro-road .visual-stage {
         height: 600px;
@@ -3231,6 +3271,10 @@ function ZineAnimationStyles() {
       @keyframes mountainCurtainReveal {
         from { clip-path: inset(0 0 100% 0); }
         to { clip-path: inset(0 0 0 0); }
+      }
+      @keyframes mountainFadeEnter {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       @keyframes mountainBlurExit {
         from { opacity: 1; filter: blur(0); }
