@@ -579,21 +579,53 @@ async function requestMotionPermissionIfSupported() {
 
 function CoverFrame({ active }) {
   const message = "陌生人你好！";
-  const [typedCount, setTypedCount] = React.useState(message.length);
-  const [lineOneVisible, setLineOneVisible] = React.useState(false);
-  const [lineTwoVisible, setLineTwoVisible] = React.useState(true);
-  const [sendState, setSendState] = React.useState("ready");
+  const [typedCount, setTypedCount] = React.useState(0);
+  const [lineOneVisible, setLineOneVisible] = React.useState(true);
+  const [lineTwoVisible, setLineTwoVisible] = React.useState(false);
+  const [sendState, setSendState] = React.useState("idle");
   const [, setMotionPermissionState] = React.useState("unsupported");
+  const coverImageRef = React.useRef(null);
 
   React.useEffect(() => {
     if (!active) return undefined;
 
-    setTypedCount(message.length);
-    setLineOneVisible(false);
-    setLineTwoVisible(true);
-    setSendState("ready");
+    setTypedCount(0);
+    setLineOneVisible(true);
+    setLineTwoVisible(false);
+    setSendState("idle");
     setMotionPermissionState("unsupported");
-    return undefined;
+
+    let cancelled = false;
+    const timers = [];
+    const runAfterReady = async () => {
+      if (typeof document !== "undefined" && document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+      if (coverImageRef.current?.decode) {
+        await coverImageRef.current.decode().catch(() => {});
+      }
+      if (cancelled) return;
+
+      timers.push(window.setTimeout(() => {
+        setLineOneVisible(false);
+        setLineTwoVisible(true);
+        setTypedCount(0);
+        const typingDuration = 4000;
+        message.split("").forEach((_, index) => {
+          timers.push(window.setTimeout(() => {
+            setTypedCount(index + 1);
+          }, Math.round(((index + 1) / message.length) * typingDuration)));
+        });
+        timers.push(window.setTimeout(() => setSendState("ready"), typingDuration));
+      }, 1500));
+    };
+
+    runAfterReady();
+
+    return () => {
+      cancelled = true;
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
   }, [active]);
 
   const typedText = message.slice(0, typedCount);
@@ -635,6 +667,7 @@ function CoverFrame({ active }) {
         }}
       >
         <img
+          ref={coverImageRef}
           src={pngPageSrc("intro/Cover.jpg")}
           alt=""
           aria-hidden="true"
