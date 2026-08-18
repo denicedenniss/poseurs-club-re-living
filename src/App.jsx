@@ -2142,80 +2142,6 @@ function OutroRoadMarquee() {
   );
 }
 
-function SequenceOrganicReveal({ src }) {
-  return (
-    <svg
-      className="visual-original visual-cover sequence-organic-reveal"
-      viewBox="0 0 402 588"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <defs>
-        <filter
-          id="sequence-organic-mask-filter"
-          x="-20%"
-          y="-20%"
-          width="140%"
-          height="140%"
-          colorInterpolationFilters="sRGB"
-        >
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.009 0.014"
-            numOctaves="1"
-            seed="17"
-            result="sequenceMaskNoise"
-          />
-          <feOffset in="sequenceMaskNoise" dx="0" dy="0" result="sequenceMaskDrift">
-            <animate attributeName="dx" values="0;3;1" dur="3.2s" calcMode="linear" fill="freeze" />
-            <animate attributeName="dy" values="0;-2;1" dur="3.2s" calcMode="linear" fill="freeze" />
-          </feOffset>
-          <feDisplacementMap
-            in="SourceGraphic"
-            in2="sequenceMaskDrift"
-            scale="20"
-            xChannelSelector="R"
-            yChannelSelector="G"
-            result="sequenceMaskDisplaced"
-          />
-          <feGaussianBlur in="sequenceMaskDisplaced" stdDeviation="7" />
-        </filter>
-        <mask
-          id="sequence-organic-reveal-mask"
-          x="-20%"
-          y="-20%"
-          width="140%"
-          height="140%"
-          maskUnits="userSpaceOnUse"
-          maskContentUnits="userSpaceOnUse"
-          style={{ maskType: "alpha" }}
-        >
-          <circle cx="214" cy="306" r="0.5" fill="#fff" filter="url(#sequence-organic-mask-filter)">
-            <animate
-              attributeName="r"
-              values="0.5;470"
-              dur="3.2s"
-              calcMode="spline"
-              keyTimes="0;1"
-              keySplines="0.22 1 0.36 1"
-              fill="freeze"
-            />
-          </circle>
-        </mask>
-      </defs>
-      <image
-        href={src}
-        x="0"
-        y="0"
-        width="402"
-        height="588"
-        preserveAspectRatio="xMidYMid slice"
-        mask="url(#sequence-organic-reveal-mask)"
-      />
-    </svg>
-  );
-}
-
 function VisualJourneyFrame({
   active,
   pageId,
@@ -2271,11 +2197,9 @@ function VisualJourneyFrame({
   const [re001CaptionVisible, setRe001CaptionVisible] = React.useState(false);
   const [re001CaptionComplete, setRe001CaptionComplete] = React.useState(false);
   const [startCaptionPhase, setStartCaptionPhase] = React.useState("idle");
-  const [sequenceRevealComplete, setSequenceRevealComplete] = React.useState(false);
-  const sequenceRevealTimerRef = React.useRef(null);
   const shouldStabilizeReCaptionEntry = pageId === "re-002" || pageId === "re-003";
   const isStartReCaption = pageId === "start" && captionBottom?.startsWith("Re:");
-  const isSequenceOrganicReveal = pageId === "page-3" && sequenceAnimation;
+  const isPageThreeSequence = pageId === "page-3" && sequenceAnimation;
 
   React.useEffect(() => {
     if (!dividerAnimation) return undefined;
@@ -2291,7 +2215,6 @@ function VisualJourneyFrame({
 
   React.useEffect(() => () => window.clearTimeout(dividerLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(sequenceLeaveTimerRef.current), []);
-  React.useEffect(() => () => window.clearTimeout(sequenceRevealTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(mirageLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(peelLeaveTimerRef.current), []);
   React.useEffect(() => () => {
@@ -2313,23 +2236,6 @@ function VisualJourneyFrame({
     setSequencePhase("idle");
     return undefined;
   }, [active, sequenceAnimation]);
-
-  React.useEffect(() => {
-    if (!isSequenceOrganicReveal) return undefined;
-
-    window.clearTimeout(sequenceRevealTimerRef.current);
-    if (!active) {
-      setSequenceRevealComplete(false);
-      return undefined;
-    }
-
-    setSequenceRevealComplete(false);
-    sequenceRevealTimerRef.current = window.setTimeout(() => {
-      setSequenceRevealComplete(true);
-    }, 3200);
-
-    return () => window.clearTimeout(sequenceRevealTimerRef.current);
-  }, [active, isSequenceOrganicReveal]);
 
   React.useEffect(() => {
     if (!mirageAnimation || active) return undefined;
@@ -2541,8 +2447,8 @@ function VisualJourneyFrame({
   const sequenceArtClass = sequenceAnimation && active
     ? sequencePhase === "leaving"
       ? "animate__animated animate__flipOutX"
-      : isSequenceOrganicReveal
-        ? ""
+      : isPageThreeSequence
+        ? "sequence-page-fade-in"
         : "animate__animated animate__flipInX"
     : "";
   const curtainArtClass = curtainReveal && active ? "zine-curtain-reveal" : "";
@@ -2600,8 +2506,6 @@ function VisualJourneyFrame({
             <OutroRoadMarquee />
           ) : pageId === "re-001" ? (
             <Re001WarpImage className={visualImageClass} src={imageSrc} />
-          ) : isSequenceOrganicReveal && active && sequencePhase !== "leaving" && !sequenceRevealComplete ? (
-            <SequenceOrganicReveal src={imageSrc} />
           ) : (
             <img
               className={visualImageClass}
@@ -3038,6 +2942,7 @@ function ZineAnimationStyles() {
       .animate__animated { animation-duration: 1.5s; animation-fill-mode: both; }
       .animate__flipInX { animation-name: flipInX; backface-visibility: visible !important; }
       .animate__flipOutX { animation-name: flipOutX; backface-visibility: visible !important; }
+      .sequence-page-fade-in { animation: sequencePageFadeIn 1.5s ease-out both; }
       .animate__hinge { animation-name: hinge; transform-origin: top left; }
       .animate__rotateInUpLeft { animation-name: rotateInUpLeft; transform-origin: left bottom; }
       .animate__rotateOutDownLeft { animation-name: rotateOutDownLeft; transform-origin: left bottom; }
@@ -3210,6 +3115,10 @@ function ZineAnimationStyles() {
         60% { transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1; }
         80% { transform: perspective(400px) rotate3d(1, 0, 0, -5deg); }
         to { transform: perspective(400px); }
+      }
+      @keyframes sequencePageFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       @keyframes flipOutX {
         from { transform: perspective(400px); }
