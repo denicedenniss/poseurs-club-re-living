@@ -1884,18 +1884,105 @@ const outroCopy = `我確實是要出版這本小誌，作為我的思想備份�
 果然，藝術是最後的避難所，用文字寫下對生活感悟，於別人眼中是作狀無比，但卻是為在夜裡不停輾轉反側，不能進睡的我，找到安穩的睡姿，作狀至極卻乃是我的救命藥方。`;
 
 function OutroFrame({ active, progress, onScrollProgress }) {
+  const scrollRef = React.useRef(null);
+  const copyMeasureRef = React.useRef(null);
+  const bottomArtworkRef = React.useRef(null);
+  const [copyLines, setCopyLines] = React.useState([]);
+  const [bottomArtworkVisible, setBottomArtworkVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!active) {
+      setCopyLines([]);
+      setBottomArtworkVisible(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const measureLines = () => {
+      const measureNode = copyMeasureRef.current;
+      const textNode = measureNode?.firstChild;
+      if (!measureNode || !textNode) return;
+
+      const measureRect = measureNode.getBoundingClientRect();
+      const measuredLines = [];
+      const range = document.createRange();
+
+      for (let offset = 0; offset < textNode.length; offset += 1) {
+        const character = textNode.data[offset];
+        if (character === "\n" || character === "\r") continue;
+
+        range.setStart(textNode, offset);
+        range.setEnd(textNode, offset + 1);
+        const characterRect = range.getBoundingClientRect();
+        if (!characterRect.width && !characterRect.height) continue;
+
+        const top = characterRect.top - measureRect.top;
+        const currentLine = measuredLines[measuredLines.length - 1];
+        if (!currentLine || Math.abs(currentLine.top - top) > 0.5) {
+          measuredLines.push({ top, text: character });
+        } else {
+          currentLine.text += character;
+        }
+      }
+
+      if (!cancelled) setCopyLines(measuredLines);
+    };
+
+    const fontsReady = document.fonts?.ready || Promise.resolve();
+    fontsReady.then(() => window.requestAnimationFrame(measureLines));
+    return () => {
+      cancelled = true;
+    };
+  }, [active]);
+
+  React.useEffect(() => {
+    if (!active || bottomArtworkVisible) return undefined;
+
+    const root = scrollRef.current;
+    const target = bottomArtworkRef.current;
+    if (!root || !target) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setBottomArtworkVisible(true);
+        observer.disconnect();
+      },
+      { root, threshold: 0.1 },
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [active, bottomArtworkVisible]);
+
   return (
     <article className={`phone-frame ending-page outro-page ${active ? "is-active" : ""}`} id="outro" style={pageBgStyle("outro")}>
-      <div className="ending-scroll outro-scroll" onScroll={(event) => {
+      <div ref={scrollRef} className="ending-scroll outro-scroll" onScroll={(event) => {
         const element = event.currentTarget;
         const distance = element.scrollHeight - element.clientHeight;
         onScrollProgress(distance > 0 ? element.scrollTop / distance : 0);
       }}>
         <div className="outro-canvas">
           <img className="outro-art-top" src={assetSrc("/assets/png-pages/Outro/out.png")} alt="" />
-          <span className="ending-scroll-marker" aria-hidden="true" />
-          <p className="outro-copy">{outroCopy}</p>
-          <img className="outro-art-bottom" src={assetSrc("/assets/journey/10.png")} alt="" />
+          <p ref={copyMeasureRef} className="outro-copy outro-copy-measure" aria-hidden="true">{outroCopy}</p>
+          <p className={`outro-copy outro-copy-lines ${copyLines.length ? "is-ready" : ""}`} aria-label={outroCopy}>
+            {copyLines.map((line, index) => (
+              <span
+                className="outro-copy-line"
+                key={`${line.top}-${index}`}
+                style={{ top: `${line.top}px`, animationDelay: `${index * 100}ms` }}
+                aria-hidden="true"
+              >
+                {line.text}
+              </span>
+            ))}
+          </p>
+          <img
+            ref={bottomArtworkRef}
+            className={`outro-art-bottom ${bottomArtworkVisible ? "animate__animated animate__fadeInUp is-revealed" : ""}`}
+            src={assetSrc("/assets/journey/10.png")}
+            alt=""
+          />
         </div>
       </div>
       <JourneyBottomNav pageId="outro" progress={progress} />
@@ -1941,7 +2028,7 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
   return (
     <article className={`phone-frame ending-page end-message-page ${active ? "is-active" : ""}`} id="end-msg-box" style={pageBgStyle("end-msg-box")}>
       <p className="end-message-copy">獨立出版電子Zine，一腳踢完成，<br />假如你喜歡我的作品，歡迎隨緣課金，<br />讓筆者可以維持生命。</p>
-      <button className="end-action end-payme" type="button"><span className="end-payme-brand">PayMe</span>{" "}贊助一抹人間煙火</button>
+      <a className="end-action end-payme" href="https://payme.hsbc/denlau"><span className="end-payme-brand">PayMe</span>{" "}贊助一抹人間煙火</a>
       <a className="end-action end-instagram" href="https://www.instagram.com/g.c.d___/" target="_blank" rel="noreferrer">Instagram</a>
       <label className="end-message-label" htmlFor="end-message">你對作狀生活俱樂部的 Re：</label>
       <input
@@ -3075,7 +3162,7 @@ function ZineAnimationStyles() {
         letter-spacing: 0.4px;
       }
       .text-article-scroll p.article-3-05-tight-tracking {
-        letter-spacing: -1.6px;
+        letter-spacing: -2px;
       }
       .visual-frame-part-3-a .journey-bottom-nav {
         height: 99px;
@@ -3149,6 +3236,9 @@ function ZineAnimationStyles() {
         width: 402px;
         min-height: 1168px;
       }
+      .outro-page.is-active .outro-art-top {
+        animation: outroTopBlurFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
       .outro-page .outro-copy {
         position: absolute;
         left: 23px;
@@ -3169,6 +3259,27 @@ function ZineAnimationStyles() {
         white-space: pre-wrap;
         word-break: normal;
       }
+      .outro-page .outro-copy-measure {
+        visibility: hidden;
+      }
+      .outro-page .outro-copy-lines {
+        pointer-events: none;
+        visibility: hidden;
+      }
+      .outro-page .outro-copy-lines.is-ready {
+        visibility: visible;
+      }
+      .outro-page .outro-copy-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        display: block;
+        white-space: pre;
+        opacity: 0;
+      }
+      .outro-page .outro-copy-lines.is-ready .outro-copy-line {
+        animation: outroCopyLineFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
       .outro-page .outro-art-bottom {
         position: absolute;
         left: 14px;
@@ -3181,6 +3292,25 @@ function ZineAnimationStyles() {
         object-fit: contain;
         object-position: center;
         z-index: auto;
+        opacity: 0;
+      }
+      .outro-page .outro-art-bottom.animate__fadeInUp {
+        animation-name: outroFadeInUp;
+        animation-duration: 1.2s;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        animation-fill-mode: both;
+      }
+      @keyframes outroTopBlurFadeIn {
+        from { opacity: 0; filter: blur(10px); }
+        to { opacity: 1; filter: blur(0); }
+      }
+      @keyframes outroCopyLineFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes outroFadeInUp {
+        from { opacity: 0; transform: translate3d(0, 100%, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
       }
       @keyframes flipInX {
         from { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); animation-timing-function: ease-in; opacity: 0; }
