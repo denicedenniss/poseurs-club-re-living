@@ -2151,7 +2151,7 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
 function BackFrame({ active, progress }) {
   return (
     <article className={`phone-frame ending-page back-page ${active ? "is-active" : ""}`} id="back" style={pageBgStyle("back")}>
-      <img className="back-art" src={assetSrc("/assets/journey/end.png")} alt="" />
+      <img className="back-art" src={pngPageSrc("intro/Cover.jpg")} alt="" />
       <JourneyBottomNav pageId="back" progress={progress} />
     </article>
   );
