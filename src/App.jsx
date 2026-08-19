@@ -97,9 +97,11 @@ const GOOGLE_APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbx8
 
 function pageBgStyle(pageId) {
   const pageBackground = PAGE_BG[pageId] || "#F8F8F8";
-  const bottomBarBackground = pageBackground === "#E0FF00"
-    ? "#E0FF00"
-    : "#F2F2F2";
+  const bottomBarBackground = pageId === "re-003"
+    ? "#F8F8F8"
+    : pageBackground === "#E0FF00"
+      ? "#E0FF00"
+      : "#F2F2F2";
 
   return {
     "--page-bg": pageBackground,
@@ -1386,7 +1388,7 @@ function PageTwoFrame({ active }) {
         style={{
           position: "absolute",
           left: "3px",
-          top: "3.88px",
+          top: "-16.12px",
           width: "395px",
           height: "344.84px",
           objectFit: "fill",
@@ -1405,10 +1407,9 @@ function PageTwoFrame({ active }) {
           width: "272px",
           minWidth: "272px",
           maxWidth: "272px",
-          minHeight: "239px",
+          height: "239px",
           boxSizing: "border-box",
           flexShrink: 0,
-          paddingBottom: "max(26px, env(safe-area-inset-bottom))",
           color: "#000",
           textAlign: "left",
           zIndex: 2,
@@ -1427,37 +1428,37 @@ function PageTwoFrame({ active }) {
           無論旅程走到哪裡，也請帶上自己
           <span className="cover-cursor-blink" data-node-id="805:149" data-figma-layer="typing line 03" aria-hidden="true" style={{ display: "inline-block", width: "1px", height: "14px", marginLeft: "3px", verticalAlign: "-2px", background: "#000" }} />
         </p>
-        <a
-          className="zine-action-button"
-          href="#page-3"
-          aria-label="出發"
-          data-node-id="805:124"
-          style={{
-            position: "relative",
-            left: "-12px",
-            width: "340px",
-            height: "29px",
-            marginTop: "40px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxSizing: "border-box",
-            background: "#000",
-            color: "#FFF",
-            textDecoration: "none",
-            fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
-            fontWeight: 400,
-            fontSize: "14px",
-            lineHeight: "17px",
-            letterSpacing: "0.20em",
-            textAlign: "center",
-            borderRadius: "9px",
-            zIndex: 3,
-          }}
-        >
-          出發
-        </a>
       </section>
+      <a
+        className="zine-action-button"
+        href="#page-3"
+        aria-label="出發"
+        data-node-id="805:124"
+        style={{
+          position: "absolute",
+          left: "32px",
+          top: "645px",
+          width: "340px",
+          height: "29px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxSizing: "border-box",
+          background: "#000",
+          color: "#FFF",
+          textDecoration: "none",
+          fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
+          fontWeight: 400,
+          fontSize: "14px",
+          lineHeight: "17px",
+          letterSpacing: "0.20em",
+          textAlign: "center",
+          borderRadius: "9px",
+          zIndex: 3,
+        }}
+      >
+        出發
+      </a>
     </article>
   );
 }
@@ -1707,17 +1708,7 @@ function OutroFrame({ active, progress, onScrollProgress }) {
       }}>
         <div className="outro-canvas">
           <img className="outro-art-top" src={assetSrc("/assets/png-pages/Outro/out.png")} alt="" />
-          <div className="outro-copy outro-copy-native">
-            {outroCopy.split(/\n{2,}/).map((paragraph, index) => (
-              <p
-                className="outro-copy-paragraph"
-                key={paragraph}
-                style={{ animationDelay: `${index * 250}ms` }}
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <p className="outro-copy outro-copy-native">{outroCopy}</p>
           <img
             ref={bottomArtworkRef}
             className={`outro-art-bottom ${bottomArtworkVisible ? "animate__animated animate__fadeInUp is-revealed" : ""}`}
@@ -2979,20 +2970,10 @@ function ZineAnimationStyles() {
       .outro-page .outro-copy-native {
         pointer-events: none;
         visibility: visible;
-      }
-      .outro-page .outro-copy-paragraph {
-        margin: 0 0 30px;
-        padding: 0;
-        font: inherit;
-        letter-spacing: inherit;
-        line-height: inherit;
         opacity: 0;
       }
-      .outro-page .outro-copy-paragraph:last-child {
-        margin-bottom: 0;
-      }
-      .outro-page.is-active .outro-copy-paragraph {
-        animation: outroCopyLineFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+      .outro-page.is-active .outro-copy-native {
+        animation: outroCopyFadeIn 1.2s ease-out both;
       }
       .outro-page .outro-art-bottom {
         position: absolute;
@@ -3018,7 +2999,7 @@ function ZineAnimationStyles() {
         from { opacity: 0; filter: blur(10px); }
         to { opacity: 1; filter: blur(0); }
       }
-      @keyframes outroCopyLineFadeIn {
+      @keyframes outroCopyFadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
       }
