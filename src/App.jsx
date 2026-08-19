@@ -1403,7 +1403,7 @@ function PageTwoFrame({ active }) {
         style={{
           position: "absolute",
           left: "44px",
-          top: "362px",
+          top: "342px",
           width: "272px",
           minWidth: "272px",
           maxWidth: "272px",
