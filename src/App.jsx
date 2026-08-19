@@ -1405,9 +1405,10 @@ function PageTwoFrame({ active }) {
           width: "272px",
           minWidth: "272px",
           maxWidth: "272px",
-          height: "239px",
+          minHeight: "239px",
           boxSizing: "border-box",
           flexShrink: 0,
+          paddingBottom: "max(26px, env(safe-area-inset-bottom))",
           color: "#000",
           textAlign: "left",
           zIndex: 2,
@@ -1426,37 +1427,37 @@ function PageTwoFrame({ active }) {
           無論旅程走到哪裡，也請帶上自己
           <span className="cover-cursor-blink" data-node-id="805:149" data-figma-layer="typing line 03" aria-hidden="true" style={{ display: "inline-block", width: "1px", height: "14px", marginLeft: "3px", verticalAlign: "-2px", background: "#000" }} />
         </p>
+        <a
+          className="zine-action-button"
+          href="#page-3"
+          aria-label="出發"
+          data-node-id="805:124"
+          style={{
+            position: "relative",
+            left: "-12px",
+            width: "340px",
+            height: "29px",
+            marginTop: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxSizing: "border-box",
+            background: "#000",
+            color: "#FFF",
+            textDecoration: "none",
+            fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
+            fontWeight: 400,
+            fontSize: "14px",
+            lineHeight: "17px",
+            letterSpacing: "0.20em",
+            textAlign: "center",
+            borderRadius: "9px",
+            zIndex: 3,
+          }}
+        >
+          出發
+        </a>
       </section>
-      <a
-        className="zine-action-button"
-        href="#page-3"
-        aria-label="出發"
-        data-node-id="805:124"
-        style={{
-          position: "absolute",
-          left: "32px",
-          top: "645px",
-          width: "340px",
-          height: "29px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxSizing: "border-box",
-          background: "#000",
-          color: "#FFF",
-          textDecoration: "none",
-          fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif',
-          fontWeight: 400,
-          fontSize: "14px",
-          lineHeight: "17px",
-          letterSpacing: "0.20em",
-          textAlign: "center",
-          borderRadius: "9px",
-          zIndex: 3,
-        }}
-      >
-        出發
-      </a>
     </article>
   );
 }
@@ -1666,54 +1667,15 @@ const outroCopy = `我確實是要出版這本小誌，作為我的思想備份�
 
 function OutroFrame({ active, progress, onScrollProgress }) {
   const scrollRef = React.useRef(null);
-  const copyMeasureRef = React.useRef(null);
   const bottomArtworkRef = React.useRef(null);
-  const [copyLines, setCopyLines] = React.useState([]);
   const [bottomArtworkVisible, setBottomArtworkVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (!active) {
-      setCopyLines([]);
       setBottomArtworkVisible(false);
       return undefined;
     }
-
-    let cancelled = false;
-    const measureLines = () => {
-      const measureNode = copyMeasureRef.current;
-      const textNode = measureNode?.firstChild;
-      if (!measureNode || !textNode) return;
-
-      const measureRect = measureNode.getBoundingClientRect();
-      const measuredLines = [];
-      const range = document.createRange();
-
-      for (let offset = 0; offset < textNode.length; offset += 1) {
-        const character = textNode.data[offset];
-        if (character === "\n" || character === "\r") continue;
-
-        range.setStart(textNode, offset);
-        range.setEnd(textNode, offset + 1);
-        const characterRect = range.getBoundingClientRect();
-        if (!characterRect.width && !characterRect.height) continue;
-
-        const top = characterRect.top - measureRect.top;
-        const currentLine = measuredLines[measuredLines.length - 1];
-        if (!currentLine || Math.abs(currentLine.top - top) > 0.5) {
-          measuredLines.push({ top, text: character });
-        } else {
-          currentLine.text += character;
-        }
-      }
-
-      if (!cancelled) setCopyLines(measuredLines);
-    };
-
-    const fontsReady = document.fonts?.ready || Promise.resolve();
-    fontsReady.then(() => window.requestAnimationFrame(measureLines));
-    return () => {
-      cancelled = true;
-    };
+    return undefined;
   }, [active]);
 
   React.useEffect(() => {
@@ -1745,19 +1707,17 @@ function OutroFrame({ active, progress, onScrollProgress }) {
       }}>
         <div className="outro-canvas">
           <img className="outro-art-top" src={assetSrc("/assets/png-pages/Outro/out.png")} alt="" />
-          <p ref={copyMeasureRef} className="outro-copy outro-copy-measure" aria-hidden="true">{outroCopy}</p>
-          <p className={`outro-copy outro-copy-lines ${copyLines.length ? "is-ready" : ""}`} aria-label={outroCopy}>
-            {copyLines.map((line, index) => (
-              <span
-                className="outro-copy-line"
-                key={`${line.top}-${index}`}
-                style={{ top: `${line.top}px`, animationDelay: `${index * 100}ms` }}
-                aria-hidden="true"
+          <div className="outro-copy outro-copy-native">
+            {outroCopy.split(/\n{2,}/).map((paragraph, index) => (
+              <p
+                className="outro-copy-paragraph"
+                key={paragraph}
+                style={{ animationDelay: `${index * 250}ms` }}
               >
-                {line.text}
-              </span>
+                {paragraph}
+              </p>
             ))}
-          </p>
+          </div>
           <img
             ref={bottomArtworkRef}
             className={`outro-art-bottom ${bottomArtworkVisible ? "animate__animated animate__fadeInUp is-revealed" : ""}`}
@@ -3016,25 +2976,22 @@ function ZineAnimationStyles() {
         white-space: pre-wrap;
         word-break: normal;
       }
-      .outro-page .outro-copy-measure {
-        visibility: hidden;
-      }
-      .outro-page .outro-copy-lines {
+      .outro-page .outro-copy-native {
         pointer-events: none;
-        visibility: hidden;
-      }
-      .outro-page .outro-copy-lines.is-ready {
         visibility: visible;
       }
-      .outro-page .outro-copy-line {
-        position: absolute;
-        left: 0;
-        width: 100%;
-        display: block;
-        white-space: pre;
+      .outro-page .outro-copy-paragraph {
+        margin: 0 0 30px;
+        padding: 0;
+        font: inherit;
+        letter-spacing: inherit;
+        line-height: inherit;
         opacity: 0;
       }
-      .outro-page .outro-copy-lines.is-ready .outro-copy-line {
+      .outro-page .outro-copy-paragraph:last-child {
+        margin-bottom: 0;
+      }
+      .outro-page.is-active .outro-copy-paragraph {
         animation: outroCopyLineFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
       .outro-page .outro-art-bottom {

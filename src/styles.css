@@ -1205,10 +1205,11 @@ html {
 }
 
 .back-art {
-  left: calc(-2 / 402 * 100%);
-  top: calc(-1 / 687 * 100%);
-  width: calc(406 / 402 * 100%);
-  height: calc(593 / 687 * 100%);
+  left: calc(-8 / 402 * 100%);
+  top: 0;
+  width: calc(418 / 402 * 100%);
+  height: calc(719 / 687 * 100%);
+  object-fit: contain;
 }
 
 .back-page {
