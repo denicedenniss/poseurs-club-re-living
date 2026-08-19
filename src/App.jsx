@@ -549,81 +549,31 @@ function HomeCoverArt() {
   return <img className="cover-art cover-art-original" src={journeySrc("cover.svg")} alt="" aria-hidden="true" />;
 }
 
-async function requestMotionPermissionIfSupported() {
-  if (typeof window === "undefined") return "unsupported";
-
-  const orientationAPI = window.DeviceOrientationEvent;
-  const motionAPI = window.DeviceMotionEvent;
-  const canRequestOrientation = typeof orientationAPI?.requestPermission === "function";
-  const canRequestMotion = typeof motionAPI?.requestPermission === "function";
-
-  if (!canRequestOrientation && !canRequestMotion) return "unsupported";
-
-  try {
-    let orientationGranted = true;
-    let motionGranted = true;
-
-    if (canRequestOrientation) {
-      orientationGranted = (await orientationAPI.requestPermission()) === "granted";
-    }
-
-    if (canRequestMotion) {
-      motionGranted = (await motionAPI.requestPermission()) === "granted";
-    }
-
-    return orientationGranted && motionGranted ? "granted" : "denied";
-  } catch {
-    return "error";
-  }
-}
-
 function CoverFrame({ active }) {
   const message = "陌生人你好！";
   const [typedCount, setTypedCount] = React.useState(0);
   const [lineOneVisible, setLineOneVisible] = React.useState(true);
   const [lineTwoVisible, setLineTwoVisible] = React.useState(false);
   const [sendState, setSendState] = React.useState("idle");
-  const [, setMotionPermissionState] = React.useState("unsupported");
-  const coverImageRef = React.useRef(null);
 
   React.useEffect(() => {
     if (!active) return undefined;
 
     setTypedCount(0);
-    setLineOneVisible(true);
-    setLineTwoVisible(false);
+    setLineOneVisible(false);
+    setLineTwoVisible(true);
     setSendState("idle");
-    setMotionPermissionState("unsupported");
 
-    let cancelled = false;
     const timers = [];
-    const runAfterReady = async () => {
-      if (typeof document !== "undefined" && document.fonts?.ready) {
-        await document.fonts.ready;
-      }
-      if (coverImageRef.current?.decode) {
-        await coverImageRef.current.decode().catch(() => {});
-      }
-      if (cancelled) return;
-
+    const typingDuration = 4000;
+    message.split("").forEach((_, index) => {
       timers.push(window.setTimeout(() => {
-        setLineOneVisible(false);
-        setLineTwoVisible(true);
-        setTypedCount(0);
-        const typingDuration = 4000;
-        message.split("").forEach((_, index) => {
-          timers.push(window.setTimeout(() => {
-            setTypedCount(index + 1);
-          }, Math.round(((index + 1) / message.length) * typingDuration)));
-        });
-        timers.push(window.setTimeout(() => setSendState("ready"), typingDuration));
-      }, 1500));
-    };
-
-    runAfterReady();
+        setTypedCount(index + 1);
+      }, Math.round(((index + 1) / message.length) * typingDuration)));
+    });
+    timers.push(window.setTimeout(() => setSendState("ready"), typingDuration));
 
     return () => {
-      cancelled = true;
       timers.forEach((timer) => window.clearTimeout(timer));
     };
   }, [active]);
@@ -634,16 +584,9 @@ function CoverFrame({ active }) {
   const sendSent = sendState === "sent" || sendState === "press";
   const sendEnabled = sendState === "ready";
 
-  const handleCoverSend = React.useCallback(async () => {
+  const handleCoverSend = React.useCallback(() => {
     if (!sendEnabled) return;
     setSendState("press");
-    const permissionState = await requestMotionPermissionIfSupported();
-    setMotionPermissionState(permissionState);
-    try {
-      window.sessionStorage?.setItem("motionPermissionState", permissionState);
-    } catch {
-      // Keep the Cover flow working if storage is unavailable.
-    }
     window.setTimeout(() => setSendState("sent"), 130);
     window.setTimeout(() => {
       window.location.hash = "home";
@@ -667,7 +610,6 @@ function CoverFrame({ active }) {
         }}
       >
         <img
-          ref={coverImageRef}
           src={pngPageSrc("intro/Cover.jpg")}
           alt=""
           aria-hidden="true"
@@ -924,19 +866,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     }
 
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    let motionPermissionState = "unsupported";
-    try {
-      motionPermissionState = window.sessionStorage?.getItem("motionPermissionState") || "unsupported";
-    } catch {
-      motionPermissionState = "unsupported";
-    }
-    const useTiltGravity = motionPermissionState === "granted";
     const motionScale = reducedMotion ? 0.6 : 1;
-    const tiltGravityStrength = 0.16;
-    const tiltSmoothing = 0.35;
-    const tiltDamping = 0.955;
-    const tiltMaxSpeed = 2.45;
-    const tiltDeadzone = 0.2;
     const frameRestitution = 0.34;
     const minRestitution = 0.68;
     const maxRestitution = 0.92;
@@ -944,12 +874,6 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const impactSpeedMax = 2.45;
     const minReboundSpeed = 1.25;
     const collisionGraceMs = 180;
-    const restingVelocityThreshold = 0.25;
-    const contactEpsilon = 0.75;
-    const stableTiltThreshold = 0.65;
-    const stableRecenterDelay = 1200;
-    const neutralRecenterRate = 0.006;
-    const wallGravityDecay = 0.08;
     const firstImpactLaunchY = -5.2;
     const firstImpactLaunchX = 1.15;
     const ballSize = 180;
@@ -966,13 +890,6 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     const frameHeight = 700;
     let animationFrame = 0;
     let mounted = true;
-    let tiltBaselineCaptured = false;
-    let stableTiltSince = 0;
-    const latestTilt = { beta: null, gamma: null };
-    const latestMotionGravity = { x: 0, y: 0, valid: false };
-    const previousTilt = { beta: null, gamma: null };
-    const neutralTilt = { beta: 0, gamma: 0 };
-    const gravityVector = { x: 0, y: 0 };
 
     ballStatesRef.current = ballConfigs.map((config, index) => {
       const safeLeft = Math.min(frameWidth - ballSize, Math.max(0, config.left));
@@ -1023,32 +940,7 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       const direction = Math.sign(reflected) || (normalVelocity < 0 ? 1 : -1);
       return direction * Math.max(Math.abs(reflected), minReboundSpeed);
     };
-    const getScreenAngle = () => {
-      const rawAngle =
-        typeof window.screen?.orientation?.angle === "number"
-          ? window.screen.orientation.angle
-          : window.orientation || 0;
-      return ((rawAngle % 360) + 360) % 360;
-    };
-    const mapMotionGravityToScreen = (x, y) => {
-      const angle = getScreenAngle();
-      if (angle === 90) return { x: y, y: x };
-      if (angle === 180) return { x: -x, y };
-      if (angle === 270) return { x: -y, y: -x };
-      return { x, y: -y };
-    };
-    const softenTiltDelta = (value) => {
-      if (Math.abs(value) <= tiltDeadzone) return 0;
-      return value - Math.sign(value) * tiltDeadzone;
-    };
-    const curveTiltDelta = (value) =>
-      Math.sign(value) * Math.pow(clamp(Math.abs(value) / 18, 0, 1), 0.65);
-    const getDiscoveryLaunchX = (state) => {
-      if (Number.isFinite(latestTilt.gamma) && Math.abs(latestTilt.gamma) > 1.5) {
-        return Math.sign(latestTilt.gamma) * firstImpactLaunchX;
-      }
-      return state.config.fallbackX;
-    };
+    const getDiscoveryLaunchX = (state) => state.config.fallbackX;
     const resolveBallContacts = () => {
       const states = ballStatesRef.current;
       for (let iteration = 0; iteration < pairSolverIterations; iteration += 1) {
@@ -1110,75 +1002,9 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
       }
     };
 
-    const handleOrientation = (event) => {
-      if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
-      if (Number.isFinite(event.gamma)) latestTilt.gamma = event.gamma;
-    };
-    const handleMotion = (event) => {
-      const gravity = event.accelerationIncludingGravity;
-      if (!gravity) return;
-      if (!Number.isFinite(gravity.x) || !Number.isFinite(gravity.y)) return;
-      const mappedGravity = mapMotionGravityToScreen(gravity.x, gravity.y);
-      latestMotionGravity.x = mappedGravity.x;
-      latestMotionGravity.y = mappedGravity.y;
-      latestMotionGravity.valid = true;
-    };
-
-    if (useTiltGravity) {
-      window.addEventListener("devicemotion", handleMotion, { passive: true });
-      window.addEventListener("deviceorientation", handleOrientation, { passive: true });
-    }
-
     const animate = () => {
       if (!mounted) return;
       const now = performance.now();
-
-      if (useTiltGravity) {
-        if (latestMotionGravity.valid) {
-          const targetGravityX =
-            clamp(latestMotionGravity.x / 9.81, -1, 1) * tiltGravityStrength * motionScale;
-          const targetGravityY =
-            clamp(latestMotionGravity.y / 9.81, -1, 1) * tiltGravityStrength * motionScale;
-
-          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
-          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
-        } else if (!tiltBaselineCaptured) {
-          if (latestTilt.beta !== null && latestTilt.gamma !== null) {
-            neutralTilt.beta = latestTilt.beta;
-            neutralTilt.gamma = latestTilt.gamma;
-            tiltBaselineCaptured = true;
-          }
-        }
-
-        if (tiltBaselineCaptured) {
-          const now = performance.now();
-          if (previousTilt.beta !== null && previousTilt.gamma !== null) {
-            const tiltMotion = Math.max(
-              Math.abs(latestTilt.beta - previousTilt.beta),
-              Math.abs(latestTilt.gamma - previousTilt.gamma)
-            );
-            if (tiltMotion <= stableTiltThreshold) {
-              if (!stableTiltSince) stableTiltSince = now;
-              if (now - stableTiltSince >= stableRecenterDelay) {
-                neutralTilt.beta += (latestTilt.beta - neutralTilt.beta) * neutralRecenterRate;
-                neutralTilt.gamma += (latestTilt.gamma - neutralTilt.gamma) * neutralRecenterRate;
-              }
-            } else {
-              stableTiltSince = 0;
-            }
-          }
-          previousTilt.beta = latestTilt.beta;
-          previousTilt.gamma = latestTilt.gamma;
-
-          const betaDelta = softenTiltDelta(latestTilt.beta - neutralTilt.beta);
-          const gammaDelta = softenTiltDelta(latestTilt.gamma - neutralTilt.gamma);
-          const targetGravityX = curveTiltDelta(gammaDelta) * tiltGravityStrength * motionScale;
-          const targetGravityY = curveTiltDelta(betaDelta) * tiltGravityStrength * motionScale;
-
-          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
-          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
-        }
-      }
 
       ballStatesRef.current.forEach((state, index) => {
         const ball = balls[index];
@@ -1252,49 +1078,13 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
           return;
         }
 
-        if (useTiltGravity) {
-          const recentLeftImpact = now <= recentImpactUntil.left;
-          const recentRightImpact = now <= recentImpactUntil.right;
-          const recentTopImpact = now <= recentImpactUntil.top;
-          const recentBottomImpact = now <= recentImpactUntil.bottom;
-          const touchingLeft = position.x <= bounds.minX + contactEpsilon;
-          const touchingRight = position.x >= bounds.maxX - contactEpsilon;
-          const touchingTop = position.y <= bounds.minY + contactEpsilon;
-          const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
-          const restingLeft =
-            touchingLeft && !recentLeftImpact && Math.abs(velocity.x) < restingVelocityThreshold;
-          const restingRight =
-            touchingRight && !recentRightImpact && Math.abs(velocity.x) < restingVelocityThreshold;
-          const restingTop =
-            touchingTop && !recentTopImpact && Math.abs(velocity.y) < restingVelocityThreshold;
-          const restingBottom =
-            touchingBottom && !recentBottomImpact && Math.abs(velocity.y) < restingVelocityThreshold;
-          const cancelGravityX =
-            ((restingLeft || recentLeftImpact) && gravityVector.x < 0) ||
-            ((restingRight || recentRightImpact) && gravityVector.x > 0);
-          const cancelGravityY =
-            ((restingTop || recentTopImpact) && gravityVector.y < 0) ||
-            ((restingBottom || recentBottomImpact) && gravityVector.y > 0);
-          if (cancelGravityX) gravityVector.x += (0 - gravityVector.x) * wallGravityDecay;
-          if (cancelGravityY) gravityVector.y += (0 - gravityVector.y) * wallGravityDecay;
-          const effectiveGravityX = cancelGravityX ? 0 : gravityVector.x;
-          const effectiveGravityY = cancelGravityY ? 0 : gravityVector.y;
+        velocity.x += Math.sin((now + index * 700) / 4200) * 0.0009;
+        velocity.y += Math.cos((now + index * 900) / 5100) * 0.0008;
+        velocity.x = clamp(velocity.x, -1.3, 1.3);
+        velocity.y = clamp(velocity.y, -0.95, 0.95);
 
-          velocity.x += effectiveGravityX;
-          velocity.y += effectiveGravityY;
-          velocity.x *= tiltDamping;
-          velocity.y *= tiltDamping;
-          velocity.x = clamp(velocity.x, -tiltMaxSpeed, tiltMaxSpeed);
-          velocity.y = clamp(velocity.y, -tiltMaxSpeed, tiltMaxSpeed);
-        } else {
-          velocity.x += Math.sin((now + index * 700) / 4200) * 0.0009;
-          velocity.y += Math.cos((now + index * 900) / 5100) * 0.0008;
-          velocity.x = clamp(velocity.x, -1.3, 1.3);
-          velocity.y = clamp(velocity.y, -0.95, 0.95);
-        }
-
-        const frameStepX = useTiltGravity ? velocity.x : velocity.x * motionScale;
-        const frameStepY = useTiltGravity ? velocity.y : velocity.y * motionScale;
+        const frameStepX = velocity.x * motionScale;
+        const frameStepY = velocity.y * motionScale;
         const travel = Math.max(Math.abs(frameStepX), Math.abs(frameStepY));
         const steps = Math.max(1, Math.ceil(travel / Math.max(ballSize * 0.12, 12)));
 
@@ -1347,10 +1137,6 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     return () => {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
-      if (useTiltGravity) {
-        window.removeEventListener("devicemotion", handleMotion);
-        window.removeEventListener("deviceorientation", handleOrientation);
-      }
       ballStatesRef.current = [];
       balls.forEach((ball) => {
         ball.style.transform = "translate3d(0px, 0px, 0)";
