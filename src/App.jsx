@@ -1416,7 +1416,7 @@ function PageTwoFrame({ active }) {
         }}
       >
         <p style={{ margin: 0, fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em", color: "#000", textAlign: "left" }}>第一部・荒原</p>
-        <p style={{ margin: "8px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left" }}>『世界是一個荒原，書裡說的，我很<span style={{ whiteSpace: "nowrap" }}>感動。』</span></p>
+        <p style={{ width: "300px", margin: "8px 0 0", fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left" }}>『世界是一個荒原，書裡說的，我很<span style={{ whiteSpace: "nowrap" }}>感動。』</span></p>
         <p style={{ margin: 0, fontFamily: '"Noto Sans HK", "Noto Sans TC", sans-serif', fontWeight: 350, fontSize: "12px", lineHeight: "20px", letterSpacing: "0.14em", color: "#000", textAlign: "left" }}>—— 節錄自電影《大象席地而坐》</p>
 
         <p style={{ margin: "32px 0 0", fontFamily: '"Noto Serif HK", "Noto Serif TC", serif', fontWeight: 700, fontSize: "16px", lineHeight: "normal", letterSpacing: "0.15em", color: "#000", textAlign: "left" }}>第二部・海市蜃樓</p>
