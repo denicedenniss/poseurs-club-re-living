@@ -97,7 +97,7 @@ const GOOGLE_APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbx8
 
 function pageBgStyle(pageId) {
   const pageBackground = PAGE_BG[pageId] || "#F8F8F8";
-  const bottomBarBackground = pageId === "part-3-a" || pageBackground === "#E0FF00"
+  const bottomBarBackground = pageBackground === "#E0FF00"
     ? "#E0FF00"
     : "#F2F2F2";
 
@@ -153,6 +153,7 @@ const textArticles = [
 自從西醫成主流，人被強行劈開了一半——心靈與身體分離。以致我們思考如何照顧自己時，總慣性地將它們分開。人成熟到某個階段，便會計劃如何好好照顧自己。或者這樣說：我們都在尋找應對世界的生活秘笈。
 
 我以為找到秘笈，就能將安穩變為常態。原來只是幻想，事實上無常才是常態，上一刻安穩，下一刻手足無措。我學習照顧自己：理解情緒、處理工作、鍛鍊身體、好好吃飯休息。即便全部做妥，仍無法逃避生存的無力——尤其當你認為自己已在各方面用盡全力。
+
 到底有誰已找到生活的秘笈？抑或根本沒有秘笈？
 
 「世界是一個荒原，書裡說的，我很感動。」
@@ -222,6 +223,7 @@ Re: 作為實驗品
 
 Re: 報告出爐
 二十一天後，宣布實驗成功，完整的痛苦消化報告出爐，翻著報告的每一頁：分離的哀悼消化了，事後檢討也檢討了，悲傷五個階段都像景點一樣逐一打過卡了。我完成計劃的當刻，我有點感到很驚嘆，我驚嘆的是在低潮中極力捱過的生產力，KPI (關鍵績效指標 Key Performance Indicators) 極高，而且所有SOP (標準作業程序 Standard Operating Procedure) 全數走完。最後筋疲力盡，身心透支，幸好瘦了一點，需要靜養一段時日，不再研究、不再記錄，只單純吃喝睡覺。
+
 我曾以為是二十一天這個限期救了我。因為目標明確畫在日曆上，我追趕KPI、完成SOP。可以這樣說，但又不盡如此。二十一天給我的，只是一個「也許能完成」的盼望。真正讓我完成的，不是限期，而是我願意溫柔陪伴自己——縱使前進三步又退兩步，仍對自己誠實、允許，甚至為小得尷尬的進度而歡喜。
 
 Re: 濕透的衣裳
@@ -283,7 +285,7 @@ Re: 聽過金繼嗎？
   },
   {
     pageId: "article-3-01",
-    meta: "第二部 · 山 / 3.01",
+    meta: "第三部 · 山 / 3.01",
     title: "《作狀生活俱樂部》",
     label: "作狀生活俱樂部正文",
     bodyRect: { x: 25, y: 101, width: 332 },
@@ -310,7 +312,7 @@ Re: 作狀革命
   },
   {
     pageId: "article-3-02",
-    meta: "第二部 · 山 / 3.02",
+    meta: "第三部 · 山 / 3.02",
     title: "《攜帶式避難所》",
     label: "攜帶式避難所正文",
     bodyRect: { x: 25, y: 91, width: 332 },
@@ -331,7 +333,7 @@ Re: 一定是好玩又有趣
   },
   {
     pageId: "article-3-03",
-    meta: "第二部 · 山 / 3.03",
+    meta: "第三部 · 山 / 3.03",
     title: "《西藏遊記: 我所看見的未來》",
     label: "西藏遊記: 我所看見的未來正文",
     bodyRect: { x: 25, y: 101, width: 332 },
@@ -342,7 +344,7 @@ Re: 到埗
 一直以來，我對西藏的想像，總帶著一種貼近靈魂的神秘感。無論是當地人的生活、宗教、建築、香巴拉的傳說、藏人對信仰的投入，還是他們與大自然共存的方式，都令我無比好奇。我本就熱愛自然，一個與我日常環境截然不同的世界會是何種面貌？高原地區多樣化的景色，高山與湖泊（藏語稱「措」），究竟有多壯麗？最後，就是一個最坦率的理由——我想攝影，把這些一切一切，我都想用鏡頭把它們記錄下來。
 
 Re: 記憶球
-終於，我來到了西藏，遊覽了好幾座寺廟。其中的壁畫、雕像、建築與法器，有的金碧輝煌，有的五彩斑斕，有的則細緻得令人屏息。那些人手繪畫對稱得有點不對稱的自然線條，都刻劃着匠人的手繪溫感。這一切都令我目不暇給。然而，多數寺廟內部禁止拍照。那些巨碩的佛像瀰漫著藏香，窗框透出的光線混雜着煙霧，像似電影感的情景，但卻無法把它們收進鏡頭裡。所以我都跟自己說：「那就用眼睛和腦袋記着這些畫面吧！」我也不敢喧嘩，靜靜地觀察着在寺廟裡修行的僧侶和參拜的信眾。有時寂靜無聲，有時聽到僧人們喃喃低語的誦經聲，混雜着導遊講解的內容。有抱着襁褓嬰兒來到的人、正在把銀紙插在佛像旁的人、正在專心跪拜的人、拿着電話的僧人、正在走路聊天的僧人，也有即使旅客人來人往參觀欣賞，也依舊專心頌經的僧人，彷彿把在寺廟裡的眾生相與瞬間當下，一一收進眼底。
+終於，我來到了西藏，遊覽了好幾座寺廟。其中的壁畫、雕像、建築與法器，有的金碧輝煌，有的五彩斑斕，有的則細緻得令人屏息。那些人手繪畫對稱得有點不對稱的自然線條，都刻劃着匠人的手繪溫感。這一切都令我目不暇給。然而，多數寺廟內部禁止拍照。那些巨碩的佛像瀰漫著藏香，窗框透出的光線混雜着煙霧，像似電影感的情景，但卻無法把它們收進鏡頭裡。所以我都跟自己說：「那就用眼睛和腦袋記着這些畫面吧！」我也不敢喧嘩，靜靜地觀察着在寺廟裡修行的僧侶和參拜的信眾。有時寂靜無聲，有時聽到僧人們喃喃低語的誦經聲，混雜着導遊講解的內容。有抱着襁褓嬰兒來到的人、正在把銀紙插在佛像旁的人、正在專心跪拜的人、拿着電話的僧人、正在走路聊天的僧人，也有即使旅客人來人往參觀欣賞，也依舊專心頌經的僧人，彷彿把在寺廟裡的眾生相與瞬間當下，——收進眼底。
 
 Re: 所有當下的集結
 然後一下回神，耳機響起導遊導賞的說話：「佛教中提到——未來是許多個現在的集結，所以我們只能活好每一個現在。」這句話像小石頭掉進湖裡，在我心中泛起漣漪。我想著，未來就似千百個瞬間集結在一個玻璃球，然後這些瞬間最終為未來調和出一種色彩。我突然理解，眼前這些不同的片刻，原來就是「每一個現在」——它們不只是畫面，也是選擇。
@@ -357,7 +359,7 @@ Re: 旅程完結
   },
   {
     pageId: "article-3-04",
-    meta: "第二部 · 山 / 3.04",
+    meta: "第三部 · 山 / 3.04",
     title: "《未來是這樣嗎？不一定喔!》",
     label: "未來是這樣嗎？不一定喔正文",
     bodyRect: { x: 25, y: 95, width: 332 },
@@ -375,7 +377,7 @@ Re: 塞翁失馬
   },
   {
     pageId: "article-3-05",
-    meta: "第二部 · 山 / 3.05",
+    meta: "第三部 · 山 / 3.05",
     title: "《已練成能往心內奔馳》",
     label: "已練成能往心內奔馳正文",
     bodyRect: { x: 21, y: 91, width: 332 },
@@ -456,9 +458,25 @@ function splitArticleBody(body, highlightTexts = []) {
   return blocks;
 }
 
-function articleBlockClass(block) {
+function articleBlockClass(block, pageId) {
+  if (
+    block.type === "D" &&
+    pageId === "article-3-05" &&
+    block.text.startsWith("今天我聽了《三人行》")
+  ) {
+    return "type-d article-emphasis article-3-05-tight-tracking";
+  }
   if (block.type === "D") return "type-d article-emphasis";
   if (block.type === "B") return "type-b article-note";
+  if (pageId === "article-1-02" && block.text.startsWith("我以為找到秘笈")) {
+    return "type-c article-1-02-tight-tracking";
+  }
+  if (pageId === "article-2-04" && block.text.startsWith("我們必須接納自身的無能為力")) {
+    return "type-c article-2-04-tight-tracking";
+  }
+  if (pageId === "article-3-02" && block.text.startsWith("叔本華說過人追求慾望是本能")) {
+    return "type-c article-3-02-tight-tracking";
+  }
   return "type-c";
 }
 
@@ -561,7 +579,6 @@ async function requestMotionPermissionIfSupported() {
 
 function CoverFrame({ active }) {
   const message = "陌生人你好！";
-  const [coverStarted, setCoverStarted] = React.useState(false);
   const [typedCount, setTypedCount] = React.useState(0);
   const [lineOneVisible, setLineOneVisible] = React.useState(true);
   const [lineTwoVisible, setLineTwoVisible] = React.useState(false);
@@ -572,7 +589,6 @@ function CoverFrame({ active }) {
   React.useEffect(() => {
     if (!active) return undefined;
 
-    setCoverStarted(false);
     setTypedCount(0);
     setLineOneVisible(true);
     setLineTwoVisible(false);
@@ -590,7 +606,6 @@ function CoverFrame({ active }) {
       }
       if (cancelled) return;
 
-      setCoverStarted(true);
       timers.push(window.setTimeout(() => {
         setLineOneVisible(false);
         setLineTwoVisible(true);
@@ -624,6 +639,11 @@ function CoverFrame({ active }) {
     setSendState("press");
     const permissionState = await requestMotionPermissionIfSupported();
     setMotionPermissionState(permissionState);
+    try {
+      window.sessionStorage?.setItem("motionPermissionState", permissionState);
+    } catch {
+      // Keep the Cover flow working if storage is unavailable.
+    }
     window.setTimeout(() => setSendState("sent"), 130);
     window.setTimeout(() => {
       window.location.hash = "home";
@@ -636,7 +656,6 @@ function CoverFrame({ active }) {
         data-node-id="803:97"
         data-figma-layer="Cover 1"
         aria-hidden="true"
-        className={coverStarted ? "cover-soft-reveal" : ""}
         style={{
           position: "absolute",
           left: "-6px",
@@ -644,7 +663,6 @@ function CoverFrame({ active }) {
           width: "414px",
           height: "713px",
           overflow: "hidden",
-          opacity: coverStarted ? undefined : 0,
           pointerEvents: "none",
         }}
       >
@@ -893,56 +911,434 @@ function StartButton() {
 }
 
 function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
-  const ballRef = React.useRef(null);
-  const positionRef = React.useRef({ x: 0, y: 0 });
-  const velocityRef = React.useRef({ x: 1.05, y: 0.7 });
+  const ballRefs = React.useRef([]);
+  const ballStatesRef = React.useRef([]);
 
   React.useEffect(() => {
-    const ball = ballRef.current;
-    if (!active || !ball || typeof window === "undefined") {
-      if (ball) ball.style.transform = "translate3d(0px, 0px, 0)";
+    const balls = ballRefs.current.filter(Boolean);
+    if (!active || balls.length === 0 || typeof window === "undefined") {
+      balls.forEach((ball) => {
+        ball.style.transform = "translate3d(0px, 0px, 0)";
+      });
       return undefined;
     }
 
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    let motionPermissionState = "unsupported";
+    try {
+      motionPermissionState = window.sessionStorage?.getItem("motionPermissionState") || "unsupported";
+    } catch {
+      motionPermissionState = "unsupported";
+    }
+    const useTiltGravity = motionPermissionState === "granted";
     const motionScale = reducedMotion ? 0.6 : 1;
+    const tiltGravityStrength = 0.16;
+    const tiltSmoothing = 0.35;
+    const tiltDamping = 0.955;
+    const tiltMaxSpeed = 2.45;
+    const tiltDeadzone = 0.2;
+    const frameRestitution = 0.34;
+    const minRestitution = 0.68;
+    const maxRestitution = 0.92;
+    const impactSpeedMin = 0.15;
+    const impactSpeedMax = 2.45;
+    const minReboundSpeed = 1.25;
+    const collisionGraceMs = 180;
+    const restingVelocityThreshold = 0.25;
+    const contactEpsilon = 0.75;
+    const stableTiltThreshold = 0.65;
+    const stableRecenterDelay = 1200;
+    const neutralRecenterRate = 0.006;
+    const wallGravityDecay = 0.08;
+    const firstImpactLaunchY = -5.2;
+    const firstImpactLaunchX = 1.15;
+    const ballSize = 180;
+    const separationThreshold = 180;
+    const pairSolverIterations = 4;
+    const pairVelocityResponse = 0.18;
+    const ballConfigs = [
+      { left: 18, delay: 0, fallbackX: pageId === "page-2" ? -firstImpactLaunchX : firstImpactLaunchX },
+      { left: 126, delay: 180, fallbackX: pageId === "page-2" ? firstImpactLaunchX : -firstImpactLaunchX },
+      { left: 234, delay: 360, fallbackX: pageId === "page-2" ? -firstImpactLaunchX : firstImpactLaunchX },
+    ];
 
     const frameWidth = 402;
     const frameHeight = 700;
-    const bounds = {
-      minX: -left,
-      maxX: frameWidth - left - size,
-      minY: -top,
-      maxY: frameHeight - top - size,
-    };
     let animationFrame = 0;
     let mounted = true;
+    let tiltBaselineCaptured = false;
+    let stableTiltSince = 0;
+    const latestTilt = { beta: null, gamma: null };
+    const latestMotionGravity = { x: 0, y: 0, valid: false };
+    const previousTilt = { beta: null, gamma: null };
+    const neutralTilt = { beta: 0, gamma: 0 };
+    const gravityVector = { x: 0, y: 0 };
+
+    ballStatesRef.current = ballConfigs.map((config, index) => {
+      const safeLeft = Math.min(frameWidth - ballSize, Math.max(0, config.left));
+      const bounds = {
+        minX: -safeLeft,
+        maxX: frameWidth - safeLeft - ballSize,
+        minY: -top,
+        maxY: frameHeight - top - ballSize,
+      };
+      const dropStartY = -top - ballSize - 24;
+      const state = {
+        bounds,
+        config,
+        baseLeft: safeLeft,
+        dropSettled: false,
+        dropBounceCount: 0,
+        discoveryLaunchDone: false,
+        dropStarted: false,
+        startAt: performance.now() + config.delay,
+        position: { x: 0, y: dropStartY },
+        velocity: { x: 1.05, y: 0 },
+        recentImpactUntil: { left: 0, right: 0, top: 0, bottom: 0 },
+      };
+      const ball = balls[index];
+      if (ball) {
+        ball.style.left = `${safeLeft}px`;
+        ball.style.top = `${top}px`;
+        ball.style.width = `${ballSize}px`;
+        ball.style.height = `${ballSize}px`;
+        ball.style.transform = `translate3d(0px, ${dropStartY.toFixed(2)}px, 0)`;
+      }
+      return state;
+    });
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const dynamicRestitution = (normalVelocity) => {
+      const impactSpeed = Math.abs(normalVelocity);
+      const t = clamp(
+        (impactSpeed - impactSpeedMin) / (impactSpeedMax - impactSpeedMin),
+        0,
+        1
+      );
+      const eased = t * t * (3 - 2 * t);
+      return minRestitution + (maxRestitution - minRestitution) * eased;
+    };
+    const getReboundVelocity = (normalVelocity) => {
+      const reflected = -normalVelocity * dynamicRestitution(normalVelocity);
+      const direction = Math.sign(reflected) || (normalVelocity < 0 ? 1 : -1);
+      return direction * Math.max(Math.abs(reflected), minReboundSpeed);
+    };
+    const getScreenAngle = () => {
+      const rawAngle =
+        typeof window.screen?.orientation?.angle === "number"
+          ? window.screen.orientation.angle
+          : window.orientation || 0;
+      return ((rawAngle % 360) + 360) % 360;
+    };
+    const mapMotionGravityToScreen = (x, y) => {
+      const angle = getScreenAngle();
+      if (angle === 90) return { x: y, y: x };
+      if (angle === 180) return { x: -x, y };
+      if (angle === 270) return { x: -y, y: -x };
+      return { x, y: -y };
+    };
+    const softenTiltDelta = (value) => {
+      if (Math.abs(value) <= tiltDeadzone) return 0;
+      return value - Math.sign(value) * tiltDeadzone;
+    };
+    const curveTiltDelta = (value) =>
+      Math.sign(value) * Math.pow(clamp(Math.abs(value) / 18, 0, 1), 0.65);
+    const getDiscoveryLaunchX = (state) => {
+      if (Number.isFinite(latestTilt.gamma) && Math.abs(latestTilt.gamma) > 1.5) {
+        return Math.sign(latestTilt.gamma) * firstImpactLaunchX;
+      }
+      return state.config.fallbackX;
+    };
+    const resolveBallContacts = () => {
+      const states = ballStatesRef.current;
+      for (let iteration = 0; iteration < pairSolverIterations; iteration += 1) {
+        let solved = true;
+        for (let firstIndex = 0; firstIndex < states.length; firstIndex += 1) {
+          for (let secondIndex = firstIndex + 1; secondIndex < states.length; secondIndex += 1) {
+            const first = states[firstIndex];
+            const second = states[secondIndex];
+            if ((!first.dropStarted && !first.dropSettled) || (!second.dropStarted && !second.dropSettled)) {
+              continue;
+            }
+
+            let dx =
+              second.baseLeft +
+              second.position.x +
+              ballSize / 2 -
+              (first.baseLeft + first.position.x + ballSize / 2);
+            let dy = second.position.y + ballSize / 2 - (first.position.y + ballSize / 2);
+            let distance = Math.hypot(dx, dy);
+            if (distance >= separationThreshold) continue;
+
+            solved = false;
+            if (distance < 0.001) {
+              const angle = (firstIndex + secondIndex + 1) * 2.399963229728653;
+              dx = Math.cos(angle);
+              dy = Math.sin(angle);
+              distance = 1;
+            }
+
+            const penetration = separationThreshold - distance;
+            const normalX = dx / distance;
+            const normalY = dy / distance;
+            const correctionX = normalX * penetration * 0.5;
+            const correctionY = normalY * penetration * 0.5;
+
+            first.position.x -= correctionX;
+            first.position.y -= correctionY;
+            second.position.x += correctionX;
+            second.position.y += correctionY;
+
+            first.position.x = clamp(first.position.x, first.bounds.minX, first.bounds.maxX);
+            first.position.y = clamp(first.position.y, first.bounds.minY, first.bounds.maxY);
+            second.position.x = clamp(second.position.x, second.bounds.minX, second.bounds.maxX);
+            second.position.y = clamp(second.position.y, second.bounds.minY, second.bounds.maxY);
+
+            const relativeVelocityX = second.velocity.x - first.velocity.x;
+            const relativeVelocityY = second.velocity.y - first.velocity.y;
+            const normalVelocity = relativeVelocityX * normalX + relativeVelocityY * normalY;
+            if (normalVelocity < 0) {
+              const impulse = -normalVelocity * pairVelocityResponse;
+              first.velocity.x -= normalX * impulse;
+              first.velocity.y -= normalY * impulse;
+              second.velocity.x += normalX * impulse;
+              second.velocity.y += normalY * impulse;
+            }
+          }
+        }
+        if (solved) break;
+      }
+    };
+
+    const handleOrientation = (event) => {
+      if (Number.isFinite(event.beta)) latestTilt.beta = event.beta;
+      if (Number.isFinite(event.gamma)) latestTilt.gamma = event.gamma;
+    };
+    const handleMotion = (event) => {
+      const gravity = event.accelerationIncludingGravity;
+      if (!gravity) return;
+      if (!Number.isFinite(gravity.x) || !Number.isFinite(gravity.y)) return;
+      const mappedGravity = mapMotionGravityToScreen(gravity.x, gravity.y);
+      latestMotionGravity.x = mappedGravity.x;
+      latestMotionGravity.y = mappedGravity.y;
+      latestMotionGravity.valid = true;
+    };
+
+    if (useTiltGravity) {
+      window.addEventListener("devicemotion", handleMotion, { passive: true });
+      window.addEventListener("deviceorientation", handleOrientation, { passive: true });
+    }
 
     const animate = () => {
       if (!mounted) return;
-      const position = positionRef.current;
-      const velocity = velocityRef.current;
+      const now = performance.now();
 
-      position.x += velocity.x * motionScale;
-      position.y += velocity.y * motionScale;
+      if (useTiltGravity) {
+        if (latestMotionGravity.valid) {
+          const targetGravityX =
+            clamp(latestMotionGravity.x / 9.81, -1, 1) * tiltGravityStrength * motionScale;
+          const targetGravityY =
+            clamp(latestMotionGravity.y / 9.81, -1, 1) * tiltGravityStrength * motionScale;
 
-      if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
+          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
+        } else if (!tiltBaselineCaptured) {
+          if (latestTilt.beta !== null && latestTilt.gamma !== null) {
+            neutralTilt.beta = latestTilt.beta;
+            neutralTilt.gamma = latestTilt.gamma;
+            tiltBaselineCaptured = true;
+          }
+        }
+
+        if (tiltBaselineCaptured) {
+          const now = performance.now();
+          if (previousTilt.beta !== null && previousTilt.gamma !== null) {
+            const tiltMotion = Math.max(
+              Math.abs(latestTilt.beta - previousTilt.beta),
+              Math.abs(latestTilt.gamma - previousTilt.gamma)
+            );
+            if (tiltMotion <= stableTiltThreshold) {
+              if (!stableTiltSince) stableTiltSince = now;
+              if (now - stableTiltSince >= stableRecenterDelay) {
+                neutralTilt.beta += (latestTilt.beta - neutralTilt.beta) * neutralRecenterRate;
+                neutralTilt.gamma += (latestTilt.gamma - neutralTilt.gamma) * neutralRecenterRate;
+              }
+            } else {
+              stableTiltSince = 0;
+            }
+          }
+          previousTilt.beta = latestTilt.beta;
+          previousTilt.gamma = latestTilt.gamma;
+
+          const betaDelta = softenTiltDelta(latestTilt.beta - neutralTilt.beta);
+          const gammaDelta = softenTiltDelta(latestTilt.gamma - neutralTilt.gamma);
+          const targetGravityX = curveTiltDelta(gammaDelta) * tiltGravityStrength * motionScale;
+          const targetGravityY = curveTiltDelta(betaDelta) * tiltGravityStrength * motionScale;
+
+          gravityVector.x += (targetGravityX - gravityVector.x) * tiltSmoothing;
+          gravityVector.y += (targetGravityY - gravityVector.y) * tiltSmoothing;
+        }
+      }
+
+      ballStatesRef.current.forEach((state, index) => {
+        const ball = balls[index];
+        if (!ball) return;
+
+        const { position, velocity, bounds, recentImpactUntil } = state;
+
+        if (!state.dropSettled) {
+          if (now >= state.startAt) {
+            state.dropStarted = true;
+          }
+
+          if (state.dropStarted) {
+            velocity.y += 0.42 * motionScale;
+
+            const stepX = velocity.x * motionScale;
+            const stepY = velocity.y * motionScale;
+            const dropTravel = Math.max(Math.abs(stepX), Math.abs(stepY));
+            const dropSteps = Math.max(1, Math.ceil(dropTravel / Math.max(ballSize * 0.12, 12)));
+
+            for (let step = 0; step < dropSteps; step += 1) {
+              position.x += stepX / dropSteps;
+              position.y += stepY / dropSteps;
+
+              if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+                const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
+                const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
+                position.x = clamp(position.x, bounds.minX, bounds.maxX);
+                if (incomingLeft || incomingRight) {
+                  velocity.x = getReboundVelocity(velocity.x);
+                  recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
+                }
+              }
+
+              if (position.y <= bounds.minY || position.y >= bounds.maxY) {
+                const incomingTop = position.y <= bounds.minY && velocity.y < 0;
+                const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
+                position.y = clamp(position.y, bounds.minY, bounds.maxY);
+                if (incomingBottom) {
+                  if (!state.discoveryLaunchDone) {
+                    velocity.y = -Math.max(
+                      Math.abs(velocity.y) * dynamicRestitution(velocity.y),
+                      Math.abs(firstImpactLaunchY)
+                    );
+                    velocity.x = getDiscoveryLaunchX(state);
+                    recentImpactUntil.bottom = now + collisionGraceMs;
+                    state.discoveryLaunchDone = true;
+                    state.dropBounceCount += 1;
+                  } else if (Math.abs(velocity.y) > 1.15 && state.dropBounceCount < 2) {
+                    velocity.y *= -frameRestitution;
+                    velocity.x *= 0.75;
+                    state.dropBounceCount += 1;
+                  } else {
+                    state.dropSettled = true;
+                    velocity.x = 1.05;
+                    velocity.y = 0.7;
+                  }
+                } else if (incomingTop) {
+                  velocity.y = getReboundVelocity(velocity.y);
+                  recentImpactUntil.top = now + collisionGraceMs;
+                }
+              }
+              resolveBallContacts();
+            }
+          }
+
+          position.x = clamp(position.x, bounds.minX, bounds.maxX);
+          position.y = clamp(position.y, bounds.minY, bounds.maxY);
+          resolveBallContacts();
+          ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
+          return;
+        }
+
+        if (useTiltGravity) {
+          const recentLeftImpact = now <= recentImpactUntil.left;
+          const recentRightImpact = now <= recentImpactUntil.right;
+          const recentTopImpact = now <= recentImpactUntil.top;
+          const recentBottomImpact = now <= recentImpactUntil.bottom;
+          const touchingLeft = position.x <= bounds.minX + contactEpsilon;
+          const touchingRight = position.x >= bounds.maxX - contactEpsilon;
+          const touchingTop = position.y <= bounds.minY + contactEpsilon;
+          const touchingBottom = position.y >= bounds.maxY - contactEpsilon;
+          const restingLeft =
+            touchingLeft && !recentLeftImpact && Math.abs(velocity.x) < restingVelocityThreshold;
+          const restingRight =
+            touchingRight && !recentRightImpact && Math.abs(velocity.x) < restingVelocityThreshold;
+          const restingTop =
+            touchingTop && !recentTopImpact && Math.abs(velocity.y) < restingVelocityThreshold;
+          const restingBottom =
+            touchingBottom && !recentBottomImpact && Math.abs(velocity.y) < restingVelocityThreshold;
+          const cancelGravityX =
+            ((restingLeft || recentLeftImpact) && gravityVector.x < 0) ||
+            ((restingRight || recentRightImpact) && gravityVector.x > 0);
+          const cancelGravityY =
+            ((restingTop || recentTopImpact) && gravityVector.y < 0) ||
+            ((restingBottom || recentBottomImpact) && gravityVector.y > 0);
+          if (cancelGravityX) gravityVector.x += (0 - gravityVector.x) * wallGravityDecay;
+          if (cancelGravityY) gravityVector.y += (0 - gravityVector.y) * wallGravityDecay;
+          const effectiveGravityX = cancelGravityX ? 0 : gravityVector.x;
+          const effectiveGravityY = cancelGravityY ? 0 : gravityVector.y;
+
+          velocity.x += effectiveGravityX;
+          velocity.y += effectiveGravityY;
+          velocity.x *= tiltDamping;
+          velocity.y *= tiltDamping;
+          velocity.x = clamp(velocity.x, -tiltMaxSpeed, tiltMaxSpeed);
+          velocity.y = clamp(velocity.y, -tiltMaxSpeed, tiltMaxSpeed);
+        } else {
+          velocity.x += Math.sin((now + index * 700) / 4200) * 0.0009;
+          velocity.y += Math.cos((now + index * 900) / 5100) * 0.0008;
+          velocity.x = clamp(velocity.x, -1.3, 1.3);
+          velocity.y = clamp(velocity.y, -0.95, 0.95);
+        }
+
+        const frameStepX = useTiltGravity ? velocity.x : velocity.x * motionScale;
+        const frameStepY = useTiltGravity ? velocity.y : velocity.y * motionScale;
+        const travel = Math.max(Math.abs(frameStepX), Math.abs(frameStepY));
+        const steps = Math.max(1, Math.ceil(travel / Math.max(ballSize * 0.12, 12)));
+
+        for (let step = 0; step < steps; step += 1) {
+          position.x += frameStepX / steps;
+          position.y += frameStepY / steps;
+
+          if (position.x <= bounds.minX || position.x >= bounds.maxX) {
+            const incomingLeft = position.x <= bounds.minX && velocity.x < 0;
+            const incomingRight = position.x >= bounds.maxX && velocity.x > 0;
+            position.x = clamp(position.x, bounds.minX, bounds.maxX);
+            if (incomingLeft || incomingRight) {
+              velocity.x = getReboundVelocity(velocity.x);
+              recentImpactUntil[incomingLeft ? "left" : "right"] = now + collisionGraceMs;
+            }
+          }
+
+          if (position.y <= bounds.minY || position.y >= bounds.maxY) {
+            const incomingTop = position.y <= bounds.minY && velocity.y < 0;
+            const incomingBottom = position.y >= bounds.maxY && velocity.y > 0;
+            position.y = clamp(position.y, bounds.minY, bounds.maxY);
+            if (incomingTop || incomingBottom) {
+              velocity.y = getReboundVelocity(velocity.y);
+              recentImpactUntil[incomingTop ? "top" : "bottom"] = now + collisionGraceMs;
+            }
+          }
+          resolveBallContacts();
+        }
+
         position.x = clamp(position.x, bounds.minX, bounds.maxX);
-        velocity.x *= -0.82;
-      }
-      if (position.y <= bounds.minY || position.y >= bounds.maxY) {
         position.y = clamp(position.y, bounds.minY, bounds.maxY);
-        velocity.y *= -0.82;
-      }
+        resolveBallContacts();
+        ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
+      });
 
-      velocity.x += Math.sin(performance.now() / 4200) * 0.0009;
-      velocity.y += Math.cos(performance.now() / 5100) * 0.0008;
-      velocity.x = clamp(velocity.x, -1.3, 1.3);
-      velocity.y = clamp(velocity.y, -0.95, 0.95);
+      resolveBallContacts();
+      ballStatesRef.current.forEach((state, index) => {
+        const ball = balls[index];
+        if (!ball) return;
+        state.position.x = clamp(state.position.x, state.bounds.minX, state.bounds.maxX);
+        state.position.y = clamp(state.position.y, state.bounds.minY, state.bounds.maxY);
+        ball.style.transform = `translate3d(${state.position.x.toFixed(2)}px, ${state.position.y.toFixed(2)}px, 0)`;
+      });
 
-      ball.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0)`;
       animationFrame = window.requestAnimationFrame(animate);
     };
 
@@ -951,32 +1347,44 @@ function MovingGreenBall({ active, pageId, nodeId, left, top, size }) {
     return () => {
       mounted = false;
       window.cancelAnimationFrame(animationFrame);
-      positionRef.current = { x: 0, y: 0 };
-      velocityRef.current = { x: 1.05, y: 0.7 };
-      ball.style.transform = "translate3d(0px, 0px, 0)";
+      if (useTiltGravity) {
+        window.removeEventListener("devicemotion", handleMotion);
+        window.removeEventListener("deviceorientation", handleOrientation);
+      }
+      ballStatesRef.current = [];
+      balls.forEach((ball) => {
+        ball.style.transform = "translate3d(0px, 0px, 0)";
+      });
     };
-  }, [active, left, size, top]);
+  }, [active, pageId, top]);
 
   return (
-    <div
-      ref={ballRef}
-      data-node-id={nodeId}
-      data-figma-layer="Ball"
-      aria-hidden="true"
-      style={{
-        position: "absolute",
-        left: `${left}px`,
-        top: `${top}px`,
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: "50%",
-        background: "#E0FF00",
-        pointerEvents: "none",
-        transform: "translate3d(0px, 0px, 0)",
-        willChange: "transform",
-        zIndex: 1,
-      }}
-    />
+    <>
+      {[0, 1, 2].map((ballIndex) => (
+        <div
+          key={ballIndex}
+          ref={(element) => {
+            ballRefs.current[ballIndex] = element;
+          }}
+          data-node-id={`${nodeId}-${ballIndex + 1}`}
+          data-figma-layer="Ball"
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: "0px",
+            top: `${top}px`,
+            width: "150px",
+            height: "150px",
+            borderRadius: "50%",
+            background: "#E0FF00",
+            pointerEvents: "none",
+            transform: "translate3d(0px, 0px, 0)",
+            willChange: "transform",
+            zIndex: 1,
+          }}
+        />
+      ))}
+    </>
   );
 }
 
@@ -1097,7 +1505,7 @@ function HomeFrame({ active }) {
           fontWeight: 400,
           fontSize: "14px",
           lineHeight: "17px",
-          letterSpacing: "0.04em",
+          letterSpacing: "0.20em",
           textAlign: "center",
           textDecoration: "none",
           boxSizing: "border-box",
@@ -1255,7 +1663,7 @@ function PageTwoFrame({ active }) {
           fontWeight: 400,
           fontSize: "14px",
           lineHeight: "17px",
-          letterSpacing: "0.04em",
+          letterSpacing: "0.20em",
           textAlign: "center",
           borderRadius: "9px",
           zIndex: 3,
@@ -1471,18 +1879,105 @@ const outroCopy = `我確實是要出版這本小誌，作為我的思想備份�
 果然，藝術是最後的避難所，用文字寫下對生活感悟，於別人眼中是作狀無比，但卻是為在夜裡不停輾轉反側，不能進睡的我，找到安穩的睡姿，作狀至極卻乃是我的救命藥方。`;
 
 function OutroFrame({ active, progress, onScrollProgress }) {
+  const scrollRef = React.useRef(null);
+  const copyMeasureRef = React.useRef(null);
+  const bottomArtworkRef = React.useRef(null);
+  const [copyLines, setCopyLines] = React.useState([]);
+  const [bottomArtworkVisible, setBottomArtworkVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!active) {
+      setCopyLines([]);
+      setBottomArtworkVisible(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const measureLines = () => {
+      const measureNode = copyMeasureRef.current;
+      const textNode = measureNode?.firstChild;
+      if (!measureNode || !textNode) return;
+
+      const measureRect = measureNode.getBoundingClientRect();
+      const measuredLines = [];
+      const range = document.createRange();
+
+      for (let offset = 0; offset < textNode.length; offset += 1) {
+        const character = textNode.data[offset];
+        if (character === "\n" || character === "\r") continue;
+
+        range.setStart(textNode, offset);
+        range.setEnd(textNode, offset + 1);
+        const characterRect = range.getBoundingClientRect();
+        if (!characterRect.width && !characterRect.height) continue;
+
+        const top = characterRect.top - measureRect.top;
+        const currentLine = measuredLines[measuredLines.length - 1];
+        if (!currentLine || Math.abs(currentLine.top - top) > 0.5) {
+          measuredLines.push({ top, text: character });
+        } else {
+          currentLine.text += character;
+        }
+      }
+
+      if (!cancelled) setCopyLines(measuredLines);
+    };
+
+    const fontsReady = document.fonts?.ready || Promise.resolve();
+    fontsReady.then(() => window.requestAnimationFrame(measureLines));
+    return () => {
+      cancelled = true;
+    };
+  }, [active]);
+
+  React.useEffect(() => {
+    if (!active || bottomArtworkVisible) return undefined;
+
+    const root = scrollRef.current;
+    const target = bottomArtworkRef.current;
+    if (!root || !target) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setBottomArtworkVisible(true);
+        observer.disconnect();
+      },
+      { root, threshold: 0.1 },
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [active, bottomArtworkVisible]);
+
   return (
     <article className={`phone-frame ending-page outro-page ${active ? "is-active" : ""}`} id="outro" style={pageBgStyle("outro")}>
-      <div className="ending-scroll outro-scroll" onScroll={(event) => {
+      <div ref={scrollRef} className="ending-scroll outro-scroll" onScroll={(event) => {
         const element = event.currentTarget;
         const distance = element.scrollHeight - element.clientHeight;
         onScrollProgress(distance > 0 ? element.scrollTop / distance : 0);
       }}>
         <div className="outro-canvas">
           <img className="outro-art-top" src={assetSrc("/assets/png-pages/Outro/out.png")} alt="" />
-          <span className="ending-scroll-marker" aria-hidden="true" />
-          <p className="outro-copy">{outroCopy}</p>
-          <img className="outro-art-bottom" src={assetSrc("/assets/journey/10.png")} alt="" />
+          <p ref={copyMeasureRef} className="outro-copy outro-copy-measure" aria-hidden="true">{outroCopy}</p>
+          <p className={`outro-copy outro-copy-lines ${copyLines.length ? "is-ready" : ""}`} aria-label={outroCopy}>
+            {copyLines.map((line, index) => (
+              <span
+                className="outro-copy-line"
+                key={`${line.top}-${index}`}
+                style={{ top: `${line.top}px`, animationDelay: `${index * 100}ms` }}
+                aria-hidden="true"
+              >
+                {line.text}
+              </span>
+            ))}
+          </p>
+          <img
+            ref={bottomArtworkRef}
+            className={`outro-art-bottom ${bottomArtworkVisible ? "animate__animated animate__fadeInUp is-revealed" : ""}`}
+            src={assetSrc("/assets/journey/10.png")}
+            alt=""
+          />
         </div>
       </div>
       <JourneyBottomNav pageId="outro" progress={progress} />
@@ -1528,7 +2023,7 @@ function EndMessageFrame({ active, progress, onSubmitSuccess }) {
   return (
     <article className={`phone-frame ending-page end-message-page ${active ? "is-active" : ""}`} id="end-msg-box" style={pageBgStyle("end-msg-box")}>
       <p className="end-message-copy">獨立出版電子Zine，一腳踢完成，<br />假如你喜歡我的作品，歡迎隨緣課金，<br />讓筆者可以維持生命。</p>
-      <button className="end-action end-payme" type="button"><span className="end-payme-brand">PayMe</span>{" "}贊助一抹人間煙火</button>
+      <a className="end-action end-payme" href="https://payme.hsbc/denlau"><span className="end-payme-brand">PayMe</span>{" "}贊助一抹人間煙火</a>
       <a className="end-action end-instagram" href="https://www.instagram.com/g.c.d___/" target="_blank" rel="noreferrer">Instagram</a>
       <label className="end-message-label" htmlFor="end-message">你對作狀生活俱樂部的 Re：</label>
       <input
@@ -1662,6 +2157,91 @@ function BackFrame({ active, progress }) {
   );
 }
 
+function Re001WarpImage({ className, src }) {
+  return (
+    <svg
+      className={`${className} zine-re001-warp-svg`}
+      viewBox="0 0 439 642"
+      preserveAspectRatio="xMidYMid meet"
+      style={{ overflow: "visible" }}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <filter
+          id="re001-organic-warp-filter"
+          x="-12%"
+          y="-12%"
+          width="124%"
+          height="124%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.008 0.012"
+            numOctaves="1"
+            seed="11"
+            result="re001WarpNoise"
+          />
+          <feOffset
+            in="re001WarpNoise"
+            dx="36"
+            dy="-28.3"
+            result="re001WarpMovingNoise"
+          >
+            <animate
+              attributeName="dx"
+              dur="10s"
+              values="36;56;64.3;56;36;16;7.7;16;36"
+              calcMode="linear"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="dy"
+              dur="10s"
+              values="-28.3;-20;0;20;28.3;20;0;-20;-28.3"
+              calcMode="linear"
+              repeatCount="indefinite"
+            />
+          </feOffset>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="re001WarpMovingNoise"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </defs>
+      <image
+        href={src}
+        xlinkHref={src}
+        x="0"
+        y="0"
+        width="439"
+        height="642"
+        preserveAspectRatio="xMidYMid meet"
+        filter="url(#re001-organic-warp-filter)"
+      />
+    </svg>
+  );
+}
+
+function OutroRoadMarquee() {
+  const backgroundSrc = assetSrc("/assets/png-pages/Outro/山路漫長底.png");
+  const typographySrc = assetSrc("/assets/png-pages/Outro/山路漫長字-long.png");
+
+  return (
+    <div className="outro-road-artwork" aria-hidden="true">
+      <img className="outro-road-background" src={backgroundSrc} alt="" />
+      <div className="outro-road-marquee-track">
+        <img className="outro-road-typography-track" src={typographySrc} alt="" />
+        <img className="outro-road-typography-track" src={typographySrc} alt="" />
+      </div>
+    </div>
+  );
+}
+
 function VisualJourneyFrame({
   active,
   pageId,
@@ -1708,11 +2288,18 @@ function VisualJourneyFrame({
   const waterVisualLeaveTimerRef = React.useRef(null);
   const reCaptionExitTimerRef = React.useRef(null);
   const reCaptionPendingNextRef = React.useRef(null);
+  const re001CaptionTimerRef = React.useRef(null);
+  const re001EntryTimerRef = React.useRef(null);
   const mountainSequenceRevealTimerRef = React.useRef(null);
   const mountainSequenceLineTimerRef = React.useRef(null);
   const mountainSequenceLeaveTimerRef = React.useRef(null);
   const [reCaptionEntryComplete, setReCaptionEntryComplete] = React.useState(false);
+  const [re001CaptionVisible, setRe001CaptionVisible] = React.useState(false);
+  const [re001CaptionComplete, setRe001CaptionComplete] = React.useState(false);
+  const [startCaptionPhase, setStartCaptionPhase] = React.useState("idle");
   const shouldStabilizeReCaptionEntry = pageId === "re-002" || pageId === "re-003";
+  const isStartReCaption = pageId === "start" && captionBottom?.startsWith("Re:");
+  const isPageThreeSequence = pageId === "page-3" && sequenceAnimation;
 
   React.useEffect(() => {
     if (!dividerAnimation) return undefined;
@@ -1730,7 +2317,11 @@ function VisualJourneyFrame({
   React.useEffect(() => () => window.clearTimeout(sequenceLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(mirageLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(peelLeaveTimerRef.current), []);
-  React.useEffect(() => () => window.clearTimeout(re001LeaveTimerRef.current), []);
+  React.useEffect(() => () => {
+    window.clearTimeout(re001LeaveTimerRef.current);
+    window.clearTimeout(re001CaptionTimerRef.current);
+    window.clearTimeout(re001EntryTimerRef.current);
+  }, []);
   React.useEffect(() => () => window.clearTimeout(blurVisualLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(waterVisualLeaveTimerRef.current), []);
   React.useEffect(() => () => window.clearTimeout(reCaptionExitTimerRef.current), []);
@@ -1759,10 +2350,52 @@ function VisualJourneyFrame({
   }, [active, peelAnimation]);
 
   React.useEffect(() => {
-    if (!re001Animation || active) return undefined;
-    setRe001Phase("idle");
+    if (!isStartReCaption) return undefined;
+    if (!active) {
+      setStartCaptionPhase("idle");
+      return undefined;
+    }
+    setStartCaptionPhase("waiting");
     return undefined;
+  }, [active, isStartReCaption]);
+
+  React.useEffect(() => {
+    if (!re001Animation) return undefined;
+
+    window.clearTimeout(re001CaptionTimerRef.current);
+    window.clearTimeout(re001EntryTimerRef.current);
+
+    if (!active) {
+      setRe001Phase("idle");
+      setRe001CaptionVisible(false);
+      setRe001CaptionComplete(false);
+      return undefined;
+    }
+
+    setRe001Phase("entering");
+    setRe001CaptionVisible(false);
+    setRe001CaptionComplete(false);
+
+    re001EntryTimerRef.current = window.setTimeout(() => {
+      setRe001Phase("entered");
+    }, 1000);
+
+    re001CaptionTimerRef.current = window.setTimeout(() => {
+      setRe001CaptionVisible(true);
+    }, 3000);
+
+    return () => {
+      window.clearTimeout(re001CaptionTimerRef.current);
+      window.clearTimeout(re001EntryTimerRef.current);
+    };
   }, [active, re001Animation]);
+
+  React.useEffect(() => {
+    if (!re001Animation || re001Phase !== "leaving") return undefined;
+    window.clearTimeout(re001CaptionTimerRef.current);
+    window.clearTimeout(re001EntryTimerRef.current);
+    return undefined;
+  }, [re001Animation, re001Phase]);
 
   React.useEffect(() => {
     if (!blurVisualAnimation || active) return undefined;
@@ -1860,7 +2493,7 @@ function VisualJourneyFrame({
       return;
     }
 
-    if (shouldStabilizeReCaptionEntry) {
+    if (re001Animation || shouldStabilizeReCaptionEntry) {
       window.clearTimeout(reCaptionExitTimerRef.current);
       reCaptionExitTimerRef.current = window.setTimeout(() => {
         window.location.hash = nextPageId;
@@ -1886,6 +2519,16 @@ function VisualJourneyFrame({
     setReCaptionEntryComplete(true);
   }, [shouldStabilizeReCaptionEntry]);
 
+  const handleStartVisualAnimationEnd = React.useCallback((event) => {
+    if (!isStartReCaption || !active || startCaptionPhase !== "waiting") return;
+    if (event.animationName !== "curtainRevealTopDown") return;
+    setStartCaptionPhase("typing");
+  }, [active, isStartReCaption, startCaptionPhase]);
+
+  const handleStartCaptionComplete = React.useCallback(() => {
+    setStartCaptionPhase("complete");
+  }, []);
+
   const handleMountainSequenceNext = (nextPageId) => {
     if (mountainSequencePhase === "line-flashing" || mountainSequencePhase === "leaving") return;
     window.clearTimeout(mountainSequenceRevealTimerRef.current);
@@ -1902,7 +2545,11 @@ function VisualJourneyFrame({
     ? `section-divider-art ${dividerPhase === "visible" || dividerPhase === "leaving" ? "is-visible" : ""}`
     : "";
   const sequenceArtClass = sequenceAnimation && active
-    ? `animate__animated ${sequencePhase === "leaving" ? "animate__flipOutX" : "animate__flipInX"}`
+    ? sequencePhase === "leaving"
+      ? "animate__animated animate__flipOutX"
+      : isPageThreeSequence
+        ? "sequence-page-fade-in"
+        : "animate__animated animate__flipInX"
     : "";
   const curtainArtClass = curtainReveal && active ? "zine-curtain-reveal" : "";
   const mirageArtClass = mirageAnimation && active
@@ -1912,27 +2559,40 @@ function VisualJourneyFrame({
     ? `zine-page-peel-${peelPhase === "leaving" ? "exit" : "enter"}`
     : "";
   const re001ArtClass = re001Animation && active
-    ? `zine-re001-${re001Phase === "leaving" ? "exit" : "curtain"}`
+    ? re001Phase === "leaving"
+      ? "zine-re001-exit"
+      : re001Phase === "entering"
+        ? "zine-re001-curtain"
+        : ""
     : "";
   const blurVisualArtClass = blurVisualAnimation && active
-    ? `zine-blur-art-${blurVisualPhase === "leaving" ? "exit" : "enter"}`
+    ? blurVisualPhase === "leaving"
+      ? "zine-blur-art-exit"
+      : pageId === "re-002"
+        ? "zine-re002-stretch-enter"
+        : "zine-blur-art-enter"
     : "";
   const waterVisualArtClass = waterVisualAnimation && active
     ? `zine-water-visual-${waterVisualPhase === "leaving" ? "exit" : "enter"}`
     : "";
   const mountainSequenceArtClass = mountainSequenceAnimation && active
-    ? `zine-mountain-${mountainSequencePhase === "leaving" ? "blur-exit" : "curtain-reveal"}`
+    ? mountainSequencePhase === "leaving"
+      ? "zine-mountain-blur-exit"
+      : pageId === "part-3-a"
+        ? "zine-mountain-fade-enter"
+        : "zine-mountain-curtain-reveal"
     : "";
   const shouldShowMountainLine = !mountainSequenceAnimation
     || mountainSequencePhase === "line-visible"
     || mountainSequencePhase === "line-flashing";
   const mountainLineClass = `mountain-line-overlay ${mountainSequencePhase === "line-flashing" ? "mountain-line-flash-out" : ""}`;
+  const visualImageClass = `visual-original visual-${fit} ${dividerArtClass} ${sequenceArtClass} ${curtainArtClass} ${mirageArtClass} ${peelArtClass} ${re001ArtClass} ${blurVisualArtClass} ${waterVisualArtClass} ${mountainSequenceArtClass}`;
 
   return (
     <article className={`phone-frame visual-frame visual-frame-${pageId} ${active ? "is-active" : ""} ${dividerPhase === "leaving" ? "is-divider-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
       {imageRect ? (
         <img
-          className={`visual-original visual-absolute ${dividerArtClass} ${mountainSequenceArtClass}`}
+          className={`visual-original visual-absolute ${dividerArtClass} ${blurVisualArtClass} ${mountainSequenceArtClass}`}
           style={{
             ...frameRectStyle(imageRect),
             ...(mountainSequenceAnimation ? { "--mountain-reveal-duration": `${mountainRevealMs}ms` } : {}),
@@ -1950,7 +2610,18 @@ function VisualJourneyFrame({
             onScrollProgress(scrollableDistance > 0 ? element.scrollTop / scrollableDistance : 0);
           }}
         >
-          <img className={`visual-original visual-${fit} ${dividerArtClass} ${sequenceArtClass} ${curtainArtClass} ${mirageArtClass} ${peelArtClass} ${re001ArtClass} ${blurVisualArtClass} ${waterVisualArtClass} ${mountainSequenceArtClass}`} src={imageSrc} alt="" />
+          {pageId === "outro-road" ? (
+            <OutroRoadMarquee />
+          ) : pageId === "re-001" ? (
+            <Re001WarpImage className={visualImageClass} src={imageSrc} />
+          ) : (
+            <img
+              className={visualImageClass}
+              src={imageSrc}
+              alt=""
+              onAnimationEnd={isStartReCaption ? handleStartVisualAnimationEnd : undefined}
+            />
+          )}
           {peelAnimation && active && peelPhase !== "leaving" && <span className="zine-page-peel-fold" aria-hidden="true" />}
         </div>
       )}
@@ -1968,25 +2639,41 @@ function VisualJourneyFrame({
         />
       )}
       {captionTop && <p className="start-caption start-caption-top">{captionTop}</p>}
-      {captionBottom && (
+      {captionBottom && (!isStartReCaption || startCaptionPhase === "typing" || startCaptionPhase === "complete") && (
         <p className="start-caption start-caption-bottom">
-          {captionBottom.startsWith("Re:") ? <ReTypingLabel text={captionBottom} active={active} /> : captionBottom}
+          {isStartReCaption && startCaptionPhase === "complete" ? (
+            captionBottom
+          ) : captionBottom.startsWith("Re:") ? (
+            <ReTypingLabel
+              text={captionBottom}
+              active={active}
+              onComplete={isStartReCaption ? handleStartCaptionComplete : undefined}
+            />
+          ) : captionBottom}
         </p>
       )}
-      {reCaption && reCaptionExitPhase === "idle" && (
+      {reCaption && reCaptionExitPhase === "idle" && (!re001Animation || re001CaptionVisible) && (
         <p className="re-caption">
-          {shouldStabilizeReCaptionEntry && reCaptionEntryComplete ? (
+          {re001Animation && (re001CaptionComplete || re001Phase === "leaving") ? (
+            reCaption
+          ) : shouldStabilizeReCaptionEntry && reCaptionEntryComplete ? (
             reCaption
           ) : (
             <ReTypingLabel
               text={reCaption}
               active={active}
-              onComplete={shouldStabilizeReCaptionEntry ? handleReCaptionEntryComplete : undefined}
+              onComplete={
+                re001Animation
+                  ? () => setRe001CaptionComplete(true)
+                  : shouldStabilizeReCaptionEntry
+                    ? handleReCaptionEntryComplete
+                    : undefined
+              }
             />
           )}
         </p>
       )}
-      {reCaption && reCaptionExitPhase === "typing" && (
+      {reCaption && !re001Animation && reCaptionExitPhase === "typing" && (
         <p className="re-caption">
           <ReTypingLabel
             key={`${pageId}-exit-re-caption`}
@@ -2116,7 +2803,9 @@ function OpeningPageFrame({
     ? `zine-blur-art-${phase === "leaving" ? "exit" : "enter"}`
     : "";
   const hingeArtworkClass = hingeArtwork && isArtworkVisible
-    ? `animate__animated ${phase === "leaving" ? "opening-asset-hinge-out animate__hinge" : "animate__flipInX"}`
+    ? phase === "leaving"
+      ? "zine-hinge-swing-exit"
+      : "animate__animated animate__flipInX"
     : "";
   const edgeWeatherArtworkClass = edgeWeatherArtwork && isArtworkVisible
     ? `${phase === "leaving" ? "zine-edge-weather-exit" : "animate__animated animate__flipInX"}`
@@ -2133,11 +2822,17 @@ function OpeningPageFrame({
   const fadeDownArtworkClass = fadeDownArtwork && isArtworkVisible
     ? `animate__animated opening-asset-fade-down ${phase === "leaving" ? "animate__fadeOutBottomRight" : "animate__fadeInDown"}`
     : "";
+  const artworkWrapperStyle = fadeDownArtwork
+    ? frameRectStyle({ x: 0, y: 0, width: 402, height: 700 })
+    : frameRectStyle(art);
+  const artworkImageStyle = fadeDownArtwork
+    ? { ...frameRectStyle(art), position: "absolute", maxWidth: "none" }
+    : undefined;
 
   return (
     <article className={`phone-frame opening-page-frame opening-page-frame-${pageId} ${active ? "is-active" : ""} ${phase === "leaving" ? "is-leaving" : ""}`} id={pageId} style={pageBgStyle(pageId)}>
-      <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""}`} style={frameRectStyle(art)}>
-        <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${edgeWeatherArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} src={imageSrc} alt="" />
+      <div className={`opening-main-asset ${isArtworkVisible ? "is-visible" : ""} ${hingeArtwork && phase === "leaving" ? "is-hinge-swinging" : ""} ${rotateFlashArtwork ? "is-rotate-flash-motion" : ""} ${fadeDownArtwork ? "is-full-frame-motion" : ""}`} style={artworkWrapperStyle}>
+        <img className={`${flipArtworkClass} ${rotateArtworkClass} ${waterArtworkClass} ${blurArtworkClass} ${hingeArtworkClass} ${edgeWeatherArtworkClass} ${eraserArtworkClass} ${rollArtworkClass} ${rotateFlashArtworkClass} ${fadeDownArtworkClass}`} style={artworkImageStyle} src={imageSrc} alt="" />
       </div>
       <p className="opening-meta type-a1" style={openingTextStyle(meta.rect)}>{meta.text}</p>
       <p className="opening-title type-a2" style={openingTitleStyle(title.rect)} aria-label={title.text}>
@@ -2191,7 +2886,7 @@ function TextArticleFrame({ active, pageId, meta, title, body, bodyRect, label, 
         }}
       >
         {splitArticleBody(body, highlightTexts).map((block, index) => (
-          <p className={articleBlockClass(block)} key={`${pageId}-${block.type}-${index}`}>{articleBlockContent(block, pageId)}</p>
+          <p className={articleBlockClass(block, pageId)} key={`${pageId}-${block.type}-${index}`}>{articleBlockContent(block, pageId)}</p>
         ))}
       </section>
       <JourneyBottomNav pageId={pageId} progress={progress} />
@@ -2203,9 +2898,15 @@ const visualPages = [
   { pageId: "page-3", image: "png-pages/intro/序.png", sequenceAnimation: true },
   { pageId: "start", image: "png-pages/intro/Start.png", captionTop: "Start", captionBottom: "Re: OKOK", curtainReveal: true },
   { pageId: "page-4", image: "png-pages/荒原100/100.png", dividerAnimation: true, peelAnimation: true },
-  { pageId: "re-001", image: "png-pages/Re001.png", fit: "contain", reCaption: "Re: 404 not found", re001Animation: true },
+  { pageId: "re-001", image: "png-pages/Re001-web.png", fit: "contain", reCaption: "Re: 404 not found", re001Animation: true },
   { pageId: "part-2", image: "png-pages/海市蜃樓 200/200.png", dividerAnimation: true, mirageAnimation: true },
-  { pageId: "re-002", image: "png-pages/Re002.png", reCaption: "Re: Yes", blurVisualAnimation: true },
+  {
+    pageId: "re-002",
+    image: "png-pages/Re002.png",
+    imageRect: { x: -21, y: -26, width: 442, height: 646 },
+    reCaption: "Re: Yes",
+    blurVisualAnimation: true,
+  },
   {
     pageId: "part-3-a",
     image: "png-pages/山 300/300.png",
@@ -2213,7 +2914,7 @@ const visualPages = [
     mountainLine: { name: "Mountain_Line_01", x: 289, y: 77, length: 50, strokeWeight: 2 },
     dividerAnimation: true,
     mountainSequenceAnimation: true,
-    mountainRevealMs: 2000,
+    mountainRevealMs: 1500,
   },
   {
     pageId: "part-3-b",
@@ -2221,7 +2922,7 @@ const visualPages = [
     imageRect: { x: 140, y: 185, width: 121, height: 270 },
     mountainLine: { name: "Mountain_Line_02", x: 255, y: 390, length: 50, strokeWeight: 1 },
     mountainSequenceAnimation: true,
-    mountainRevealMs: 3500,
+    mountainRevealMs: 4000,
   },
   { pageId: "re-003", image: "png-pages/Re003.png", fit: "contain", reCaption: "Re: I look forward to...", waterVisualAnimation: true },
   { pageId: "outro-road", image: "png-pages/Outro/山路漫長.png", fit: "contain" },
@@ -2267,7 +2968,7 @@ const openingPages = [
   {
     pageId: "article-2-03-cover",
     image: "png-pages/海市蜃樓 200/203.png",
-    edgeWeatherArtwork: true,
+    hingeArtwork: true,
     art: { x: -24, y: 0, width: 451, height: 660 },
     meta: { text: "第二部 · 海市蜃樓 / 2.03", rect: { x: 136, y: 91, width: 130, height: 20 } },
     title: { text: "《觀望與被觀望的距離》", rect: { x: 5, y: 111, width: 392, height: 20 } },
@@ -2287,7 +2988,7 @@ const openingPages = [
     image: "png-pages/山 300/301.png",
     rollArtwork: true,
     art: { x: 0, y: 45, width: 403, height: 590 },
-    meta: { text: "第二部 · 山 / 3.01", rect: { x: 157, y: 91, width: 91, height: 20 } },
+    meta: { text: "第三部 · 山 / 3.01", rect: { x: 157, y: 91, width: 91, height: 20 } },
     title: { text: "《作狀生活俱樂部》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "1／5", rect: { x: 189, y: 548, width: 27, height: 20 } },
   },
@@ -2296,7 +2997,7 @@ const openingPages = [
     image: "png-pages/山 300/302.png",
     blurArtwork: true,
     art: { x: 2, y: 19, width: 400, height: 584 },
-    meta: { text: "第二部 · 山 / 3.02", rect: { x: 156, y: 91, width: 91, height: 20 } },
+    meta: { text: "第三部 · 山 / 3.02", rect: { x: 156, y: 91, width: 91, height: 20 } },
     title: { text: "《攜帶式避難所》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "2／5", rect: { x: 187, y: 548, width: 30, height: 20 } },
   },
@@ -2305,7 +3006,7 @@ const openingPages = [
     image: "png-pages/山 300/303.png",
     rotateFlashArtwork: true,
     art: { x: 21.98, y: 262.4, width: 356.57, height: 123.06 },
-    meta: { text: "第二部 · 山 / 3.03", rect: { x: 156, y: 91, width: 91, height: 20 } },
+    meta: { text: "第三部 · 山 / 3.03", rect: { x: 156, y: 91, width: 91, height: 20 } },
     title: { text: "《西藏遊記: 我所看見的未來》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "3／5", rect: { x: 187, y: 548, width: 30, height: 20 } },
   },
@@ -2314,7 +3015,7 @@ const openingPages = [
     image: "png-pages/山 300/304.png",
     blurArtwork: true,
     art: { x: 0, y: 37, width: 403, height: 588 },
-    meta: { text: "第二部 · 山 / 3.04", rect: { x: 157, y: 91, width: 91, height: 20 } },
+    meta: { text: "第三部 · 山 / 3.04", rect: { x: 157, y: 91, width: 91, height: 20 } },
     title: { text: "《未來是這樣嗎？不一定喔!》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "4／5", rect: { x: 187, y: 548, width: 30, height: 20 } },
   },
@@ -2323,7 +3024,7 @@ const openingPages = [
     image: "png-pages/山 300/305.png",
     fadeDownArtwork: true,
     art: { x: 1, y: 60, width: 400, height: 584 },
-    meta: { text: "第二部 · 山 / 3.05", rect: { x: 157, y: 91, width: 91, height: 20 } },
+    meta: { text: "第三部 · 山 / 3.05", rect: { x: 157, y: 91, width: 91, height: 20 } },
     title: { text: "《已練成能往心內奔馳》", rect: { x: 5, y: 111, width: 392, height: 20 } },
     pageNumber: { text: "5／5", rect: { x: 187, y: 548, width: 30, height: 20 } },
   },
@@ -2348,10 +3049,6 @@ function useActivePage() {
 function ZineAnimationStyles() {
   return (
     <style>{`
-      .cover-entry-frame .cover-soft-reveal {
-        animation: coverSoftReveal 2s cubic-bezier(0.22, 1, 0.36, 1) both;
-        will-change: clip-path, opacity, filter;
-      }
       .cover-cursor-blink {
         animation: coverCursorBlink 0.8s ease-in-out infinite;
       }
@@ -2363,6 +3060,7 @@ function ZineAnimationStyles() {
       .animate__animated { animation-duration: 1.5s; animation-fill-mode: both; }
       .animate__flipInX { animation-name: flipInX; backface-visibility: visible !important; }
       .animate__flipOutX { animation-name: flipOutX; backface-visibility: visible !important; }
+      .sequence-page-fade-in { animation: sequencePageFadeIn 1.5s ease-out both; }
       .animate__hinge { animation-name: hinge; transform-origin: top left; }
       .animate__rotateInUpLeft { animation-name: rotateInUpLeft; transform-origin: left bottom; }
       .animate__rotateOutDownLeft { animation-name: rotateOutDownLeft; transform-origin: left bottom; }
@@ -2373,6 +3071,21 @@ function ZineAnimationStyles() {
       .animate__rollOut { animation-name: rollOut; }
       .opening-asset-flip-out { animation-duration: 2s !important; }
       .opening-asset-hinge-out { animation-duration: 3s !important; }
+      .opening-main-asset.is-hinge-swinging {
+        overflow: visible;
+        z-index: 4;
+      }
+      .opening-main-asset.is-rotate-flash-motion {
+        overflow: visible;
+      }
+      .opening-main-asset.is-full-frame-motion {
+        overflow: visible;
+      }
+      .zine-hinge-swing-exit {
+        animation: hingeSwingExit 3s linear both;
+        transform-origin: 12% 8%;
+        pointer-events: none;
+      }
       .opening-asset-roll { animation-duration: 2.5s !important; }
       .opening-asset-rotate-in,
       .opening-asset-fade-down { animation-duration: 3s !important; }
@@ -2380,30 +3093,14 @@ function ZineAnimationStyles() {
       .zine-mirage-enter { animation: mirageEnter 3.02s linear both; }
       .zine-mirage-exit { animation: mirageExit 2s ease-in-out both; pointer-events: none; }
       .zine-blur-art-enter { animation: blurArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .zine-re002-stretch-enter {
+        animation: re002StretchEnter 4.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        transform-origin: 50% 0%;
+      }
       .zine-blur-art-exit { animation: blurArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
       .zine-water-visual-enter { animation: waterVisualEnter 3s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-visual-exit { animation: waterVisualExit 2.5s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
       .zine-flash-blur-exit { animation: flashBlurExit 3s linear both; pointer-events: none; }
-      @keyframes coverSoftReveal {
-        0% {
-          opacity: 0;
-          filter: blur(18px);
-          clip-path: inset(0 0 100% 0);
-        }
-        35% {
-          opacity: 0.45;
-          filter: blur(12px);
-        }
-        72% {
-          opacity: 0.88;
-          filter: blur(4px);
-        }
-        100% {
-          opacity: 1;
-          filter: blur(0);
-          clip-path: inset(0 0 0 0);
-        }
-      }
       .zine-edge-weather-exit {
         animation: edgeWeatherExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
         -webkit-mask-image:
@@ -2421,12 +3118,64 @@ function ZineAnimationStyles() {
         pointer-events: none;
       }
       .zine-mountain-curtain-reveal { animation: mountainCurtainReveal var(--mountain-reveal-duration, 2s) linear both; }
+      .zine-mountain-fade-enter { animation: mountainFadeEnter 1.5s ease-out both; }
       .zine-mountain-blur-exit { animation: mountainBlurExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; pointer-events: none; }
       .mountain-line-flash-out { animation: mountainLineFlashOut 0.18s linear both !important; }
       .zine-water-art-enter { animation: waterArtEnter 2.5s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: center; }
       .zine-water-art-exit { animation: waterArtExit 2s cubic-bezier(0.4, 0, 0.2, 1) both; transform-origin: center; pointer-events: none; }
-      .zine-re001-curtain { animation: re001CurtainReveal 5s linear both; }
-      .zine-re001-exit { animation: re001FlashFadeOut 2.2s linear both; pointer-events: none; }
+      .zine-re001-curtain { animation: re001BlurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .zine-re001-exit { animation: re001FadeOut 1s ease-out both; pointer-events: none; }
+      .text-article-scroll p.article-1-02-tight-tracking {
+        letter-spacing: 0.4px;
+      }
+      .text-article-scroll p.article-2-04-tight-tracking,
+      .text-article-scroll p.article-3-02-tight-tracking {
+        letter-spacing: 0.4px;
+      }
+      .text-article-scroll p.article-3-05-tight-tracking {
+        letter-spacing: -2px;
+      }
+      .visual-frame-part-3-a .journey-bottom-nav {
+        height: 99px;
+      }
+      .visual-frame-outro-road .visual-stage {
+        height: 600px;
+        inset: 0 0 auto;
+      }
+      .outro-road-artwork {
+        position: absolute;
+        inset: 0;
+        width: 402px;
+        height: 600px;
+      }
+      .outro-road-background {
+        position: absolute;
+        left: 2px;
+        top: 0;
+        width: 398px;
+        height: 600px;
+        max-width: none;
+        display: block;
+      }
+      .outro-road-marquee-track {
+        position: absolute;
+        left: -10px;
+        top: -20px;
+        width: 421px;
+        height: 4580.912px;
+        animation: outroRoadMarquee 88s linear infinite;
+        will-change: transform;
+      }
+      .outro-road-typography-track {
+        width: 421px;
+        height: 2290.456px;
+        max-width: none;
+        display: block;
+      }
+      @keyframes outroRoadMarquee {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(0, -2290.456px, 0); }
+      }
       .zine-eraser-exit {
         animation: eraserExit 3s cubic-bezier(0.4, 0, 0.2, 1) both;
         -webkit-mask-image:
@@ -2458,6 +3207,9 @@ function ZineAnimationStyles() {
         width: 402px;
         min-height: 1168px;
       }
+      .outro-page.is-active .outro-art-top {
+        animation: outroTopBlurFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
       .outro-page .outro-copy {
         position: absolute;
         left: 23px;
@@ -2478,6 +3230,27 @@ function ZineAnimationStyles() {
         white-space: pre-wrap;
         word-break: normal;
       }
+      .outro-page .outro-copy-measure {
+        visibility: hidden;
+      }
+      .outro-page .outro-copy-lines {
+        pointer-events: none;
+        visibility: hidden;
+      }
+      .outro-page .outro-copy-lines.is-ready {
+        visibility: visible;
+      }
+      .outro-page .outro-copy-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        display: block;
+        white-space: pre;
+        opacity: 0;
+      }
+      .outro-page .outro-copy-lines.is-ready .outro-copy-line {
+        animation: outroCopyLineFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
       .outro-page .outro-art-bottom {
         position: absolute;
         left: 14px;
@@ -2490,6 +3263,25 @@ function ZineAnimationStyles() {
         object-fit: contain;
         object-position: center;
         z-index: auto;
+        opacity: 0;
+      }
+      .outro-page .outro-art-bottom.animate__fadeInUp {
+        animation-name: outroFadeInUp;
+        animation-duration: 1.2s;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        animation-fill-mode: both;
+      }
+      @keyframes outroTopBlurFadeIn {
+        from { opacity: 0; filter: blur(10px); }
+        to { opacity: 1; filter: blur(0); }
+      }
+      @keyframes outroCopyLineFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes outroFadeInUp {
+        from { opacity: 0; transform: translate3d(0, 100%, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
       }
       @keyframes flipInX {
         from { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); animation-timing-function: ease-in; opacity: 0; }
@@ -2497,6 +3289,10 @@ function ZineAnimationStyles() {
         60% { transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1; }
         80% { transform: perspective(400px) rotate3d(1, 0, 0, -5deg); }
         to { transform: perspective(400px); }
+      }
+      @keyframes sequencePageFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       @keyframes flipOutX {
         from { transform: perspective(400px); }
@@ -2541,6 +3337,34 @@ function ZineAnimationStyles() {
         40%, 80% { animation-timing-function: ease-in-out; transform: rotate3d(0, 0, 1, 60deg); opacity: 1; }
         100% { transform: translate3d(0, 700px, 0); opacity: 0; }
       }
+      @keyframes hingeSwingExit {
+        0% {
+          transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        }
+        11.6667% {
+          animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+          transform: translate3d(42px, 18px, 0) rotate(0deg) scale(0.56);
+        }
+        35% {
+          animation-timing-function: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+          transform: translate3d(96px, 62px, 0) rotate(68deg) scale(0.56);
+        }
+        52% {
+          animation-timing-function: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+          transform: translate3d(78px, 88px, 0) rotate(50deg) scale(0.56);
+        }
+        68% {
+          animation-timing-function: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+          transform: translate3d(96px, 104px, 0) rotate(76deg) scale(0.56);
+        }
+        78.3333% {
+          animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+          transform: translate3d(90px, 118px, 0) rotate(64deg) scale(0.56);
+        }
+        100% {
+          transform: translate3d(90px, 760px, 0) rotate(64deg) scale(0.56);
+        }
+      }
       @keyframes curtainRevealTopDown {
         from { clip-path: inset(0 0 100% 0); }
         to { clip-path: inset(0 0 0 0); }
@@ -2548,6 +3372,10 @@ function ZineAnimationStyles() {
       @keyframes mountainCurtainReveal {
         from { clip-path: inset(0 0 100% 0); }
         to { clip-path: inset(0 0 0 0); }
+      }
+      @keyframes mountainFadeEnter {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       @keyframes mountainBlurExit {
         from { opacity: 1; filter: blur(0); }
@@ -2575,6 +3403,10 @@ function ZineAnimationStyles() {
       @keyframes blurArtEnter {
         from { opacity: 0.18; filter: blur(20px); }
         to { opacity: 1; filter: blur(0); }
+      }
+      @keyframes re002StretchEnter {
+        from { transform: scaleY(0.18); }
+        to { transform: none; }
       }
       @keyframes blurArtExit {
         from { opacity: 1; filter: blur(0); }
@@ -2649,14 +3481,19 @@ function ZineAnimationStyles() {
           mask-position: center, center;
         }
       }
-      @keyframes re001CurtainReveal {
-        from { clip-path: inset(0 0 100% 0); }
-        to { clip-path: inset(0 0 0 0); }
+      @keyframes re001BlurFadeIn {
+        from {
+          opacity: 0;
+          filter: blur(4px);
+        }
+        to {
+          opacity: 1;
+          filter: blur(0);
+        }
       }
-      @keyframes re001FlashFadeOut {
-        0%, 11%, 22%, 43%, 64% { opacity: 1; }
-        5.5%, 16.5%, 32%, 53.5% { opacity: 0; }
-        100% { opacity: 0; }
+      @keyframes re001FadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
       }
       @keyframes eraserExit {
         0% {
