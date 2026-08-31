@@ -3275,6 +3275,35 @@ function App() {
   const activePage = useActivePage();
   const [pageScrollProgress, setPageScrollProgress] = React.useState(0);
   const [rollerStartToken, setRollerStartToken] = React.useState(0);
+  const [canvasScale, setCanvasScale] = React.useState(1);
+
+  React.useLayoutEffect(() => {
+    let animationFrame = 0;
+
+    const updateCanvasScale = () => {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(() => {
+        const viewport = window.visualViewport;
+        const viewportWidth = viewport?.width ?? window.innerWidth;
+        const viewportHeight = viewport?.height ?? window.innerHeight;
+        setCanvasScale(Math.min(1, viewportWidth / 402, viewportHeight / 700));
+      });
+    };
+
+    updateCanvasScale();
+    window.addEventListener("resize", updateCanvasScale);
+    window.addEventListener("orientationchange", updateCanvasScale);
+    window.visualViewport?.addEventListener("resize", updateCanvasScale);
+    window.visualViewport?.addEventListener("scroll", updateCanvasScale);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", updateCanvasScale);
+      window.removeEventListener("orientationchange", updateCanvasScale);
+      window.visualViewport?.removeEventListener("resize", updateCanvasScale);
+      window.visualViewport?.removeEventListener("scroll", updateCanvasScale);
+    };
+  }, []);
 
   React.useEffect(() => {
     setPageScrollProgress(0);
@@ -3290,53 +3319,62 @@ function App() {
     <main className="preview-page">
       <ZineAnimationStyles />
       <h1 className="sr-only">作狀生活俱樂部</h1>
-      <CoverFrame active={activePage === "cover"} />
-      <HomeFrame active={activePage === "home"} />
-      <PageTwoFrame active={activePage === "page-2"} />
-      <Article101Frame
-        active={activePage === "article-1-01"}
-        progress={journeyProgress}
-        onScrollProgress={setPageScrollProgress}
-      />
-      {visualPages.map((page) => (
-        <VisualJourneyFrame
-          key={page.pageId}
-          {...page}
-          active={activePage === page.pageId}
+      <div
+        className="phone-frame-scale-host"
+        style={{
+          width: `${402 * canvasScale}px`,
+          height: `${700 * canvasScale}px`,
+          "--phone-frame-scale": canvasScale,
+        }}
+      >
+        <CoverFrame active={activePage === "cover"} />
+        <HomeFrame active={activePage === "home"} />
+        <PageTwoFrame active={activePage === "page-2"} />
+        <Article101Frame
+          active={activePage === "article-1-01"}
           progress={journeyProgress}
           onScrollProgress={setPageScrollProgress}
         />
-      ))}
-      <OutroFrame active={activePage === "outro"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
-      <EndMessageFrame active={activePage === "end-msg-box"} progress={journeyProgress} onSubmitSuccess={startRollerAfterMessage} />
-      <RollerFrame active={activePage === "roller"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} startToken={rollerStartToken} />
-      <BackFrame active={activePage === "back"} progress={journeyProgress} />
-      {openingPages.map((page) => (
-        <OpeningPageFrame
-          key={page.pageId}
-          {...page}
-          active={activePage === page.pageId}
-          progress={journeyProgress}
-        />
-      ))}
-      {textArticles.map((page) => (
-        <TextArticleFrame
-          key={page.pageId}
-          {...page}
-          active={activePage === page.pageId}
-          progress={journeyProgress}
-          onScrollProgress={setPageScrollProgress}
-        />
-      ))}
-      {artworkArticles.map((page) => (
-        <ArtworkArticleFrame
-          key={page.pageId}
-          {...page}
-          active={activePage === page.pageId}
-          progress={journeyProgress}
-          onScrollProgress={setPageScrollProgress}
-        />
-      ))}
+        {visualPages.map((page) => (
+          <VisualJourneyFrame
+            key={page.pageId}
+            {...page}
+            active={activePage === page.pageId}
+            progress={journeyProgress}
+            onScrollProgress={setPageScrollProgress}
+          />
+        ))}
+        <OutroFrame active={activePage === "outro"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} />
+        <EndMessageFrame active={activePage === "end-msg-box"} progress={journeyProgress} onSubmitSuccess={startRollerAfterMessage} />
+        <RollerFrame active={activePage === "roller"} progress={journeyProgress} onScrollProgress={setPageScrollProgress} startToken={rollerStartToken} />
+        <BackFrame active={activePage === "back"} progress={journeyProgress} />
+        {openingPages.map((page) => (
+          <OpeningPageFrame
+            key={page.pageId}
+            {...page}
+            active={activePage === page.pageId}
+            progress={journeyProgress}
+          />
+        ))}
+        {textArticles.map((page) => (
+          <TextArticleFrame
+            key={page.pageId}
+            {...page}
+            active={activePage === page.pageId}
+            progress={journeyProgress}
+            onScrollProgress={setPageScrollProgress}
+          />
+        ))}
+        {artworkArticles.map((page) => (
+          <ArtworkArticleFrame
+            key={page.pageId}
+            {...page}
+            active={activePage === page.pageId}
+            progress={journeyProgress}
+            onScrollProgress={setPageScrollProgress}
+          />
+        ))}
+      </div>
     </main>
   );
 }

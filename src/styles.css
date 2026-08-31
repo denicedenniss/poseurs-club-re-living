@@ -132,19 +132,27 @@ html {
 }
 
 .phone-frame {
-  position: relative;
-  width: min(402px, 100vw, calc(100dvh * 402 / 700));
-  aspect-ratio: 402 / 700;
-  height: auto;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 402px;
+  height: 700px;
+  margin-left: -201px;
   display: none;
   overflow: hidden;
   background: var(--page-bg, #f8f8f8);
   color: #000000;
+  transform: scale(var(--phone-frame-scale, 1));
   transform-origin: top center;
 }
 
 .phone-frame.is-active {
   display: block;
+}
+
+.phone-frame-scale-host {
+  position: relative;
+  flex: none;
 }
 
 .page-two-frame {
