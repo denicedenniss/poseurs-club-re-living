@@ -1873,7 +1873,11 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
         }}
       >
         <div className="roller-canvas">
-          <img className={`roller-art ${isArtVisible ? "is-visible" : ""}`} src={assetSrc("/assets/png-pages/Outro/roller.png")} alt="" />
+          <div className={`roller-art ${isArtVisible ? "is-visible" : ""}`}>
+            <img className="roller-art-segment roller-art-logo" src={pngPageSrc("Outro/new roller-02.png")} alt="" />
+            <img className="roller-art-segment roller-art-divider" src={pngPageSrc("Outro/new roller-03.png")} alt="" />
+            <img className="roller-art-segment roller-art-directory" src={pngPageSrc("Outro/new roller-01.png")} alt="" />
+          </div>
           {isScrollReady && <span className="ending-scroll-marker" aria-hidden="true" />}
         </div>
       </div>

@@ -898,8 +898,8 @@ html {
 }
 
 .roller-canvas {
-  width: calc(403 / 402 * 100%);
-  aspect-ratio: 403 / 1930;
+  width: 403px;
+  height: 2999px;
 }
 
 .outro-art-top,
@@ -962,8 +962,8 @@ html {
 }
 
 .roller-scroll .ending-scroll-marker {
-  top: calc(181 / 1930 * 100%);
-  height: calc(147 / 1930 * 100%);
+  top: calc(181 / 2999 * 100%);
+  height: calc(147 / 2999 * 100%);
 }
 
 .end-message-copy {
@@ -1143,6 +1143,34 @@ html {
 
 .roller-art.is-visible {
   opacity: 1;
+}
+
+.roller-art-segment {
+  position: absolute;
+  display: block;
+  width: 403px;
+  max-width: none;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.roller-art-logo {
+  left: 0;
+  top: 100px;
+  height: 189px;
+}
+
+.roller-art-divider {
+  left: -1px;
+  top: 289px;
+  height: 88px;
+}
+
+.roller-art-directory {
+  left: 0;
+  top: 377px;
+  height: 2600px;
 }
 
 .roller-header {
