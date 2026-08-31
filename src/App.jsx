@@ -1807,10 +1807,14 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
   const handledSendTokenRef = React.useRef(0);
   const [rollerPhase, setRollerPhase] = React.useState("idle");
   const [rollerReply, setRollerReply] = React.useState("再見。");
+  const [logoRevealComplete, setLogoRevealComplete] = React.useState(false);
+  const [dividerFlashComplete, setDividerFlashComplete] = React.useState(false);
 
   React.useEffect(() => {
     if (!active) {
       setRollerPhase("idle");
+      setLogoRevealComplete(false);
+      setDividerFlashComplete(false);
       return undefined;
     }
 
@@ -1823,6 +1827,11 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
     setRollerPhase("intro");
     return undefined;
   }, [active, rollerPhase, startToken]);
+
+  React.useEffect(() => {
+    if (!active || rollerPhase !== "revealing-intro") return;
+    if (logoRevealComplete && dividerFlashComplete) setRollerPhase("rolling");
+  }, [active, dividerFlashComplete, logoRevealComplete, rollerPhase]);
 
   React.useEffect(() => {
     if (!active || rollerPhase !== "rolling") return undefined;
@@ -1852,8 +1861,8 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
     return () => window.cancelAnimationFrame(animationFrame);
   }, [active, rollerPhase]);
 
-  const isLogoVisible = ["revealing-logo", "flashing-divider", "rolling", "complete"].includes(rollerPhase);
-  const isDividerVisible = ["flashing-divider", "rolling", "complete"].includes(rollerPhase);
+  const isLogoVisible = ["revealing-intro", "rolling", "complete"].includes(rollerPhase);
+  const isDividerVisible = ["revealing-intro", "rolling", "complete"].includes(rollerPhase);
   const isDirectoryVisible = ["rolling", "complete"].includes(rollerPhase);
   const isScrollReady = rollerPhase === "complete";
 
@@ -1871,19 +1880,19 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
         <div className="roller-canvas">
           <div className="roller-art">
             <img
-              className={`roller-art-segment roller-art-logo ${rollerPhase === "revealing-logo" ? "is-revealing" : isLogoVisible ? "is-visible" : ""}`}
+              className={`roller-art-segment roller-art-logo ${rollerPhase === "revealing-intro" && !logoRevealComplete ? "is-revealing" : isLogoVisible ? "is-visible" : ""}`}
               src={pngPageSrc("Outro/new roller-02.png")}
               alt=""
               onAnimationEnd={() => {
-                if (rollerPhase === "revealing-logo") setRollerPhase("flashing-divider");
+                if (rollerPhase === "revealing-intro") setLogoRevealComplete(true);
               }}
             />
             <img
-              className={`roller-art-segment roller-art-divider ${rollerPhase === "flashing-divider" ? "is-flashing" : isDividerVisible ? "is-visible" : ""}`}
+              className={`roller-art-segment roller-art-divider ${rollerPhase === "revealing-intro" && !dividerFlashComplete ? "is-flashing" : isDividerVisible ? "is-visible" : ""}`}
               src={pngPageSrc("Outro/new roller-03.png")}
               alt=""
               onAnimationEnd={() => {
-                if (rollerPhase === "flashing-divider") setRollerPhase("rolling");
+                if (rollerPhase === "revealing-intro") setDividerFlashComplete(true);
               }}
             />
             <img className={`roller-art-segment roller-art-directory ${isDirectoryVisible ? "is-visible" : ""}`} src={pngPageSrc("Outro/new roller-01.png")} alt="" />
@@ -1896,7 +1905,7 @@ function RollerFrame({ active, progress, onScrollProgress, startToken }) {
           <ReTypingLabel
             text={`Re: ${rollerReply}`}
             active={active && rollerPhase !== "idle"}
-            onComplete={() => setRollerPhase("revealing-logo")}
+            onComplete={() => setRollerPhase("revealing-intro")}
           />
         )}
       </header>

@@ -1162,7 +1162,7 @@ html {
 
 .roller-art-logo.is-revealing {
   opacity: 1;
-  animation: rollerLogoReveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: rollerLogoReveal 3.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .roller-art-divider {
@@ -1172,7 +1172,7 @@ html {
 }
 
 .roller-art-divider.is-flashing {
-  animation: rollerDividerFlash 0.45s linear 3 both;
+  animation: rollerDividerFlash 0.9s linear 3 both;
 }
 
 .roller-art-directory {
